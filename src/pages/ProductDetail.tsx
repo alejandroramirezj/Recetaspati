@@ -1,8 +1,8 @@
-
 import { useParams } from 'react-router-dom';
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
+import { Cookie } from 'lucide-react';
 
 const ProductDetail = () => {
   const { category, id } = useParams();
@@ -11,18 +11,39 @@ const ProductDetail = () => {
   const getProductDetails = () => {
     if (category === 'galletas') {
       return {
-        name: 'Galletas Artesanales',
-        description: 'Nuestras deliciosas galletas están elaboradas con los mejores ingredientes.',
-        images: ['/lovable-uploads/66bb591e-c761-4cf7-a07e-babfc4f8bba2.png'],
-        flavors: [
-          'Con Pépitas de Chocolate',
-          'Nutella',
-          'Filipinos',
-        ],
-        price: '16€',
+        name: 'Caja de Galletas Artesanales',
+        description: 'Una selección de nuestras galletas más populares, presentadas en una elegante caja.',
+        images: ['/lovable-uploads/20a5182d-6dd8-4376-84ad-0f55d69d53e8.png'],
         packSizes: [
           { name: 'Pack 6 unidades', price: '16€', description: '3 sabores máximo' },
           { name: 'Pack 12 unidades', price: '29€', description: '6 sabores máximo' }
+        ],
+        individualCookies: [
+          {
+            name: "Galleta de Chocolate Blanco",
+            image: "/lovable-uploads/64b08075-01dc-430d-bb79-8b7eb5e26009.png",
+            description: "Deliciosa galleta decorada con chocolate blanco"
+          },
+          {
+            name: "Galleta de Kinder",
+            image: "/lovable-uploads/f210e04b-9a02-43c4-aa9d-a5ca6d736d2b.png",
+            description: "Galleta con pepitas de chocolate y chocolate Kinder"
+          },
+          {
+            name: "Galleta de Nutella",
+            image: "/lovable-uploads/dfd109ec-8a78-487a-a9a4-988a86e4ed27.png",
+            description: "Galleta con pepitas y centro de Nutella"
+          },
+          {
+            name: "Galleta de Oreo",
+            image: "/lovable-uploads/55bbb9b7-a902-4ff5-9a29-babb9b656b94.png",
+            description: "Galleta con trozos de Oreo"
+          },
+          {
+            name: "Galleta de Pistacho",
+            image: "/lovable-uploads/8d0abcce-f289-4845-b13d-c24ca513d41b.png",
+            description: "Galleta de pistacho con crema de pistacho"
+          }
         ]
       };
     } else if (category === 'tartas') {
@@ -65,15 +86,6 @@ const ProductDetail = () => {
             {category === 'galletas' && (
               <>
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-pati-burgundy">Sabores disponibles:</h3>
-                  <ul className="list-disc list-inside space-y-2 text-pati-brown">
-                    {product.flavors.map((flavor) => (
-                      <li key={flavor}>{flavor}</li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-pati-burgundy">Opciones de pack:</h3>
                   {product.packSizes.map((pack) => (
                     <div key={pack.name} className="border border-pati-pink rounded-lg p-4">
@@ -84,6 +96,27 @@ const ProductDetail = () => {
                       <p className="text-sm text-pati-brown mt-1">{pack.description}</p>
                     </div>
                   ))}
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-pati-burgundy flex items-center gap-2">
+                    <Cookie className="h-5 w-5" /> Sabores disponibles:
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {product.individualCookies.map((cookie) => (
+                      <div key={cookie.name} className="border border-pati-pink rounded-lg overflow-hidden">
+                        <img 
+                          src={cookie.image} 
+                          alt={cookie.name}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="p-4">
+                          <h4 className="font-medium text-pati-burgundy">{cookie.name}</h4>
+                          <p className="text-sm text-pati-brown mt-1">{cookie.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </>
             )}

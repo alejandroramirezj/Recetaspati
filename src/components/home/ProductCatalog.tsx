@@ -12,7 +12,8 @@ type Product = {
   image: string;
   category: 'tartas' | 'galletas' | 'palmeritas' | 'mini-tartas';
   size?: string;
-  options?: {name: string; price: string}[];
+  options?: {name: string; price: string; description?: string}[];
+  individualCookies?: {name: string; image: string; description: string}[]
 };
 
 // Sample product data
@@ -28,24 +29,51 @@ const products: Product[] = [
   },
   {
     id: 2,
+    name: "Caja de Galletas Artesanales",
+    description: "Una selección de nuestras galletas más populares, presentadas en una elegante caja.",
+    price: "16€",
+    image: "/lovable-uploads/20a5182d-6dd8-4376-84ad-0f55d69d53e8.png",
+    category: "galletas",
+    options: [
+      {name: "Pack 6 unidades", price: "16€", description: "3 sabores máximo"},
+      {name: "Pack 12 unidades", price: "29€", description: "6 sabores máximo"}
+    ],
+    individualCookies: [
+      {
+        name: "Galleta de Chocolate Blanco",
+        image: "/lovable-uploads/64b08075-01dc-430d-bb79-8b7eb5e26009.png",
+        description: "Deliciosa galleta decorada con chocolate blanco"
+      },
+      {
+        name: "Galleta de Kinder",
+        image: "/lovable-uploads/f210e04b-9a02-43c4-aa9d-a5ca6d736d2b.png",
+        description: "Galleta con pepitas de chocolate y chocolate Kinder"
+      },
+      {
+        name: "Galleta de Nutella",
+        image: "/lovable-uploads/dfd109ec-8a78-487a-a9a4-988a86e4ed27.png",
+        description: "Galleta con pepitas y centro de Nutella"
+      },
+      {
+        name: "Galleta de Oreo",
+        image: "/lovable-uploads/55bbb9b7-a902-4ff5-9a29-babb9b656b94.png",
+        description: "Galleta con trozos de Oreo"
+      },
+      {
+        name: "Galleta de Pistacho",
+        image: "/lovable-uploads/8d0abcce-f289-4845-b13d-c24ca513d41b.png",
+        description: "Galleta de pistacho con crema de pistacho"
+      }
+    ]
+  },
+  {
+    id: 3,
     name: "Tarta de Queso",
     description: "Nuestra deliciosa tarta de queso cremosa y suave.",
     price: "28,50€",
     image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
     category: "tartas",
     size: "8-10 personas",
-  },
-  {
-    id: 3,
-    name: "Pack Galletas Variadas",
-    description: "Deliciosas galletas artesanales con diferentes sabores a elegir.",
-    price: "16€",
-    image: "/lovable-uploads/66bb591e-c761-4cf7-a07e-babfc4f8bba2.png",
-    category: "galletas",
-    options: [
-      {name: "Pack 6 unidades", price: "16€"},
-      {name: "Pack 12 unidades", price: "29€"}
-    ]
   },
   {
     id: 4,
