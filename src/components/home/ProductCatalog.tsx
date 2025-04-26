@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from 'react-router-dom';
 
 // Product type definition
 type Product = {
@@ -19,32 +19,32 @@ type Product = {
 const products: Product[] = [
   {
     id: 1,
-    name: "Tarta de Chocolate y Frambuesa",
-    description: "Exquisita combinación de bizcocho de chocolate con crema de frambuesa, ideal para 8-10 personas.",
-    price: "24,95€",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
+    name: "Bundtcake de Chocolate",
+    description: "Exquisito bizcocho de chocolate elaborado artesanalmente, perfecto para compartir.",
+    price: "32€",
+    image: "/lovable-uploads/08eb7794-e907-463f-8d3e-38aaa1e5b5ec.png",
     category: "tartas",
     size: "8-10 personas",
   },
   {
     id: 2,
-    name: "Tarta de Zanahoria",
-    description: "La clásica carrot cake con crema de queso y nueces. Perfecta para meriendas familiares.",
-    price: "22,95€",
+    name: "Tarta de Queso",
+    description: "Nuestra deliciosa tarta de queso cremosa y suave.",
+    price: "28,50€",
     image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
     category: "tartas",
     size: "8-10 personas",
   },
   {
     id: 3,
-    name: "Pack Galletas de Nutella",
-    description: "Deliciosas galletas rellenas del mejor chocolate con avellanas.",
-    price: "12,95€",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
+    name: "Pack Galletas Variadas",
+    description: "Deliciosas galletas artesanales con diferentes sabores a elegir.",
+    price: "16€",
+    image: "/lovable-uploads/66bb591e-c761-4cf7-a07e-babfc4f8bba2.png",
     category: "galletas",
     options: [
-      {name: "Pack 6 unidades", price: "12,95€"},
-      {name: "Pack 12 unidades", price: "22,95€"}
+      {name: "Pack 6 unidades", price: "16€"},
+      {name: "Pack 12 unidades", price: "29€"}
     ]
   },
   {
@@ -83,6 +83,7 @@ const products: Product[] = [
 
 const ProductCatalog = () => {
   const [activeTab, setActiveTab] = useState<string>("tartas");
+  const navigate = useNavigate();
 
   return (
     <section id="productos" className="py-16 bg-white">
@@ -183,8 +184,13 @@ const ProductCatalog = () => {
 };
 
 const ProductCard = ({ product }: { product: Product }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl product-card">
+    <div 
+      className="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl product-card cursor-pointer"
+      onClick={() => navigate(`/product/${product.category}/${product.id}`)}
+    >
       <div className="h-56 overflow-hidden">
         <img 
           src={product.image} 

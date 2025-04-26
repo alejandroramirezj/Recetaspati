@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Menu, X, Instagram, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,9 +10,13 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="/" className="flex items-center">
-          <h1 className="text-2xl font-playfair font-bold text-pati-burgundy">Recetas Pati</h1>
-        </a>
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/lovable-uploads/c64064a5-a6b3-47e2-a0db-ebecb31a3ae6.png" 
+            alt="Recetas Pati" 
+            className="h-12"
+          />
+        </Link>
         
         {/* Mobile menu button */}
         <button 
