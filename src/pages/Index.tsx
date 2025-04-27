@@ -10,6 +10,7 @@ import InstagramFeed from "@/components/home/InstagramFeed";
 import TikTokFeed from "@/components/home/TikTokFeed";
 import RecommendationWizard from "@/components/home/RecommendationWizard";
 import ProductTicker from "@/components/layout/ProductTicker";
+import LastMinuteOffers from "@/components/home/LastMinuteOffers";
 
 const Index = () => {
   return (
@@ -24,6 +25,7 @@ const Index = () => {
         <RecommendationWizard /> {/* Component has py-16 */}
         <MothersDay /> {/* Component has py-16 */}
         <Testimonials /> {/* Component has py-16 */}
+        <LastMinuteOffers /> {/* Use the renamed component */}
         {/* Slightly reduced padding for social feeds? */}
         <InstagramFeed /> {/* Let's adjust this component */}
         <TikTokFeed /> {/* Let's adjust this component */}

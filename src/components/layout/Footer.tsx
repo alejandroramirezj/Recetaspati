@@ -1,8 +1,12 @@
-
 import { Instagram, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Footer = () => {
+  // WhatsApp details for general contact
+  const phoneNumber = "34671266981";
+  const message = "¡Hola Pati! 👋 Tengo una pregunta / Me gustaría hacer un pedido personalizado.";
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
   return (
     <footer className="bg-pati-cream pt-12 pb-6">
       <div className="container mx-auto px-4">
@@ -50,8 +54,10 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-playfair text-lg font-medium text-pati-burgundy">Contacto</h4>
             <p className="text-pati-dark-brown">¿Tienes alguna pregunta o quieres realizar un pedido personalizado?</p>
-            <Button className="bg-pati-burgundy hover:bg-pati-brown text-white w-full">
-              Enviar mensaje
+            <Button asChild className="bg-pati-burgundy hover:bg-pati-brown text-white w-full">
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                Enviar mensaje
+              </a>
             </Button>
           </div>
         </div>
