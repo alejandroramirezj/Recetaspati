@@ -65,11 +65,12 @@ const Testimonials = () => {
           <h3 className="text-2xl font-bold text-pati-burgundy mb-8 text-center">
             Ve las reacciones a nuestros productos
           </h3>
-          {/* Use flexbox for horizontal layout, wrap on smaller screens */}
-          <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-center items-center">
+          {/* Adjusted layout for vertical videos */}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-6 md:gap-8 justify-center items-center">
             
             {/* Video 1 */}
-            <div className="w-full md:w-1/3 aspect-video bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
+            {/* Set max-width and vertical aspect ratio */}
+            <div className="w-full sm:w-auto max-w-xs aspect-[9/16] bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
               <video 
                 controls 
                 preload="metadata" 
@@ -82,7 +83,7 @@ const Testimonials = () => {
             </div>
 
             {/* Video 2 */}
-            <div className="w-full md:w-1/3 aspect-video bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
+            <div className="w-full sm:w-auto max-w-xs aspect-[9/16] bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
               <video 
                 controls 
                 preload="metadata" 
@@ -95,7 +96,7 @@ const Testimonials = () => {
             </div>
 
             {/* Video 3 */}
-             <div className="w-full md:w-1/3 aspect-video bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
+             <div className="w-full sm:w-auto max-w-xs aspect-[9/16] bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
               <video 
                 controls 
                 preload="metadata" 
