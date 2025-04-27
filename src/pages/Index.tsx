@@ -9,6 +9,7 @@ import MothersDay from "@/components/home/MothersDay";
 import InstagramFeed from "@/components/home/InstagramFeed";
 import TikTokFeed from "@/components/home/TikTokFeed";
 import RecommendationWizard from "@/components/home/RecommendationWizard";
+import ProductTicker from "@/components/layout/ProductTicker";
 
 const Index = () => {
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <Navbar />
       <main className="flex-grow">
         <Hero />
+        <ProductTicker />
         <ProductCatalog />
         <RecommendationWizard />
         <MothersDay />

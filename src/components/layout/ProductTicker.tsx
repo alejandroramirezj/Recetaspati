@@ -1,15 +1,15 @@
 import React from 'react';
 
 const products = [
-  "Tartas Artesanales", 
-  "Galletas Caseras", 
-  "Palmeritas de Hojaldre", 
-  "Mini Tartas", 
-  "Bundt Cakes", 
-  "Cheesecakes", 
-  "Regalos Dulces", 
-  "Eventos Especiales",
-  "¡Y Mucho Más!"
+  "Tartas Artesanales 🎂", 
+  "Galletas Caseras 🍪", 
+  "Palmeritas de Hojaldre ✨", 
+  "Mini Tartas 🧁", 
+  "Bundt Cakes 🍩", 
+  "Cheesecakes 🍰", 
+  "Regalos Dulces 🎁", 
+  "Eventos Especiales 🎉",
+  "¡Y Mucho Más! 🥳"
 ];
 
 // Duplicate the array for a seamless loop effect
