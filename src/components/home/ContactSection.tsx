@@ -1,149 +1,42 @@
-
-import { Instagram, Mail, Phone } from 'lucide-react';
+import { Instagram, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+
+// Define URLs
+const whatsappUrl = "https://wa.me/34671266981"; // Use the number from previous steps
+const instagramUrl = "https://instagram.com/recetaspati"; // From previous context
+const tiktokUrl = "https://tiktok.com/@recetaspati_"; // Found in TikTokFeed.tsx
 
 const ContactSection = () => {
   return (
     <section id="contacto" className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-4">Ponte en contacto con nosotros</h2>
-            <p className="text-pati-brown max-w-2xl mx-auto">
-              ¿Quieres hacer un pedido o tienes alguna pregunta? Estamos aquí para ayudarte.
-            </p>
-          </div>
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-4">Ponte en contacto con nosotros</h2>
+          <p className="text-pati-brown mb-10">
+            ¿Quieres hacer un pedido o tienes alguna pregunta? Estamos aquí para ayudarte.
+          </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div>
-              <h3 className="text-xl font-bold text-pati-burgundy mb-6">Métodos de contacto</h3>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="w-12 h-12 rounded-full bg-pati-pink flex items-center justify-center mr-4">
-                    <Instagram className="text-pati-burgundy" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-pati-burgundy">Instagram</h4>
-                    <p className="text-pati-brown mb-2">La forma más rápida de contactarnos</p>
-                    <a 
-                      href="https://instagram.com/recetas.pati" 
-                      className="text-pati-burgundy underline hover:text-pati-brown"
-                    >
-                      @recetas.pati
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="w-12 h-12 rounded-full bg-pati-pink flex items-center justify-center mr-4">
-                    <Phone className="text-pati-burgundy" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-pati-burgundy">Teléfono</h4>
-                    <p className="text-pati-brown mb-2">Disponible de lunes a viernes de 9:00 a 18:00</p>
-                    <a 
-                      href="tel:+34600000000" 
-                      className="text-pati-burgundy underline hover:text-pati-brown"
-                    >
-                      +34 600 000 000
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="w-12 h-12 rounded-full bg-pati-pink flex items-center justify-center mr-4">
-                    <Mail className="text-pati-burgundy" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-pati-burgundy">Email</h4>
-                    <p className="text-pati-brown mb-2">Te responderemos en menos de 24 horas</p>
-                    <a 
-                      href="mailto:info@recetaspati.es" 
-                      className="text-pati-burgundy underline hover:text-pati-brown"
-                    >
-                      info@recetaspati.es
-                    </a>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-10 bg-pati-cream rounded-lg p-6">
-                <h4 className="font-bold text-pati-burgundy mb-2">Entrega local en Granada</h4>
-                <p className="text-pati-brown mb-4">
-                  Por el momento solo realizamos entregas en Granada capital y área metropolitana.
-                </p>
-                <p className="text-pati-burgundy font-medium">
-                  ¿Estás fuera de Granada? Rellena el formulario de expansión y te avisaremos cuando estemos disponibles en tu ciudad.
-                </p>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6">
             
-            <div>
-              <h3 className="text-xl font-bold text-pati-burgundy mb-6">Envíanos un mensaje</h3>
-              
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-pati-brown mb-1">
-                      Nombre
-                    </label>
-                    <Input 
-                      id="name" 
-                      placeholder="Tu nombre" 
-                      className="border-pati-pink focus:border-pati-burgundy" 
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-pati-brown mb-1">
-                      Teléfono
-                    </label>
-                    <Input 
-                      id="phone" 
-                      type="tel"
-                      placeholder="Tu teléfono" 
-                      className="border-pati-pink focus:border-pati-burgundy" 
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-pati-brown mb-1">
-                    Email
-                  </label>
-                  <Input 
-                    id="email" 
-                    type="email"
-                    placeholder="Tu email" 
-                    className="border-pati-pink focus:border-pati-burgundy" 
-                  />
-                </div>
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-pati-brown mb-1">
-                    Asunto
-                  </label>
-                  <Input 
-                    id="subject" 
-                    placeholder="Asunto de tu mensaje" 
-                    className="border-pati-pink focus:border-pati-burgundy" 
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-pati-brown mb-1">
-                    Mensaje
-                  </label>
-                  <Textarea 
-                    id="message" 
-                    placeholder="Cuéntanos en qué podemos ayudarte" 
-                    className="border-pati-pink focus:border-pati-burgundy min-h-[120px]" 
-                  />
-                </div>
-                <Button className="w-full bg-pati-burgundy hover:bg-pati-brown text-white">
-                  Enviar mensaje
-                </Button>
-              </form>
-            </div>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full bg-[#25D366] hover:bg-[#1DAA54] text-white">
+                <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
+              </Button>
+            </a>
+
+            <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full bg-[#E4405F] hover:bg-[#C13584] text-white">
+                <Instagram className="mr-2 h-5 w-5" /> Instagram
+              </Button>
+            </a>
+
+            <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full bg-black hover:bg-gray-800 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.01-1.58-.01-3.19-.01-4.8 0-2.16-1.2-4.06-2.94-4.86h-3.02v16.61c0 2.3-.94 4.3-2.48 5.76-1.53 1.45-3.61 2.14-5.83 2.02-2.18-.12-4.13-.96-5.53-2.48-1.4-1.53-2.05-3.53-1.9-5.71.14-2.1.97-3.96 2.4-5.37 1.47-1.45 3.5-2.1 5.65-1.95.02 1.59.02 3.18.01 4.78-.01 1.9.9 3.59 2.32 4.74 1.44 1.13 3.35 1.52 5.08 1.27v-4.1a4.96 4.96 0 0 1-2.25-.46v-4.87c.01-.16.01-.32.02-.48.01-.09.01-.18.02-.27z"/></svg>
+                TikTok
+              </Button>
+            </a>
+
           </div>
         </div>
       </div>
