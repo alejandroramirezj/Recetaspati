@@ -93,7 +93,7 @@ const ProductCatalog = () => {
           {/* Render TabsContent dynamically based on filteredCards */}
           <div className="mt-8">
             <TabsContent value={activeTab} className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredCards.map(cardInfo => (
                   // Pass category card info to ProductCard
                   <ProductCard key={cardInfo.categoryName} product={cardInfo as CategoryInfo} /> 
