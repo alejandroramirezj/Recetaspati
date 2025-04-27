@@ -202,7 +202,7 @@ const RecommendationWizard = () => {
     <section id="recomendador" className="py-16 bg-gradient-to-b from-pati-cream to-white">
       <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-10 flex flex-col md:flex-row items-center justify-center gap-6">
-            <img src="/lovable-uploads/Bundcake.JPG" alt="Tarta deliciosa" className="w-32 h-32 object-cover rounded-full shadow-lg border-4 border-white"/>
+            <img src="/Recetaspati/videos/Bundcake.JPG" alt="Tarta deliciosa" className="w-32 h-32 object-cover rounded-full shadow-lg border-4 border-white"/>
             <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-3">
                 ¿No sabes qué elegir?

@@ -29,7 +29,7 @@ export type Product = {
 // Centralized product data
 export const productsData: Product[] = [
   // Tartas
-  { id: 1, name: "Bundtcake de Chocolate", description: "Exquisito bizcocho de chocolate elaborado artesanalmente.", price: "32€", image: "/Recetaspati/lovable-uploads/Bundcake.JPG", category: "tartas", size: "8-10 personas" },
+  { id: 1, name: "Bundtcake de Chocolate", description: "Exquisito bizcocho de chocolate elaborado artesanalmente.", price: "32€", image: "/Recetaspati/videos/Bundcake.JPG", category: "tartas", size: "8-10 personas" },
   { id: 3, name: "Tarta de Queso", description: "Nuestra deliciosa tarta de queso cremosa y suave.", price: "25€", image: "/Recetaspati/placeholder.svg", category: "tartas", size: "8-10 personas" },
   { id: 4, name: "Tarta de Queso y Lotus", description: "Combinación irresistible de tarta de queso con Lotus.", price: "30€", image: "/Recetaspati/placeholder.svg", category: "tartas", size: "8-10 personas" },
   { id: 5, name: "Tarta de Tiramisú", description: "El clásico postre italiano convertido en una deliciosa tarta.", price: "39€", image: "/Recetaspati/placeholder.svg", category: "tartas", size: "8-10 personas" },
@@ -42,18 +42,18 @@ export const productsData: Product[] = [
     name: "Caja de Galletas Artesanales",
     description: "Una selección de nuestras galletas más populares.",
     price: "16€", // Base price
-    image: "/Recetaspati/lovable-uploads/Caja galletas 6.png",
+    image: "/Recetaspati/videos/Caja galletas 6.png",
     category: "galletas",
     options: [
       { name: 'Pack 6 unidades', price: '16€', description: '3 sabores máximo' },
       { name: 'Pack 12 unidades', price: '29€', description: '6 sabores máximo' }
     ],
     individualCookies: [
-        { name: "Galleta de Filipinos", image: "/Recetaspati/lovable-uploads/Galleta-Filipinos.png", description: "Decorada con chocolate blanco." },
-        { name: "Galleta de Kinder", image: "/Recetaspati/lovable-uploads/Galleta-Kinderbueno.png", description: "Con pepitas y Kinder." },
-        { name: "Galleta de Nutella", image: "/Recetaspati/lovable-uploads/Galleta-Nutella.png", description: "Con pepitas y centro de Nutella." },
-        { name: "Galleta de Oreo", image: "/Recetaspati/lovable-uploads/Galleta-oreo.png", description: "Con trozos de Oreo." },
-        { name: "Galleta de Pistacho", image: "/Recetaspati/lovable-uploads/Galleta-Pistacho.png", description: "Con crema de pistacho." },
+        { name: "Galleta de Filipinos", image: "/Recetaspati/videos/Galleta-Filipinos.png", description: "Decorada con chocolate blanco." },
+        { name: "Galleta de Kinder", image: "/Recetaspati/videos/Galleta-Kinderbueno.png", description: "Con pepitas y Kinder." },
+        { name: "Galleta de Nutella", image: "/Recetaspati/videos/Galleta-Nutella.png", description: "Con pepitas y centro de Nutella." },
+        { name: "Galleta de Oreo", image: "/Recetaspati/videos/Galleta-oreo.png", description: "Con trozos de Oreo." },
+        { name: "Galleta de Pistacho", image: "/Recetaspati/videos/Galleta-Pistacho.png", description: "Con crema de pistacho." },
         { name: "Galleta de Lotus", image: "/Recetaspati/placeholder.svg", description: "Con sabor Lotus Biscoff." },
         { name: "Galleta de Choc. Blanco y Sal", image: "/Recetaspati/placeholder.svg", description: "Con chocolate blanco y sal." }
     ]
@@ -64,7 +64,7 @@ export const productsData: Product[] = [
     name: "Palmeritas Artesanas",
     description: "El clásico dulce hojaldrado en varios sabores.",
     price: "12€", // Base price
-    image: "/Recetaspati/lovable-uploads/palmeritas.JPG",
+    image: "/Recetaspati/videos/palmeritas.JPG",
     category: "palmeritas",
     options: [
       { name: "25 unidades", price: "12€", description: "2 sabores" },
@@ -78,7 +78,7 @@ export const productsData: Product[] = [
     name: "Pack Tartitas Individuales",
     description: "Ideal para eventos o un capricho variado.",
     price: "60€",
-    image: "/Recetaspati/lovable-uploads/minitartas.png",
+    image: "/Recetaspati/videos/minitartas.png",
     category: "mini-tartas",
     options: [
         { name: "Pack 14 unidades", price: "60€", description: "Sabores: Lotus y fresas y nata" }
