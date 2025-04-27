@@ -135,7 +135,8 @@ const ProductDetail = () => {
 
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start"> {/* Added items-start */}
           {/* Image Section */}
-          <div className="space-y-4 sticky top-24"> {/* Made image sticky */}
+          {/* Sticky only on md and larger screens */}
+          <div className="space-y-4 md:sticky md:top-24"> 
             <Card className="overflow-hidden border-pati-pink/30 shadow-md"> {/* Added card style */}
               <CardContent className="p-0">
                 <div className="aspect-square"> {/* Maintain aspect ratio */}
