@@ -1,4 +1,3 @@
-
 import { Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -117,7 +116,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
               <img 
                 src={testimonial.image} 
                 alt={testimonial.name} 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             ) : (
               <div className="w-full h-full bg-pati-pink flex items-center justify-center text-pati-burgundy font-bold">

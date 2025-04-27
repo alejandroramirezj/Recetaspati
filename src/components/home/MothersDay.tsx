@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 
 const MothersDay = () => {
@@ -65,7 +64,7 @@ const MothersDay = () => {
               <img 
                 src="https://images.unsplash.com/photo-1582562124811-c09040d0a901" 
                 alt="Pack Especial Día de la Madre" 
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
               />
               <div className="absolute bottom-0 right-0 bg-pati-burgundy text-white px-6 py-3 font-bold">
                 Edición Limitada

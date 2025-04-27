@@ -1,66 +1,71 @@
-
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-pati-light-pink to-pati-cream pb-10">
-      <div className="container mx-auto px-4 pt-12 pb-16 md:pt-16 md:pb-24 flex flex-col md:flex-row items-center">
-        {/* Hero content */}
-        <div className="w-full md:w-1/2 space-y-6 text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-pati-burgundy leading-tight">
-            Dulces artesanos con amor
+    // Use a standard background, adjust padding and alignment for two columns
+    <div className="bg-gradient-to-br from-pati-light-pink via-white to-pati-cream py-20 md:py-28">
+      <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        
+        {/* Left Column: Text Content */}
+        <div className="w-full lg:w-1/2 text-center lg:text-left space-y-5 lg:space-y-6 order-2 lg:order-1">
+          <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl font-bold text-pati-burgundy leading-tight">
+            Recetas Pati
           </h1>
-          <p className="text-lg md:text-xl text-pati-dark-brown max-w-lg">
-            Tartas, galletas y dulces caseros elaborados con productos de primera calidad. El sabor auténtico que recordarás.
-          </p>
-          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-            <Button className="bg-pati-burgundy hover:bg-pati-brown text-white px-6 py-6 text-lg">
+          <h2 className="text-lg sm:text-xl md:text-2xl text-pati-dark-brown max-w-xl mx-auto lg:mx-0 font-medium">
+            Dulces para sorprender a tus amigos, invitados, madre o para darte un capricho a ti.
+          </h2>
+          {/* Buttons below text */}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start pt-4">
+            <Button 
+              size="lg" 
+              className="bg-pati-burgundy hover:bg-pati-brown text-white px-8 py-3 text-base md:text-lg shadow-md"
+              onClick={() => document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               Ver productos
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button variant="outline" className="border-pati-burgundy text-pati-burgundy hover:bg-pati-pink px-6 py-6 text-lg">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-pati-burgundy text-pati-burgundy hover:bg-pati-pink px-8 py-3 text-base md:text-lg shadow-md"
+              onClick={() => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               Hacer un pedido
             </Button>
           </div>
-        </div>
-        
-        {/* Hero image */}
-        <div className="w-full md:w-1/2 mt-10 md:mt-0 relative">
-          <div className="relative rounded-full overflow-hidden w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto border-8 border-white shadow-xl">
-            <img 
-              src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9" 
-              alt="Deliciosos dulces artesanos de Recetas Pati" 
-              className="object-cover w-full h-full"
-            />
+          {/* Added Location and Social Proof with Icons */}
+          <div className="pt-8 text-center lg:text-left space-y-3"> 
+            <p className="flex items-center justify-center lg:justify-start gap-2 text-base md:text-lg text-pati-brown font-semibold">
+              <MapPin className="h-5 w-5 text-pati-burgundy flex-shrink-0" /> 
+              <span>Solo pedidos Granada ciudad y alrededores</span>
+            </p>
+            <p className="flex items-center justify-center lg:justify-start gap-2 text-sm md:text-base text-gray-600">
+              <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
+              <span>¡Endulzando momentos para más de 500 clientes felices!</span>
+            </p>
           </div>
-          {/* Decorative elements */}
-          <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-pati-pink opacity-60 blur-md"></div>
-          <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-pati-burgundy opacity-30 blur-md"></div>
         </div>
+
+        {/* Right Column: Video */}
+        <div className="w-full lg:w-1/2 order-1 lg:order-2 flex justify-center">
+          <div className="aspect-[9/16] w-full max-w-sm md:max-w-md bg-white rounded-lg shadow-xl overflow-hidden border-4 border-white">
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="w-full h-full object-cover"
+              poster="/placeholder.svg" // Placeholder while loading
+            >
+              <source src="/Galletas.mp4" type="video/mp4" />
+              Tu navegador no soporta el tag de video.
+            </video>
+          </div>
+        </div>
+
       </div>
-      
-      {/* Badges */}
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8 -mt-6 md:-mt-12">
-          <div className="bg-white rounded-lg shadow-md p-4 text-center">
-            <p className="text-pati-burgundy font-bold text-2xl md:text-3xl">100%</p>
-            <p className="text-pati-brown text-sm md:text-base">Artesanal</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-4 text-center">
-            <p className="text-pati-burgundy font-bold text-2xl md:text-3xl">+500</p>
-            <p className="text-pati-brown text-sm md:text-base">Clientes felices</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-4 text-center">
-            <p className="text-pati-burgundy font-bold text-2xl md:text-3xl">24h</p>
-            <p className="text-pati-brown text-sm md:text-base">Elaboración fresca</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-4 text-center">
-            <p className="text-pati-burgundy font-bold text-2xl md:text-3xl">Granada</p>
-            <p className="text-pati-brown text-sm md:text-base">Entrega local</p>
-          </div>
-        </div>
-      </div>
+       {/* Removed Badges section from Hero */}
     </div>
   );
 };

@@ -3,59 +3,51 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Cookie } from 'lucide-react';
+import { productsData, Product as ProductType } from '@/data/products'; // Import centralized data and type
+
+// Define a more specific type for the details object
+interface ProductDetailsDisplay {
+  name: string;
+  description: string;
+  images: string[];
+  packSizes?: { name: string; price: string; description?: string }[];
+  individualCookies?: { name: string; image: string; description: string }[];
+  price?: string;
+  serving?: string;
+}
 
 const ProductDetail = () => {
   const { category, id } = useParams();
 
   // Find the product details based on category and id
-  const getProductDetails = () => {
-    if (category === 'galletas') {
-      return {
-        name: 'Caja de Galletas Artesanales',
-        description: 'Una selección de nuestras galletas más populares, presentadas en una elegante caja.',
-        images: ['/lovable-uploads/20a5182d-6dd8-4376-84ad-0f55d69d53e8.png'],
-        packSizes: [
-          { name: 'Pack 6 unidades', price: '16€', description: '3 sabores máximo' },
-          { name: 'Pack 12 unidades', price: '29€', description: '6 sabores máximo' }
-        ],
-        individualCookies: [
-          {
-            name: "Galleta de Chocolate Blanco",
-            image: "/lovable-uploads/64b08075-01dc-430d-bb79-8b7eb5e26009.png",
-            description: "Deliciosa galleta decorada con chocolate blanco"
-          },
-          {
-            name: "Galleta de Kinder",
-            image: "/lovable-uploads/f210e04b-9a02-43c4-aa9d-a5ca6d736d2b.png",
-            description: "Galleta con pepitas de chocolate y chocolate Kinder"
-          },
-          {
-            name: "Galleta de Nutella",
-            image: "/lovable-uploads/dfd109ec-8a78-487a-a9a4-988a86e4ed27.png",
-            description: "Galleta con pepitas y centro de Nutella"
-          },
-          {
-            name: "Galleta de Oreo",
-            image: "/lovable-uploads/55bbb9b7-a902-4ff5-9a29-babb9b656b94.png",
-            description: "Galleta con trozos de Oreo"
-          },
-          {
-            name: "Galleta de Pistacho",
-            image: "/lovable-uploads/8d0abcce-f289-4845-b13d-c24ca513d41b.png",
-            description: "Galleta de pistacho con crema de pistacho"
-          }
-        ]
-      };
-    } else if (category === 'tartas') {
-      return {
-        name: 'Bundtcake de Chocolate',
-        description: 'Delicioso bundtcake elaborado con el mejor chocolate.',
-        price: '32€',
-        serving: '8-10 personas',
-        images: ['/lovable-uploads/08eb7794-e907-463f-8d3e-38aaa1e5b5ec.png']
-      };
+  const getProductDetails = (): ProductDetailsDisplay | null => {
+    const productId = parseInt(id || '0');
+    const product = productsData.find(p => p.id === productId && p.category === category);
+
+    if (!product) return null;
+
+    // Map the found product data to the structure expected by the component
+    const details: ProductDetailsDisplay = {
+      name: product.name,
+      description: product.description,
+      images: [product.image],
+    };
+
+    if (category === 'galletas' && product.options && product.individualCookies) {
+      details.packSizes = product.options;
+      details.individualCookies = product.individualCookies;
+    } else if (category === 'tartas' && product.price && product.size) {
+      details.price = product.price;
+      details.serving = product.size;
+    } else if (category === 'palmeritas' && product.options) {
+      details.packSizes = product.options; // Using packSizes structure for consistency, might need UI update
+       details.price = product.price; // Display base price maybe?
+    } else if (category === 'mini-tartas' && product.price && product.options) { // Added check for options
+        details.price = product.price; 
+        details.packSizes = product.options; // Display pack info for mini tartas too
     }
-    return null;
+
+    return details;
   };
 
   const product = getProductDetails();
@@ -74,7 +66,7 @@ const ProductDetail = () => {
               <img 
                 src={product.images[0]} 
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
           </div>
@@ -83,7 +75,7 @@ const ProductDetail = () => {
             <h1 className="text-3xl font-bold text-pati-burgundy">{product.name}</h1>
             <p className="text-pati-brown text-lg">{product.description}</p>
             
-            {category === 'galletas' && (
+            {category === 'galletas' && product.packSizes && product.individualCookies && (
               <>
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-pati-burgundy">Opciones de pack:</h3>
@@ -108,7 +100,7 @@ const ProductDetail = () => {
                         <img 
                           src={cookie.image} 
                           alt={cookie.name}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-48 object-contain"
                         />
                         <div className="p-4">
                           <h4 className="font-medium text-pati-burgundy">{cookie.name}</h4>

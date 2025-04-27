@@ -1,117 +1,75 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { productsData, Product } from '@/data/products'; // Import centralized data and type
 
-// Product type definition
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  image: string;
-  category: 'tartas' | 'galletas' | 'palmeritas' | 'mini-tartas';
-  size?: string;
-  options?: {name: string; price: string; description?: string}[];
-  individualCookies?: {name: string; image: string; description: string}[]
-};
+// --- Remove local Product type definition and products array ---
 
-// Sample product data
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Bundtcake de Chocolate",
-    description: "Exquisito bizcocho de chocolate elaborado artesanalmente, perfecto para compartir.",
-    price: "32€",
-    image: "/lovable-uploads/08eb7794-e907-463f-8d3e-38aaa1e5b5ec.png",
-    category: "tartas",
-    size: "8-10 personas",
-  },
-  {
-    id: 2,
-    name: "Caja de Galletas Artesanales",
-    description: "Una selección de nuestras galletas más populares, presentadas en una elegante caja.",
-    price: "16€",
-    image: "/lovable-uploads/20a5182d-6dd8-4376-84ad-0f55d69d53e8.png",
-    category: "galletas",
-    options: [
-      {name: "Pack 6 unidades", price: "16€", description: "3 sabores máximo"},
-      {name: "Pack 12 unidades", price: "29€", description: "6 sabores máximo"}
-    ],
-    individualCookies: [
-      {
-        name: "Galleta de Chocolate Blanco",
-        image: "/lovable-uploads/64b08075-01dc-430d-bb79-8b7eb5e26009.png",
-        description: "Deliciosa galleta decorada con chocolate blanco"
-      },
-      {
-        name: "Galleta de Kinder",
-        image: "/lovable-uploads/f210e04b-9a02-43c4-aa9d-a5ca6d736d2b.png",
-        description: "Galleta con pepitas de chocolate y chocolate Kinder"
-      },
-      {
-        name: "Galleta de Nutella",
-        image: "/lovable-uploads/dfd109ec-8a78-487a-a9a4-988a86e4ed27.png",
-        description: "Galleta con pepitas y centro de Nutella"
-      },
-      {
-        name: "Galleta de Oreo",
-        image: "/lovable-uploads/55bbb9b7-a902-4ff5-9a29-babb9b656b94.png",
-        description: "Galleta con trozos de Oreo"
-      },
-      {
-        name: "Galleta de Pistacho",
-        image: "/lovable-uploads/8d0abcce-f289-4845-b13d-c24ca513d41b.png",
-        description: "Galleta de pistacho con crema de pistacho"
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: "Tarta de Queso",
-    description: "Nuestra deliciosa tarta de queso cremosa y suave.",
-    price: "28,50€",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-    category: "tartas",
-    size: "8-10 personas",
-  },
-  {
-    id: 4,
-    name: "Galletas de Pistacho",
-    description: "Nuestras galletas más cremosas con un toque de pistacho que las hace irresistibles.",
-    price: "13,95€",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-    category: "galletas",
-    options: [
-      {name: "Pack 6 unidades", price: "13,95€"},
-      {name: "Pack 12 unidades", price: "23,95€"}
-    ]
-  },
-  {
-    id: 5,
-    name: "Palmeritas de Chocolate",
-    description: "El clásico dulce hojaldrado bañado en chocolate negro de alta calidad.",
-    price: "9,95€",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-    category: "palmeritas",
-    options: [
-      {name: "Pack 12 unidades", price: "9,95€"},
-      {name: "Pack 25 unidades", price: "18,95€"}
-    ]
-  },
-  {
-    id: 6,
-    name: "Mini Tarta de Lotus",
-    description: "Nuestra famosa tarta de galletas Lotus en formato individual, perfecta para un capricho.",
-    price: "6,95€",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-    category: "mini-tartas"
-  },
-];
+// --- Generate representative products for categories ---
+const categories = ['tartas', 'galletas', 'palmeritas', 'mini-tartas'] as const;
+type Category = typeof categories[number];
+
+interface CategoryInfo extends Product {
+  // We'll use the structure of the first product found for the category card
+  // Add specific fields if needed for category display
+  categoryName: string; 
+  availableTypes?: string[]; // List some examples - FOR TARTAS, THIS WILL BE THE FULL LIST
+  priceRange?: string; // e.g., "Desde 25€"
+}
+
+const categoryCards: CategoryInfo[] = categories.map(category => {
+  const productsInCategory = productsData.filter(p => p.category === category);
+  const firstProduct = productsInCategory[0]; // Use the first product as representative
+
+  // Generate descriptions and price ranges
+  let description = firstProduct.description;
+  let priceRange = firstProduct.price;
+  let availableTypes: string[] = [];
+
+  if (category === 'tartas') {
+    // Get ALL cake names, clean them up slightly
+    availableTypes = productsInCategory.map(p => 
+      p.name.replace('Tarta de ', '').replace('Bundtcake de ', '')
+    ); 
+    description = "Elige entre nuestra deliciosa variedad:"; // Changed description
+    const prices = productsInCategory.map(p => parseFloat(p.price.replace('€', '').replace(',', '.')));
+    priceRange = `Desde ${Math.min(...prices).toFixed(2).replace('.', ',' )}€`;
+  } else if (category === 'galletas') {
+      description = "Cajas de 6 y 12 unidades. Sabores variados.";
+      // Prices defined in options
+      priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`; 
+  } else if (category === 'palmeritas') {
+       description = "Packs de 25 y 50 unidades. Varios sabores.";
+       priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`;
+  } else if (category === 'mini-tartas') {
+       description = firstProduct.options?.[0]?.description || firstProduct.description;
+       priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`;
+  }
+
+  return {
+    ...firstProduct, // Spread the first product's details (id, image, category)
+    name: category.charAt(0).toUpperCase() + category.slice(1).replace('-tartas', ' Tartas'), // Capitalize category name
+    description: description,
+    price: priceRange, // Use the calculated price range/base price
+    categoryName: category, // Store original category slug
+    availableTypes: availableTypes, // Assign the full list for tartas
+    priceRange: priceRange,
+    // Override fields that should represent the category, not the first product
+    size: undefined, // Size doesn't apply to the category card
+    options: undefined, // Options shown in detail page
+    individualCookies: undefined, // Shown in detail page
+  };
+});
+
 
 const ProductCatalog = () => {
-  const [activeTab, setActiveTab] = useState<string>("tartas");
+  const [activeTab, setActiveTab] = useState<string>("todos"); 
   const navigate = useNavigate();
+
+  const filteredCards = activeTab === 'todos' 
+    ? categoryCards 
+    : categoryCards.filter(card => card.categoryName === activeTab);
 
   return (
     <section id="productos" className="py-16 bg-white">
@@ -119,140 +77,103 @@ const ProductCatalog = () => {
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-4">Nuestros Productos</h2>
           <p className="text-pati-brown max-w-2xl mx-auto">
-            Todos nuestros productos están elaborados de forma artesanal con ingredientes de primera calidad, sin conservantes ni aditivos.
+            Todos nuestros productos están elaborados de forma artesanal con ingredientes de primera calidad.
           </p>
         </div>
-        
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full max-w-2xl mx-auto grid grid-cols-2 md:grid-cols-4 mb-8">
-            <TabsTrigger 
-              value="tartas" 
-              className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white"
-            >
-              Tartas
-            </TabsTrigger>
-            <TabsTrigger 
-              value="galletas" 
-              className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white"
-            >
-              Galletas
-            </TabsTrigger>
-            <TabsTrigger 
-              value="palmeritas" 
-              className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white"
-            >
-              Palmeritas
-            </TabsTrigger>
-            <TabsTrigger 
-              value="mini-tartas" 
-              className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white"
-            >
-              Mini Tartas
-            </TabsTrigger>
+          <TabsList className="w-full max-w-3xl mx-auto grid grid-cols-3 md:grid-cols-5 mb-8">
+            <TabsTrigger value="todos" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Todos</TabsTrigger>
+            <TabsTrigger value="tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Tartas</TabsTrigger>
+            <TabsTrigger value="galletas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Galletas</TabsTrigger>
+            <TabsTrigger value="palmeritas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Palmeritas</TabsTrigger>
+            <TabsTrigger value="mini-tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Mini Tartas</TabsTrigger>
           </TabsList>
           
+          {/* Render TabsContent dynamically based on filteredCards */}
           <div className="mt-8">
-            <TabsContent value="tartas" className="mt-0">
+            <TabsContent value={activeTab} className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products
-                  .filter(product => product.category === "tartas")
-                  .map(product => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="galletas" className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products
-                  .filter(product => product.category === "galletas")
-                  .map(product => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="palmeritas" className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products
-                  .filter(product => product.category === "palmeritas")
-                  .map(product => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="mini-tartas" className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products
-                  .filter(product => product.category === "mini-tartas")
-                  .map(product => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
+                {filteredCards.map(cardInfo => (
+                  // Pass category card info to ProductCard
+                  <ProductCard key={cardInfo.categoryName} product={cardInfo as CategoryInfo} /> 
+                ))}
               </div>
             </TabsContent>
           </div>
         </Tabs>
-        
-        {/* Custom order CTA */}
-        <div className="mt-16 bg-pati-cream rounded-xl p-6 md:p-10 text-center">
-          <h3 className="text-2xl md:text-3xl font-bold text-pati-burgundy mb-4">
-            ¿Buscas algo especial?
-          </h3>
-          <p className="text-pati-brown mb-6 max-w-2xl mx-auto">
-            Si deseas un producto personalizado o tienes alguna idea para un evento especial, estaremos encantados de ayudarte.
-          </p>
-          <Button className="bg-pati-burgundy hover:bg-pati-brown text-white px-8 py-6 text-lg">
-            Pedir presupuesto
-          </Button>
-        </div>
       </div>
     </section>
   );
 };
 
-const ProductCard = ({ product }: { product: Product }) => {
+// Modified ProductCard to display Category Info
+const ProductCard = ({ product }: { product: CategoryInfo }) => {
   const navigate = useNavigate();
 
-  return (
-    <div 
-      className="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl product-card cursor-pointer"
-      onClick={() => navigate(`/product/${product.category}/${product.id}`)}
-    >
-      <div className="h-56 overflow-hidden">
+  // Navigate to the detail page of the *first product* in the category as a starting point
+  // For Tartas, this function won't be called directly by clicking the card div itself
+  const handleCardClick = () => {
+     const firstProductInCategory = productsData.find(p => p.category === product.categoryName);
+     if (firstProductInCategory) {
+        navigate(`/product/${firstProductInCategory.category}/${firstProductInCategory.id}`);
+     } else {
+         console.warn(`No product found for category: ${product.categoryName}`);
+     }
+  };
+
+  // Define content separate from the clickable wrapper for non-tartas cards
+  const cardContent = (
+    <>
+      <div className="h-56 overflow-hidden"> 
         <img 
           src={product.image} 
           alt={product.name} 
-          className="w-full h-full object-cover transition-transform duration-300"
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" // Added group-hover for Link style effect
         />
       </div>
-      <div className="p-6">
-        <h3 className="font-bold text-lg text-pati-burgundy mb-2">{product.name}</h3>
-        <p className="text-pati-brown text-sm mb-4">{product.description}</p>
+      <div className="p-6 flex flex-col flex-grow">
+        <h3 className="font-bold text-xl text-pati-burgundy mb-2">{product.name}</h3>
         
-        {product.size && (
-          <div className="text-sm text-pati-dark-brown mb-2">
-            <span className="font-semibold">Tamaño:</span> {product.size}
-          </div>
-        )}
-        
-        {product.options ? (
-          <div className="space-y-2 mb-4">
-            {product.options.map((option, index) => (
-              <div key={index} className="flex justify-between items-center">
-                <span className="text-pati-dark-brown text-sm">{option.name}</span>
-                <span className="font-bold text-pati-burgundy">{option.price}</span>
-              </div>
+        {product.categoryName === 'tartas' && product.availableTypes && product.availableTypes.length > 0 ? (
+          <ul className="list-disc list-inside text-pati-brown text-sm mb-4 space-y-1 flex-grow">
+            {product.availableTypes.map((tarta, index) => (
+              <li key={index}>{tarta}</li>
             ))}
-          </div>
+          </ul>
         ) : (
-          <div className="font-bold text-xl text-pati-burgundy mb-4">{product.price}</div>
+          <p className="text-pati-brown text-sm mb-4 flex-grow">{product.description}</p>
         )}
+
+        <div className="font-bold text-xl text-pati-burgundy mb-4 mt-auto"> 
+          {product.priceRange || product.price} 
+        </div>
         
-        <Button className="w-full bg-pati-pink hover:bg-pati-burgundy text-pati-burgundy hover:text-white border border-pati-burgundy">
-          Hacer pedido
+        {/* Use Link component within Button for Tartas */}
+        <Button 
+           asChild={product.categoryName === 'tartas'} // Use asChild only for tartas link
+           className="w-full bg-pati-pink hover:bg-pati-burgundy text-pati-burgundy hover:text-white border border-pati-burgundy mt-2"
+           onClick={product.categoryName !== 'tartas' ? handleCardClick : undefined} // Keep original onClick for others
+        >
+          {product.categoryName === 'tartas' ? (
+              <Link to={`/category/tartas`}>Ver Tartas</Link>
+          ) : (
+              'Ver Opciones'
+          )} 
         </Button>
       </div>
+    </>
+  );
+
+  // Render logic: Wrap content in Link only for non-tartas cards
+  return (
+    <div 
+      className="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl product-card flex flex-col h-full group" // Added group for hover effect
+      // Remove onClick from the main div
+      style={{ cursor: product.categoryName === 'tartas' ? 'default' : 'pointer' }}
+    >
+        {/* Tartas card isn't a link itself, only the button is */} 
+        {cardContent} 
     </div>
   );
 };
