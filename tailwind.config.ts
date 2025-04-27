@@ -124,7 +124,7 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
                 'fade-in': 'fade-in 0.5s ease-out forwards',
                 'slide-in': 'slide-in 0.5s ease-out forwards',
-                marquee: 'marquee 40s linear infinite',
+                marquee: 'marquee 20s linear infinite',
 			},
             fontFamily: {
                 'playfair': ['"Playfair Display"', 'serif'],

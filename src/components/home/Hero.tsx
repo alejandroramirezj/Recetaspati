@@ -36,7 +36,7 @@ const Hero = () => {
               size="lg" 
               variant="outline" 
               className="border-pati-burgundy text-pati-burgundy hover:bg-pati-pink px-8 py-3 text-base md:text-lg shadow-md"
-              onClick={() => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('recomendador')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Hacer un pedido
             </Button>
