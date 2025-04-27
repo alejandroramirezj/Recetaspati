@@ -54,8 +54,8 @@ export const productsData: Product[] = [
         { name: "Galleta de Nutella", image: "/Recetaspati/images/Galleta-Nutella.png", description: "Con pepitas y centro de Nutella." },
         { name: "Galleta de Oreo", image: "/Recetaspati/images/Galleta-oreo.png", description: "Con trozos de Oreo." },
         { name: "Galleta de Pistacho", image: "/Recetaspati/images/Galleta-Pistacho.png", description: "Con crema de pistacho." },
-        { name: "Galleta de Lotus", image: "/Recetaspati/placeholder.svg", description: "Con sabor Lotus Biscoff." },
-        { name: "Galleta de Choc. Blanco y Sal", image: "/Recetaspati/placeholder.svg", description: "Con chocolate blanco y sal." }
+        { name: "Galleta de Lotus", image: "/Recetaspati/images/Galleta-lotus.png", description: "Con sabor Lotus Biscoff." },
+        { name: "Galleta Choco Negro Salado", image: "/Recetaspati/images/Galleta-chocolate-salado.png", description: "Intenso chocolate negro con un toque de sal." }
     ]
   },
   // Palmeritas
