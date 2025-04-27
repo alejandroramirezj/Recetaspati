@@ -56,9 +56,9 @@ const Hero = () => {
               muted 
               playsInline 
               className="w-full h-full object-cover"
-              poster="/placeholder.svg" // Placeholder while loading
+              poster="/Recetaspati/placeholder.svg" // Add base path to poster too
             >
-              <source src="/Galletas.mp4" type="video/mp4" />
+              <source src="/Recetaspati/videos/Galletas.mp4" type="video/mp4" />
               Tu navegador no soporta el tag de video.
             </video>
           </div>
