@@ -72,7 +72,10 @@ const Testimonials = () => {
             {/* Set max-width and vertical aspect ratio */}
             <div className="w-full sm:w-auto max-w-xs aspect-[9/16] bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
               <video 
-                controls 
+                autoPlay
+                loop
+                muted
+                playsInline
                 preload="metadata" 
                 className="w-full h-full object-cover"
                 poster="/Recetaspati/placeholder.svg" // Optional: Add specific poster images later?
@@ -85,7 +88,10 @@ const Testimonials = () => {
             {/* Video 2 */}
             <div className="w-full sm:w-auto max-w-xs aspect-[9/16] bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
               <video 
-                controls 
+                autoPlay
+                loop
+                muted
+                playsInline
                 preload="metadata" 
                 className="w-full h-full object-cover"
                 poster="/Recetaspati/placeholder.svg"
@@ -98,7 +104,10 @@ const Testimonials = () => {
             {/* Video 3 */}
              <div className="w-full sm:w-auto max-w-xs aspect-[9/16] bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
               <video 
-                controls 
+                autoPlay
+                loop
+                muted
+                playsInline
                 preload="metadata" 
                 className="w-full h-full object-cover"
                 poster="/Recetaspati/placeholder.svg"
