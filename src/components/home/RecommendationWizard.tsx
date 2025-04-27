@@ -4,7 +4,7 @@ import {
   Card, 
   CardContent, 
   CardDescription, 
-  CardFooter, 
+  CardFooter,
   CardHeader, 
   CardTitle
 } from "@/components/ui/card";
@@ -29,7 +29,8 @@ interface FormState {
 }
 
 const RecommendationWizard = () => {
-  const [step, setStep] = useState(1);
+  // Remove step state
+  // const [step, setStep] = useState(1);
   const [formState, setFormState] = useState<FormState>({
     occasion: '',
     numberOfPeople: '',
@@ -37,13 +38,10 @@ const RecommendationWizard = () => {
     flavor: '',
   });
 
-  // Combined handler for Select and Input
+  // Handler for Select and Input
   const handleValueChange = (field: keyof FormState, value: string) => {
     setFormState(prev => ({ ...prev, [field]: value }));
-    // Auto-advance if it's a Select/Radio in steps 1, 3 (old 2)
-    if ((field === 'occasion' && step === 1) || (field === 'preference' && step === 3)) {
-         if (step < 4) { setStep(step + 1); }
-    }
+    // Remove auto-advance logic
   };
 
   // Handler for RadioGroup (Preference)
@@ -51,152 +49,43 @@ const RecommendationWizard = () => {
        handleValueChange('preference', value);
    }
 
-   // Handler for Number Input - Go to next step on Enter or Blur?
-   // Let's keep it simple: require button click or focus change
+   // Handler for Number Input
     const handlePeopleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         handleValueChange('numberOfPeople', event.target.value);
     }
 
-    // Handler to explicitly move to next step from Number of People input
-    const goToNextStepFromPeople = () => {
-        if (step === 2 && step < 4) {
-            setStep(step + 1);
-        }
-    }
+  // Remove step advancement handlers
+  // const goToNextStepFromPeople = () => { ... }
 
-    // --- MODIFIED: Function to open WhatsApp --- 
-    const openWhatsApp = () => {
-        const { occasion, numberOfPeople, preference, flavor } = formState;
-        
-        // Sanitize and format values for the message
-        const occasionText = occasion || 'Cualquiera';
-        const peopleText = numberOfPeople || '-';
-        const preferenceText = preference === 'surprise' ? 'Sorpresa' : (preference || 'Cualquiera');
-        const flavorText = flavor === 'todos' ? 'Sin preferencia' : (flavor || 'Sin preferencia');
+  // Function to open WhatsApp
+  const openWhatsApp = () => {
+      const { occasion, numberOfPeople, preference, flavor } = formState;
+      
+      const occasionText = occasion || 'Cualquiera';
+      const peopleText = numberOfPeople || '-';
+      const preferenceText = preference === 'surprise' ? '¡Sorpresa! 🎉' : (preference || 'Cualquiera');
+      const flavorText = flavor === 'todos' ? 'Sin preferencia' : (flavor || 'Sin preferencia');
 
-        const message = 
-`¡Hola Pati! 👋 Me gustaría una recomendación de dulce con estas características:
+      const message = 
+`¡Hola Pati! 👋 Busco una recomendación:
 
-*   Ocasión: ${occasionText}
-*   Número de personas: ${peopleText}
-*   Tipo preferido: ${preferenceText}
-*   Sabor preferido: ${flavorText}
+*   🎉 Ocasión: ${occasionText}
+*   🧑‍🤝‍🧑 Personas: ${peopleText}
+*   🎂 Preferencia: ${preferenceText}
+*   🍓 Sabor: ${flavorText}
 
 ¡Gracias! 😊`;
 
-        const phoneNumber = "34671266981"; // Remove '+'
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-        // Open WhatsApp link in a new tab
-        window.open(whatsappUrl, '_blank');
-    }
-
-  const resetForm = () => {
-      setFormState({ occasion: '', numberOfPeople: '', preference: '', flavor: '' });
-      setStep(1);
+      const phoneNumber = "34671266981";
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
   }
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Heart size={20} /> ¿Para qué ocasión?</CardTitle>
-              <CardDescription>Cuéntanos un poco más.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Select onValueChange={(v) => handleValueChange('occasion', v)} value={formState.occasion}>
-                <SelectTrigger><SelectValue placeholder="Selecciona una ocasión..." /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="celebration">Una celebración</SelectItem>
-                  <SelectItem value="gift">Un regalo especial</SelectItem>
-                  <SelectItem value="myself">Un capricho para mí</SelectItem>
-                  <SelectItem value="any">Cualquiera</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardContent>
-             <CardFooter className="text-xs text-gray-500 justify-end">Paso 1 de 4</CardFooter>
-          </>
-        );
-      case 2:
-        return (
-            <>
-                <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Users size={20}/> ¿Para cuántas personas?</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                   <Label htmlFor="num-people">Número aproximado</Label>
-                   <Input 
-                      id="num-people"
-                      type="number" 
-                      placeholder="Ej: 8" 
-                      value={formState.numberOfPeople}
-                      onChange={handlePeopleInputChange}
-                      min="1"
-                    />
-                    <Button onClick={goToNextStepFromPeople} className="w-full mt-4" disabled={!formState.numberOfPeople}>
-                       Siguiente
-                    </Button>
-                </CardContent>
-                 <CardFooter className="flex justify-between text-xs text-gray-500">
-                    <Button variant="ghost" size="sm" onClick={() => setStep(1)}>Atrás</Button>
-                    <span>Paso 2 de 4</span>
-                </CardFooter>
-            </>
-        );
-       case 3:
-        return (
-          <>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><CakeSlice size={20}/> ¿Qué tipo de dulce prefieres?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup onValueChange={handleRadioChange} value={formState.preference} className="grid grid-cols-2 gap-4">
-                 <div><RadioGroupItem value="tartas" id="cat-tartas" className="peer sr-only" /><Label htmlFor="cat-tartas" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">Tartas</Label></div>
-                 <div><RadioGroupItem value="galletas" id="cat-galletas" className="peer sr-only" /><Label htmlFor="cat-galletas" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">Galletas</Label></div>
-                 <div><RadioGroupItem value="palmeritas" id="cat-palmeritas" className="peer sr-only" /><Label htmlFor="cat-palmeritas" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">Palmeritas</Label></div>
-                 <div><RadioGroupItem value="surprise" id="cat-surprise" className="peer sr-only" /><Label htmlFor="cat-surprise" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">¡Sorpréndeme!</Label></div>
-               </RadioGroup>
-            </CardContent>
-             <CardFooter className="flex justify-between text-xs text-gray-500">
-                <Button variant="ghost" size="sm" onClick={() => setStep(2)}>Atrás</Button>
-                <span>Paso 3 de 4</span>
-             </CardFooter>
-          </>
-        );
-      case 4:
-        return (
-          <>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><ThumbsUp size={20}/> ¿Alguna preferencia de sabor?</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Select onValueChange={(v) => handleValueChange('flavor', v)} value={formState.flavor}>
-                <SelectTrigger><SelectValue placeholder="Elige un sabor o déjalo vacío..." /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="chocolate_lover">Chocolate Lover 🍫</SelectItem>
-                  <SelectItem value="lotus">Lotus</SelectItem>
-                  <SelectItem value="pistacho">Pistacho</SelectItem>
-                  <SelectItem value="fresa_nata">Fresa y Nata 🍓</SelectItem>
-                  <SelectItem value="queso">Queso</SelectItem>
-                  <SelectItem value="todos">Todos / Sin preferencia</SelectItem>
-                </SelectContent>
-              </Select>
-               <Button onClick={openWhatsApp} className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white">
-                 <MessageCircle className="mr-2 h-4 w-4" /> ¡Pedir recomendación por WhatsApp!
-               </Button>
-            </CardContent>
-            <CardFooter className="flex justify-between text-xs text-gray-500">
-                <Button variant="ghost" size="sm" onClick={() => setStep(3)}>Atrás</Button>
-                <span>Paso 4 de 4</span>
-             </CardFooter>
-          </>
-        );
-      default:
-        return null;
-    }
-  };
+  // Remove resetForm or keep if a reset button is desired
+  // const resetForm = () => { ... }
+
+  // Remove renderStep function
+  // const renderStep = () => { ... }
 
   return (
     <section id="recomendador" className="py-16 bg-gradient-to-b from-pati-cream to-white">
@@ -214,7 +103,73 @@ const RecommendationWizard = () => {
           </div>
 
           <Card className="w-full shadow-xl transition-all duration-300 ease-out border-2 border-pati-pink/50">
-             {renderStep()}
+             <CardHeader>
+               <CardTitle>Cuéntanos tus preferencias</CardTitle>
+               <CardDescription>Rellena los detalles y te ayudamos por WhatsApp.</CardDescription>
+             </CardHeader>
+             <CardContent className="space-y-6">
+                
+                {/* Occasion */}
+                <div className="space-y-2">
+                    <Label htmlFor="occasion" className="flex items-center gap-2 font-medium"><Heart size={18} /> Ocasión</Label>
+                    <Select onValueChange={(v) => handleValueChange('occasion', v)} value={formState.occasion}>
+                        <SelectTrigger id="occasion"><SelectValue placeholder="Selecciona una ocasión..." /></SelectTrigger>
+                        <SelectContent>
+                        <SelectItem value="celebration">🥳 Una celebración</SelectItem>
+                        <SelectItem value="gift">🎁 Un regalo especial</SelectItem>
+                        <SelectItem value="myself">💖 Un capricho para mí</SelectItem>
+                        <SelectItem value="any">🤷‍♀️ Cualquiera</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Number of People */}
+                <div className="space-y-2">
+                    <Label htmlFor="num-people" className="flex items-center gap-2 font-medium"><Users size={18}/> Personas (aprox.)</Label>
+                    <Input 
+                        id="num-people"
+                        type="number" 
+                        placeholder="Ej: 8" 
+                        value={formState.numberOfPeople}
+                        onChange={handlePeopleInputChange}
+                        min="1"
+                        className="w-full md:w-1/2"
+                        />
+                </div>
+
+                {/* Preference */}
+                <div className="space-y-2">
+                     <Label className="flex items-center gap-2 font-medium"><CakeSlice size={18}/> Tipo preferido</Label>
+                     <RadioGroup onValueChange={handleRadioChange} value={formState.preference} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                         <div><RadioGroupItem value="tartas" id="cat-tartas" className="peer sr-only" /><Label htmlFor="cat-tartas" className="flex items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-sm">Tartas 🎂</Label></div>
+                         <div><RadioGroupItem value="galletas" id="cat-galletas" className="peer sr-only" /><Label htmlFor="cat-galletas" className="flex items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-sm">Galletas 🍪</Label></div>
+                         <div><RadioGroupItem value="palmeritas" id="cat-palmeritas" className="peer sr-only" /><Label htmlFor="cat-palmeritas" className="flex items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-sm">Palmeritas 🥨</Label></div>
+                         <div><RadioGroupItem value="surprise" id="cat-surprise" className="peer sr-only" /><Label htmlFor="cat-surprise" className="flex items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-sm">¡Sorpresa! 🎉</Label></div>
+                     </RadioGroup>
+                </div>
+
+                 {/* Flavor */}
+                <div className="space-y-2">
+                    <Label htmlFor="flavor" className="flex items-center gap-2 font-medium"><ThumbsUp size={18}/> Sabor</Label>
+                    <Select onValueChange={(v) => handleValueChange('flavor', v)} value={formState.flavor}>
+                        <SelectTrigger id="flavor"><SelectValue placeholder="Elige un sabor o déjalo vacío..." /></SelectTrigger>
+                        <SelectContent>
+                        <SelectItem value="chocolate_lover">Chocolate Lover 🍫</SelectItem>
+                        <SelectItem value="lotus">Lotus 🍪</SelectItem>
+                        <SelectItem value="pistacho">Pistacho 💚</SelectItem>
+                        <SelectItem value="fresa_nata">Fresa y Nata 🍓</SelectItem>
+                        <SelectItem value="queso">Queso 🧀</SelectItem>
+                        <SelectItem value="todos">Todos / Sin preferencia</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+             </CardContent>
+             <CardFooter className="justify-center pt-4">
+                 <Button onClick={openWhatsApp} size="lg" className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white text-base">
+                    <MessageCircle className="mr-2 h-5 w-5" /> ¡Pedir recomendación por WhatsApp!
+                 </Button>
+             </CardFooter>
            </Card>
       </div>
     </section>

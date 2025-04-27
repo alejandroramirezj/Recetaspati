@@ -82,13 +82,16 @@ const ProductCatalog = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full max-w-3xl mx-auto grid grid-cols-3 md:grid-cols-5 mb-8">
-            <TabsTrigger value="todos" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Todos</TabsTrigger>
-            <TabsTrigger value="tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Tartas</TabsTrigger>
-            <TabsTrigger value="galletas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Galletas</TabsTrigger>
-            <TabsTrigger value="palmeritas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Palmeritas</TabsTrigger>
-            <TabsTrigger value="mini-tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white">Mini Tartas</TabsTrigger>
-          </TabsList>
+          {/* Added overflow-x-auto and modified grid for better mobile tab view */}
+          <div className="overflow-x-auto pb-2 mb-8">
+             <TabsList className="w-max min-w-full grid grid-cols-5 gap-2 md:w-full md:max-w-3xl mx-auto md:gap-0">
+                <TabsTrigger value="todos" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Todos</TabsTrigger>
+                <TabsTrigger value="tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Tartas</TabsTrigger>
+                <TabsTrigger value="galletas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Galletas</TabsTrigger>
+                <TabsTrigger value="palmeritas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Palmeritas</TabsTrigger>
+                <TabsTrigger value="mini-tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Mini Tartas</TabsTrigger>
+             </TabsList>
+          </div>
           
           {/* Render TabsContent dynamically based on filteredCards */}
           <div className="mt-8">
@@ -125,14 +128,18 @@ const ProductCard = ({ product }: { product: CategoryInfo }) => {
   // Define content separate from the clickable wrapper for non-tartas cards
   const cardContent = (
     <>
-      <div className="h-56 overflow-hidden"> 
-        <img 
-          src={product.image} 
-          alt={product.name} 
-          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" // Added group-hover for Link style effect
-        />
-      </div>
-      <div className="p-6 flex flex-col flex-grow">
+      {/* Conditionally render image: Don't render for Tartas category card */}
+      {product.categoryName !== 'tartas' && (
+          <div className="h-56 overflow-hidden"> 
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
+            />
+          </div>
+      )}
+      {/* Adjust padding if image is hidden */}
+      <div className={`p-6 flex flex-col flex-grow ${product.categoryName === 'tartas' ? 'pt-6' : ''}`}> 
         <h3 className="font-bold text-xl text-pati-burgundy mb-2">{product.name}</h3>
         
         {product.categoryName === 'tartas' && product.availableTypes && product.availableTypes.length > 0 ? (
