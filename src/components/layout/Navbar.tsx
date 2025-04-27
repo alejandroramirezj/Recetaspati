@@ -27,16 +27,16 @@ const Navbar = () => {
 
         {/* Desktop navigation */}
         <nav className="hidden lg:flex items-center space-x-6">
-          <a href="/#productos" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
+          <a href="/Recetaspati/#productos" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Productos
           </a>
-          <a href="/#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
+          <a href="/Recetaspati/#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Testimonios
           </a>
-          <a href="/#dia-madre" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
+          <a href="/Recetaspati/#dia-madre" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Día de la Madre
           </a>
-          <a href="/#contacto" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
+          <a href="/Recetaspati/#contacto" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Contacto
           </a>
           {/* Wrap Button in an anchor tag for external link */}
@@ -54,28 +54,28 @@ const Navbar = () => {
           <nav className="flex flex-col space-y-4">
             {/* Use anchor tags for section links for smoother scrolling */}
             <a 
-              href="/#productos" 
+              href="/Recetaspati/#productos" 
               className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
               Productos
             </a>
             <a 
-              href="/#testimonios" 
+              href="/Recetaspati/#testimonios" 
               className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
               Testimonios
             </a>
             <a 
-              href="/#dia-madre" 
+              href="/Recetaspati/#dia-madre" 
               className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
               Día de la Madre
             </a>
             <a 
-              href="/#contacto" 
+              href="/Recetaspati/#contacto" 
               className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
