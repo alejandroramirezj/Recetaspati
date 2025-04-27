@@ -5,7 +5,7 @@ import ProductCatalog from "@/components/home/ProductCatalog";
 import Testimonials from "@/components/home/Testimonials";
 import ContactSection from "@/components/home/ContactSection";
 import MothersDay from "@/components/home/MothersDay";
-import ExpansionForm from "@/components/home/ExpansionForm";
+// import ExpansionForm from "@/components/home/ExpansionForm"; // Commented out import
 import InstagramFeed from "@/components/home/InstagramFeed";
 import TikTokFeed from "@/components/home/TikTokFeed";
 import RecommendationWizard from "@/components/home/RecommendationWizard";
@@ -22,7 +22,7 @@ const Index = () => {
         <Testimonials />
         <InstagramFeed />
         <TikTokFeed />
-        <ExpansionForm />
+        {/* <ExpansionForm /> */} {/* Commented out usage */}
         <ContactSection />
       </main>
       <Footer />
