@@ -8,7 +8,7 @@ const Hero = () => {
       <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
         
         {/* Left Column: Text Content */}
-        <div className="w-full lg:w-1/2 text-center lg:text-left space-y-5 lg:space-y-6 order-2 lg:order-1">
+        <div className="w-full lg:w-1/2 text-center lg:text-left space-y-5 lg:space-y-6 lg:order-1">
           <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl font-bold text-pati-burgundy leading-tight">
             Recetas Pati
           </h1>
@@ -48,7 +48,7 @@ const Hero = () => {
         </div>
 
         {/* Right Column: Video */}
-        <div className="w-full lg:w-1/2 order-1 lg:order-2 flex justify-center">
+        <div className="w-full lg:w-1/2 lg:order-2 flex justify-center">
           <div className="aspect-[9/16] w-full max-w-sm md:max-w-md bg-white rounded-lg shadow-xl overflow-hidden border-4 border-white">
             <video 
               autoPlay 
