@@ -3,12 +3,12 @@ import { Instagram } from 'lucide-react';
 
 // Example images - replace with actual relevant image paths or placeholders
 const feedImages = [
-  "/Recetaspati/videos/Caja galletas 6.png",
-  "/Recetaspati/videos/Galleta-Kinderbueno.png",
-  "/Recetaspati/videos/Bundcake.JPG",
-  "/Recetaspati/videos/Galleta-Nutella.png",
-  "/Recetaspati/videos/Galleta-Pistacho.png",
-  "/Recetaspati/videos/Galleta-Filipinos.png",
+  "/Recetaspati/images/Caja galletas 6.png",
+  "/Recetaspati/images/Galleta-Kinderbueno.png",
+  "/Recetaspati/images/Bundcake.JPG",
+  "/Recetaspati/images/Galleta-Nutella.png",
+  "/Recetaspati/images/Galleta-Pistacho.png",
+  "/Recetaspati/images/Galleta-Filipinos.png",
 ];
 
 const InstagramFeed = () => {
