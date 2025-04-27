@@ -12,7 +12,7 @@ const Hero = () => {
           <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl font-bold text-pati-burgundy leading-tight">
             Recetas Pati
           </h1>
-          <div className="flex justify-center lg:justify-start mt-4 mb-2">
+          <div className="flex justify-center lg:justify-start mt-4 mb-6">
             <img 
               src="/Recetaspati/images/Isotipo.png"
               alt="Isotipo Pati Sweet Creations" 

@@ -14,7 +14,7 @@ const TikTokFeed = () => {
   const profileName = "recetaspati_"; // Extracted profile name
 
   return (
-    <section id="tiktok" className="py-16 bg-white overflow-hidden">
+    <section id="tiktok" className="py-12 bg-white overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-2">

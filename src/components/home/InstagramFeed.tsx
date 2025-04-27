@@ -15,7 +15,7 @@ const InstagramFeed = () => {
   const instagramUrl = "https://instagram.com/recetaspati";
 
   return (
-    <section id="instagram" className="py-16 bg-pati-cream">
+    <section id="instagram" className="py-12 bg-pati-cream">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-2">

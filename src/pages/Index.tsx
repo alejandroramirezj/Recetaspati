@@ -17,15 +17,18 @@ const Index = () => {
       <Navbar />
       <main className="flex-grow">
         <Hero />
-        <ProductTicker />
-        <ProductCatalog />
-        <RecommendationWizard />
-        <MothersDay />
-        <Testimonials />
-        <InstagramFeed />
-        <TikTokFeed />
+        {/* Reduced vertical padding for the ticker */}
+        <ProductTicker /> {/* Keep default padding from component? Or add py-6 here? Let's adjust component itself */}
+        {/* Ensured consistent large padding for main sections */}
+        <ProductCatalog /> {/* Component has py-16 */}
+        <RecommendationWizard /> {/* Component has py-16 */}
+        <MothersDay /> {/* Component has py-16 */}
+        <Testimonials /> {/* Component has py-16 */}
+        {/* Slightly reduced padding for social feeds? */}
+        <InstagramFeed /> {/* Let's adjust this component */}
+        <TikTokFeed /> {/* Let's adjust this component */}
         {/* <ExpansionForm /> */} {/* Commented out usage */}
-        <ContactSection />
+        <ContactSection /> {/* Component has py-16 */}
       </main>
       <Footer />
     </div>

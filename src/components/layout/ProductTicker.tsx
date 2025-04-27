@@ -17,7 +17,7 @@ const doubledProducts = [...products, ...products];
 
 const ProductTicker = () => {
   return (
-    <div className="bg-gradient-to-r from-pati-light-pink via-white to-pati-cream overflow-hidden py-3 whitespace-nowrap shadow-sm">
+    <div className="bg-gradient-to-r from-pati-light-pink via-white to-pati-cream overflow-hidden py-4 whitespace-nowrap shadow-sm">
       <div className="animate-marquee flex space-x-8">
         {doubledProducts.map((product, index) => (
           <span key={index} className="text-lg font-medium text-pati-burgundy">

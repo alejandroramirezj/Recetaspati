@@ -1,6 +1,16 @@
 import { Button } from '@/components/ui/button';
 
 const MothersDay = () => {
+  // Define WhatsApp details
+  const phoneNumber = "34671266981";
+  const message = 
+`¡Hola Pati! 👋 Quiero reservar el *Pack Especial del Día de la Madre* 💖 para que mi madre no me desherede 😅.
+
+Ya que estoy... ¿qué galletas me recomiendas para mí? 🍪😉
+
+¡Gracias! ✨`;
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
   return (
     <section id="dia-madre" className="py-16 bg-gradient-to-b from-white to-pati-light-pink">
       <div className="container mx-auto px-4">
@@ -47,9 +57,11 @@ const MothersDay = () => {
               </div>
               
               <div className="flex flex-wrap gap-3">
-                <Button size="lg" className="bg-pati-burgundy hover:bg-pati-brown text-white">
-                  Reservar ahora
-                </Button>
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" className="bg-pati-burgundy hover:bg-pati-brown text-white">
+                    Reservar ahora
+                  </Button>
+                </a>
                 <Button size="lg" variant="outline" className="border-pati-burgundy text-pati-burgundy hover:bg-pati-pink">
                   Más información
                 </Button>
