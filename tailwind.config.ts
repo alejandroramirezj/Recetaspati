@@ -125,6 +125,8 @@ export default {
                 'fade-in': 'fade-in 0.5s ease-out forwards',
                 'slide-in': 'slide-in 0.5s ease-out forwards',
                 marquee: 'marquee 20s linear infinite',
+                'chat-bubble-1': 'fade-in 0.5s ease-out 0.2s forwards',
+                'chat-bubble-2': 'fade-in 0.5s ease-out 0.8s forwards',
 			},
             fontFamily: {
                 'playfair': ['"Playfair Display"', 'serif'],
