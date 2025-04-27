@@ -14,7 +14,7 @@ interface CategoryInfo extends Product {
   // We'll use the structure of the first product found for the category card
   // Add specific fields if needed for category display
   categoryName: string; 
-  availableTypes?: string[]; // List some examples - FOR TARTAS, THIS WILL BE THE FULL LIST
+  // availableTypes?: string[]; // Removed this, description will be simpler
   priceRange?: string; // e.g., "Desde 25€"
 }
 
@@ -25,14 +25,11 @@ const categoryCards: CategoryInfo[] = categories.map(category => {
   // Generate descriptions and price ranges
   let description = firstProduct.description;
   let priceRange = firstProduct.price;
-  let availableTypes: string[] = [];
+  // let availableTypes: string[] = []; // Removed
 
   if (category === 'tartas') {
-    // Get ALL cake names, clean them up slightly
-    availableTypes = productsInCategory.map(p => 
-      p.name.replace('Tarta de ', '').replace('Bundtcake de ', '')
-    ); 
-    description = "Elige entre nuestra deliciosa variedad:"; // Changed description
+    // Revert to simpler description for the category card
+    description = "Nuestras deliciosas tartas para cada ocasión."; 
     const prices = productsInCategory.map(p => parseFloat(p.price.replace('€', '').replace(',', '.')));
     priceRange = `Desde ${Math.min(...prices).toFixed(2).replace('.', ',' )}€`;
   } else if (category === 'galletas') {
@@ -53,7 +50,7 @@ const categoryCards: CategoryInfo[] = categories.map(category => {
     description: description,
     price: priceRange, // Use the calculated price range/base price
     categoryName: category, // Store original category slug
-    availableTypes: availableTypes, // Assign the full list for tartas
+    // availableTypes: availableTypes, // Removed
     priceRange: priceRange,
     // Override fields that should represent the category, not the first product
     size: undefined, // Size doesn't apply to the category card
@@ -128,29 +125,20 @@ const ProductCard = ({ product }: { product: CategoryInfo }) => {
   // Define content separate from the clickable wrapper for non-tartas cards
   const cardContent = (
     <>
-      {/* Conditionally render image: Don't render for Tartas category card */}
-      {product.categoryName !== 'tartas' && (
-          <div className="h-56 overflow-hidden"> 
-            <img 
-              src={product.image} 
-              alt={product.name} 
-              className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
-            />
-          </div>
-      )}
-      {/* Adjust padding if image is hidden */}
-      <div className={`p-6 flex flex-col flex-grow ${product.categoryName === 'tartas' ? 'pt-6' : ''}`}> 
+      {/* Removed conditional rendering for image: Show image for all */}
+      <div className="h-56 overflow-hidden"> 
+        <img 
+          src={product.image} 
+          alt={product.name} 
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
+        />
+      </div>
+       {/* Removed padding adjustment logic */}
+      <div className={`p-6 flex flex-col flex-grow`}> 
         <h3 className="font-bold text-xl text-pati-burgundy mb-2">{product.name}</h3>
         
-        {product.categoryName === 'tartas' && product.availableTypes && product.availableTypes.length > 0 ? (
-          <ul className="list-disc list-inside text-pati-brown text-sm mb-4 space-y-1 flex-grow">
-            {product.availableTypes.map((tarta, index) => (
-              <li key={index}>{tarta}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-pati-brown text-sm mb-4 flex-grow">{product.description}</p>
-        )}
+        {/* Removed list rendering for Tartas, show simple description */} 
+        <p className="text-pati-brown text-sm mb-4 flex-grow">{product.description}</p>
 
         <div className="font-bold text-xl text-pati-burgundy mb-4 mt-auto"> 
           {product.priceRange || product.price} 
