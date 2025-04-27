@@ -1,5 +1,5 @@
-
 import type { Config } from "tailwindcss";
+import animatePlugin from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -113,6 +113,10 @@ export default {
                         opacity: '1',
                         transform: 'translateX(0)'
                     }
+                },
+                marquee: {
+                    '0%': { transform: 'translateX(0%)' },
+                    '100%': { transform: 'translateX(-50%)' },
                 }
 			},
 			animation: {
@@ -120,6 +124,7 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
                 'fade-in': 'fade-in 0.5s ease-out forwards',
                 'slide-in': 'slide-in 0.5s ease-out forwards',
+                marquee: 'marquee 40s linear infinite',
 			},
             fontFamily: {
                 'playfair': ['"Playfair Display"', 'serif'],
@@ -127,5 +132,5 @@ export default {
             }
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [animatePlugin],
 } satisfies Config;

@@ -12,6 +12,13 @@ const Hero = () => {
           <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl font-bold text-pati-burgundy leading-tight">
             Recetas Pati
           </h1>
+          <div className="flex justify-center lg:justify-start mt-4 mb-2">
+            <img 
+              src="/images/Isotipo.png" 
+              alt="Isotipo Pati Sweet Creations" 
+              className="h-16 w-auto"
+            />
+          </div>
           <h2 className="text-lg sm:text-xl md:text-2xl text-pati-dark-brown max-w-xl mx-auto lg:mx-0 font-medium">
             Dulces para sorprender a tus amigos, invitados, madre o para darte un capricho a ti.
           </h2>
