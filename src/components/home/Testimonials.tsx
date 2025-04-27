@@ -60,45 +60,53 @@ const Testimonials = () => {
           ))}
         </div>
         
-        {/* Video testimonials */}
+        {/* Video testimonials - Updated to use actual videos and horizontal layout */}
         <div className="mt-16">
-          <h3 className="text-2xl font-bold text-pati-burgundy mb-6 text-center">
+          <h3 className="text-2xl font-bold text-pati-burgundy mb-8 text-center">
             Ve las reacciones a nuestros productos
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-              <div className="text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-pati-burgundy mx-auto flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <p className="mt-4 text-pati-brown">Video reacción: Tarta de chocolate</p>
-              </div>
+          {/* Use flexbox for horizontal layout, wrap on smaller screens */}
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-center items-center">
+            
+            {/* Video 1 */}
+            <div className="w-full md:w-1/3 aspect-video bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
+              <video 
+                controls 
+                preload="metadata" 
+                className="w-full h-full object-cover"
+                poster="/Recetaspati/placeholder.svg" // Optional: Add specific poster images later?
+              >
+                <source src="/Recetaspati/videos/Reacciones-1.mp4#t=0.5" type="video/mp4" />
+                Tu navegador no soporta vídeos.
+              </video>
             </div>
-            <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-              <div className="text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-pati-burgundy mx-auto flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <p className="mt-4 text-pati-brown">Video viral: Galletas de pistacho</p>
-              </div>
+
+            {/* Video 2 */}
+            <div className="w-full md:w-1/3 aspect-video bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
+              <video 
+                controls 
+                preload="metadata" 
+                className="w-full h-full object-cover"
+                poster="/Recetaspati/placeholder.svg"
+              >
+                <source src="/Recetaspati/videos/Reacciones-2.mp4#t=0.5" type="video/mp4" />
+                Tu navegador no soporta vídeos.
+              </video>
             </div>
-            <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-              <div className="text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-pati-burgundy mx-auto flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <p className="mt-4 text-pati-brown">Reseña: Palmeritas caseras</p>
-              </div>
+
+            {/* Video 3 */}
+             <div className="w-full md:w-1/3 aspect-video bg-white rounded-lg shadow-lg overflow-hidden border-2 border-pati-pink/50">
+              <video 
+                controls 
+                preload="metadata" 
+                className="w-full h-full object-cover"
+                poster="/Recetaspati/placeholder.svg"
+              >
+                <source src="/Recetaspati/videos/Reacciones-3.mp4#t=0.5" type="video/mp4" />
+                Tu navegador no soporta vídeos.
+              </video>
             </div>
+
           </div>
         </div>
       </div>
