@@ -14,7 +14,7 @@ const Hero = () => {
           </h1>
           <div className="flex justify-center lg:justify-start mt-4 mb-2">
             <img 
-              src="/images/Isotipo.png" 
+              src="/Recetaspati/images/Isotipo.png"
               alt="Isotipo Pati Sweet Creations" 
               className="h-16 w-auto"
             />
