@@ -16,17 +16,28 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Sparkles, Users, CakeSlice, Heart, ThumbsUp, MessageCircle } from 'lucide-react';
+import { Sparkles, Users, CakeSlice, Heart, ThumbsUp, MessageCircle, Smile } from 'lucide-react';
 
-// Define state structure with numberOfPeople
+// Updated FormState for multi-select flavor
 interface FormState {
   occasion: string;
   numberOfPeople: string;
   preference: string;
-  flavor: string;
+  flavor: string[]; // Changed to string array
 }
+
+// Define flavor options
+const flavorOptions = [
+  { id: 'chocolate_lover', label: 'Chocolate Lover 🍫' },
+  { id: 'lotus', label: 'Lotus 🍪' },
+  { id: 'pistacho', label: 'Pistacho 💚' },
+  { id: 'fresa_nata', label: 'Fresa y Nata 🍓' },
+  { id: 'queso', label: 'Queso 🧀' },
+  { id: 'otro', label: 'Otro (indicar en mensaje)' }, // Added 'Otro' option
+];
 
 const RecommendationWizard = () => {
   // Remove step state
@@ -35,36 +46,52 @@ const RecommendationWizard = () => {
     occasion: '',
     numberOfPeople: '',
     preference: '',
-    flavor: '',
+    flavor: [], // Initialize as empty array
   });
 
-  // Handler for Select and Input
-  const handleValueChange = (field: keyof FormState, value: string) => {
+  // Handler for single value fields (occasion, numberOfPeople)
+  const handleSingleValueChange = (field: 'occasion' | 'numberOfPeople', value: string) => {
     setFormState(prev => ({ ...prev, [field]: value }));
-    // Remove auto-advance logic
   };
 
-  // Handler for RadioGroup (Preference)
+  // Handler for RadioGroup (preference)
    const handleRadioChange = (value: string) => {
-       handleValueChange('preference', value);
+       setFormState(prev => ({ ...prev, preference: value }));
    }
 
    // Handler for Number Input
     const handlePeopleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        handleValueChange('numberOfPeople', event.target.value);
+        handleSingleValueChange('numberOfPeople', event.target.value);
     }
+
+   // Handler for Flavor Checkboxes
+   const handleFlavorChange = (flavorId: string, checked: boolean | 'indeterminate') => {
+       setFormState(prev => {
+           const currentFlavors = prev.flavor;
+           if (checked) {
+               // Add flavor if checked and not already present
+               return { ...prev, flavor: [...currentFlavors.filter(f => f !== flavorId), flavorId] }; 
+           } else {
+               // Remove flavor if unchecked
+               return { ...prev, flavor: currentFlavors.filter(f => f !== flavorId) };
+           }
+       });
+   }
 
   // Remove step advancement handlers
   // const goToNextStepFromPeople = () => { ... }
 
-  // Function to open WhatsApp
+  // Function to open WhatsApp (updated for flavor array)
   const openWhatsApp = () => {
       const { occasion, numberOfPeople, preference, flavor } = formState;
       
       const occasionText = occasion || 'Cualquiera';
       const peopleText = numberOfPeople || '-';
       const preferenceText = preference === 'surprise' ? '¡Sorpresa! 🎉' : (preference || 'Cualquiera');
-      const flavorText = flavor === 'todos' ? 'Sin preferencia' : (flavor || 'Sin preferencia');
+      // Format flavor array or set default text
+      const flavorText = flavor.length > 0 
+          ? flavor.map(f => flavorOptions.find(opt => opt.id === f)?.label || f).join(', ') 
+          : 'Sin preferencia';
 
       const message = 
 `¡Hola Pati! 👋 Busco una recomendación:
@@ -72,7 +99,7 @@ const RecommendationWizard = () => {
 *   🎉 Ocasión: ${occasionText}
 *   🧑‍🤝‍🧑 Personas: ${peopleText}
 *   🎂 Preferencia: ${preferenceText}
-*   🍓 Sabor: ${flavorText}
+*   😋 ¿Qué me gusta más?: ${flavorText}
 
 ¡Gracias! 😊`;
 
@@ -112,7 +139,7 @@ const RecommendationWizard = () => {
                 {/* Occasion */}
                 <div className="space-y-2">
                     <Label htmlFor="occasion" className="flex items-center gap-2 font-medium"><Heart size={18} /> Ocasión</Label>
-                    <Select onValueChange={(v) => handleValueChange('occasion', v)} value={formState.occasion}>
+                    <Select onValueChange={(v) => handleSingleValueChange('occasion', v)} value={formState.occasion}>
                         <SelectTrigger id="occasion"><SelectValue placeholder="Selecciona una ocasión..." /></SelectTrigger>
                         <SelectContent>
                         <SelectItem value="celebration">🥳 Una celebración</SelectItem>
@@ -148,20 +175,26 @@ const RecommendationWizard = () => {
                      </RadioGroup>
                 </div>
 
-                 {/* Flavor */}
-                <div className="space-y-2">
-                    <Label htmlFor="flavor" className="flex items-center gap-2 font-medium"><ThumbsUp size={18}/> Sabor</Label>
-                    <Select onValueChange={(v) => handleValueChange('flavor', v)} value={formState.flavor}>
-                        <SelectTrigger id="flavor"><SelectValue placeholder="Elige un sabor o déjalo vacío..." /></SelectTrigger>
-                        <SelectContent>
-                        <SelectItem value="chocolate_lover">Chocolate Lover 🍫</SelectItem>
-                        <SelectItem value="lotus">Lotus 🍪</SelectItem>
-                        <SelectItem value="pistacho">Pistacho 💚</SelectItem>
-                        <SelectItem value="fresa_nata">Fresa y Nata 🍓</SelectItem>
-                        <SelectItem value="queso">Queso 🧀</SelectItem>
-                        <SelectItem value="todos">Todos / Sin preferencia</SelectItem>
-                        </SelectContent>
-                    </Select>
+                 {/* Flavor Multi-Select Checkboxes */}
+                 <div className="space-y-2">
+                     <Label className="flex items-center gap-2 font-medium"><Smile size={18} /> ¿Qué te gusta más?</Label>
+                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1"> 
+                         {flavorOptions.map((option) => (
+                             <div key={option.id} className="flex items-center space-x-2">
+                                 <Checkbox 
+                                     id={`flavor-${option.id}`}
+                                     checked={formState.flavor.includes(option.id)}
+                                     onCheckedChange={(checked) => handleFlavorChange(option.id, checked)}
+                                 />
+                                 <Label 
+                                     htmlFor={`flavor-${option.id}`}
+                                     className="text-sm font-normal cursor-pointer"
+                                 >
+                                     {option.label}
+                                 </Label>
+                             </div>
+                         ))}
+                     </div>
                 </div>
 
              </CardContent>

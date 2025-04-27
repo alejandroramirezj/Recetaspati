@@ -60,12 +60,18 @@ const MothersDay = () => {
               </p>
             </div>
             
-            <div className="relative h-72 md:h-auto bg-pati-pink">
-              <img 
-                src="https://images.unsplash.com/photo-1582562124811-c09040d0a901" 
-                alt="Pack Especial Día de la Madre" 
+            <div className="relative h-72 md:h-auto bg-black">
+              <video 
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="absolute inset-0 w-full h-full object-contain"
-              />
+                poster="/Recetaspati/placeholder.svg"
+              >
+                <source src="/Recetaspati/videos/minitartas.mp4" type="video/mp4" />
+                 Tu navegador no soporta vídeos.
+              </video>
               <div className="absolute bottom-0 right-0 bg-pati-burgundy text-white px-6 py-3 font-bold">
                 Edición Limitada
               </div>
