@@ -45,13 +45,13 @@ const Testimonials = () => {
             align: "start", 
             loop: true, // Optional: make it loop
           }}
-          className="w-full max-w-xs sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto mb-10" // Adjust max-width as needed
+          className="w-full max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto mb-10" // Adjust max-width as needed
           onMouseEnter={plugin.current.stop} // Optional: Pause on hover
           onMouseLeave={plugin.current.reset} // Optional: Resume on leave
         >
           <CarouselContent className="-ml-4"> {/* Negative margin to offset padding */}
             {reviewImagePaths.map((imgPath, index) => (
-              <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3"> {/* Adjust basis for number of items visible */}
+              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3"> {/* Adjust basis for number of items visible */}
                 <div className="p-1"> {/* Added small padding around the card */}
                    <div className="overflow-hidden rounded-lg shadow-md border border-pati-pink/30 bg-white h-full flex"> {/* Added h-full and flex */}
                      <img 
@@ -65,8 +65,8 @@ const Testimonials = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="hidden sm:flex" /> {/* Hide arrows on very small screens */}
-          <CarouselNext className="hidden sm:flex" />
+          <CarouselPrevious className="absolute left-[-10px] sm:left-[-16px] top-1/2 -translate-y-1/2 z-10 flex items-center justify-center" />
+          <CarouselNext className="absolute right-[-10px] sm:right-[-16px] top-1/2 -translate-y-1/2 z-10 flex items-center justify-center" />
         </Carousel>
         
         {/* Video testimonials section remains the same */}
