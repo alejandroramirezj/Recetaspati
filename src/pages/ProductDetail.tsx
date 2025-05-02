@@ -129,7 +129,7 @@ ${selectedItems}
     };
 
     // --- RETURN JSX for CookieConfigurator --- 
-    return (
+  return (
       <> 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Column: Pack Selection -> Cookies */} 
@@ -138,7 +138,7 @@ ${selectedItems}
             <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
             <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
             
-            {/* Step 1: Select Pack Size - MODIFIED GRID */} 
+            {/* Step 1: Select Pack Size - ENHANCED */} 
             <Card className="border-pati-pink/30 shadow-md">
               <CardHeader>
                  <CardTitle className="text-xl text-pati-burgundy">1. Elige tu Pack</CardTitle>
@@ -148,27 +148,36 @@ ${selectedItems}
                  <RadioGroup 
                      onValueChange={handlePackSelect} 
                      value={selectedPackSize?.toString()} 
-                     // Always 2 columns now
                      className="grid grid-cols-2 gap-3 md:gap-4" 
                  >
-                    {packOptions.map((pack) => (
-                        <Label 
-                            key={pack.size} 
-                            htmlFor={`pack-${pack.size}`} 
-                            // Adjusted padding slightly for smaller cards
-                            className={`flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-colors hover:bg-pati-pink/10 [&:has([data-state=checked])]:border-pati-burgundy [&:has([data-state=checked])]:bg-pati-pink/20 cursor-pointer ${selectedPackSize && selectedPackSize !== pack.size ? 'opacity-70' : ''}`}
-                        >
-                           <RadioGroupItem value={pack.size.toString()} id={`pack-${pack.size}`} className="sr-only" />
-                           <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">Pack {pack.size}</span>
-                           <span className="text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center">{pack.description}</span>
-                           <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price}€</span>
-                        </Label>
-                    ))}
+                    {packOptions.map((pack) => {
+                        const isSelected = selectedPackSize === pack.size;
+                        return (
+                             <Label 
+                                 key={pack.size} 
+                                 htmlFor={`pack-${pack.size}`} 
+                                 // Enhanced hover and added relative positioning for check icon
+                                 className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${selectedPackSize && !isSelected ? 'opacity-70' : ''}`}
+                             >
+                                 <RadioGroupItem value={pack.size.toString()} id={`pack-${pack.size}`} className="sr-only" />
+                                 {/* Added Check icon when selected */}
+                                 {isSelected && (
+                                     <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />
+                                 )}
+                                 <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">Pack {pack.size}</span>
+                                 {/* UPDATED Description for Pack 12 with Emoji */} 
+                                 <span className={`text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center ${pack.size === 12 ? 'font-semibold text-green-700' : ''}`}>
+                                     {pack.description} {pack.size === 12 && '🎁'}
+                                 </span>
+                                 <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price}€</span>
+                             </Label>
+                        );
+                    })}
                   </RadioGroup>
               </CardContent>
             </Card>
 
-            {/* Step 2: Select Cookies - REMOVED Progress Bar */} 
+            {/* Step 2: Select Cookies - Enhanced Counter Animation */} 
             {selectedPackSize && (
               <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}> 
                  <CardHeader className="pb-4">
@@ -188,12 +197,10 @@ ${selectedItems}
                         const isAtLimit = !canAddMoreCookies;
                         
                         return (
-                          <div key={index} className="p-1 h-full relative">
+                          <div key={index} className="p-1 h-full">
                             <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${isAtLimit && !isSelected ? 'opacity-50' : ''}`}>
                               {/* Clickable Area */} 
                               <div className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreCookies ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => canAddMoreCookies && incrementCookie(cookie.name)} aria-label={!canAddMoreCookies ? `Límite de ${selectedPackSize} galletas alcanzado` : `Añadir una galleta ${cookie.name}`} role="button" tabIndex={!canAddMoreCookies ? -1 : 0}>
-                                 {/* Badge Counter */} 
-                                 {isSelected && (<Badge variant="default" className="absolute top-2 right-2 z-10 h-6 w-6 p-0 flex items-center justify-center rounded-full bg-green-600 text-white text-xs font-bold">{count}</Badge>)}
                                  {/* Image */} 
                                  <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full">
                                      <img src={cookie.image} alt={cookie.name} className="w-full h-full object-contain pointer-events-none" />
@@ -201,13 +208,19 @@ ${selectedItems}
                                  {/* Name */} 
                                  <h4 className="text-sm font-medium text-pati-burgundy px-1">{cookie.name}</h4>
                               </div>
-                              {/* +/- Controls */} 
+                              {/* +/- Controls Area - Enhanced Badge Animation */}
                               <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
-                                  <Button variant="ghost" size="icon" className={`... ${count === 0 ? 'opacity-40 cursor-not-allowed' : ''}`} onClick={() => decrementCookie(cookie.name)} disabled={count === 0}> <MinusCircle className="h-5 w-5" /> </Button>
-                                  <Button variant="ghost" size="icon" className={`... ${!canAddMoreCookies ? 'opacity-40 cursor-not-allowed' : ''}`} onClick={() => canAddMoreCookies && incrementCookie(cookie.name)} disabled={!canAddMoreCookies}> <PlusCircle className="h-5 w-5" /> </Button>
+                                  <Button variant="ghost" size="icon" className={`... ${count === 0 ? '...' : ''}`} onClick={() => decrementCookie(cookie.name)} disabled={count === 0}> <MinusCircle className="h-5 w-5" /> </Button>
+                                  <Badge 
+                                    variant={isSelected ? "default" : "outline"} 
+                                    className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-125' : 'text-gray-400 border-gray-300 scale-100'}`}
+                                   >
+                                     {count}
+                                  </Badge>
+                                  <Button variant="ghost" size="icon" className={`... ${!canAddMoreCookies ? '...' : ''}`} onClick={() => canAddMoreCookies && incrementCookie(cookie.name)} disabled={!canAddMoreCookies}> <PlusCircle className="h-5 w-5" /> </Button>
                               </div>
                             </Card>
-                          </div>
+                      </div>
                         );
                       })}
                     </div>
@@ -228,13 +241,13 @@ ${selectedItems}
                    <div className="flex justify-between items-center font-medium border-b pb-3 border-pati-pink/20">
                      <span>Galletas Seleccionadas:</span>
                      <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>{currentCount} / {selectedPackSize}</Badge>
-                   </div>
+                </div>
 
                    {/* Price (finalPackPrice) */} 
                    <div className="flex justify-between items-center text-2xl font-bold text-pati-burgundy">
                       <span>Precio Total Pack:</span>
                       <span>{finalPackPrice.toFixed(2).replace('.', ',' )}€</span>
-                   </div>
+                        </div>
                    
                    {/* WhatsApp Preview (whatsappMessagePreview) */} 
                    <div className="space-y-2">
@@ -242,7 +255,7 @@ ${selectedItems}
                       <div className={`text-sm p-3 border rounded-lg rounded-tl-none shadow-sm whitespace-pre-wrap break-words font-sans ${isOrderComplete ? 'bg-green-100 border-green-200 text-gray-800' : 'bg-gray-100 border-gray-200 text-gray-500'}`}>
                          {whatsappMessagePreview}
                       </div>
-                   </div>
+                  </div>
 
                    {/* UPDATED CTA Button - Checks isOrderComplete */} 
                    <Button 
@@ -266,7 +279,7 @@ ${selectedItems}
                    
                 </CardContent>
               </Card>
-            </div>
+                </div>
           )}
         </div>
 
@@ -288,8 +301,8 @@ ${selectedItems}
                     {isOrderComplete ? <CheckCircle2 className="mr-2 h-4 w-4"/> : <FaWhatsapp className="mr-2 h-4 w-4" />} 
                     {isOrderComplete ? "Revisar Pedido" : "Completar Caja"}
                 </Button>
-            </div>
-        )}
+              </div>
+            )}
       </> 
     );
 };
@@ -323,10 +336,10 @@ const ProductDetail = () => {
                 <p className="text-pati-brown mb-6">No pudimos encontrar la configuración de galletas.</p>
                 <Button asChild>
                    <Link to="/">Volver al inicio</Link>
-                </Button>
+            </Button>
            </main>
           <Footer />
-       </div>
+          </div>
     );
   }
 
