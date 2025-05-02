@@ -63,11 +63,12 @@ const OrderSummary: React.FC = () => {
                      </CardHeader>
                     <CardContent className="divide-y divide-pati-pink/20">
                         {state.items.map((item) => (
-                             <div key={item.id} className="flex flex-col sm:flex-row items-start gap-4 py-4">
+                             <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 py-4 px-2 sm:px-0">
                                 <img 
                                      src={item.imageUrl || '/Recetaspati/placeholder.svg'}
-                                     alt={item.productName} 
-                                     className="w-24 h-24 object-cover rounded-md border flex-shrink-0 mx-auto sm:mx-0"
+                                     alt={`Imagen de ${item.productName}${item.selectedOptions?.flavor ? ' sabor ' + item.selectedOptions.flavor : ''}`}
+                                     className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border flex-shrink-0 mx-auto sm:mx-0"
+                                     loading="lazy"
                                  />
                                  <div className="flex-grow space-y-1 text-center sm:text-left">
                                      <p className="font-semibold text-pati-burgundy leading-tight text-lg">{item.productName}</p>
@@ -89,20 +90,20 @@ const OrderSummary: React.FC = () => {
                                      </p>
                                  </div>
                                  {/* Quantity Controls & Remove (alineado a la derecha en sm+) */}
-                                 <div className="flex flex-col items-center sm:items-end gap-2 flex-shrink-0 w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto">
+                                 <div className="flex flex-row sm:flex-col items-center justify-center sm:items-end gap-2 flex-shrink-0 w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto">
                                      <div className="flex items-center gap-2">
-                                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleUpdateQuantity(item.id, item.quantity, -1)}>
-                                             <MinusCircle className="h-4 w-4" />
-                                         </Button>
-                                         <span className="font-bold text-lg w-8 text-center tabular-nums">{item.quantity}</span>
-                                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleUpdateQuantity(item.id, item.quantity, 1)}>
-                                             <PlusCircle className="h-4 w-4" />
-                                         </Button>
-                                     </div>
-                                     <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-auto py-1 text-xs" onClick={() => handleRemoveItem(item.id)}>
-                                          <Trash2 className="h-3 w-3 mr-1"/> Quitar
-                                     </Button>
-                                 </div>
+                                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleUpdateQuantity(item.id, item.quantity, -1)} aria-label="Reducir cantidad">
+                                              <MinusCircle className="h-4 w-4" />
+                                          </Button>
+                                          <span className="font-bold text-lg w-8 text-center tabular-nums">{item.quantity}</span>
+                                          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleUpdateQuantity(item.id, item.quantity, 1)} aria-label="Aumentar cantidad">
+                                              <PlusCircle className="h-4 w-4" />
+                                          </Button>
+                                      </div>
+                                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-auto py-1 text-xs" onClick={() => handleRemoveItem(item.id)}>
+                                           <Trash2 className="h-3 w-3 mr-1"/> Quitar
+                                      </Button>
+                                  </div>
                              </div>
                          ))}
                      </CardContent>

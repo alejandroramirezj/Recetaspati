@@ -125,12 +125,12 @@ const ProductCard = ({ product }: { product: CategoryInfo }) => {
   // Define content separate from the clickable wrapper for non-tartas cards
   const cardContent = (
     <>
-      {/* Removed conditional rendering for image: Show image for all */}
       <div className="h-56 overflow-hidden">
         <img 
           src={product.image} 
-          alt={product.name} 
+          alt={`Categoría ${product.name}`}
           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
+          loading="lazy"
         />
       </div>
        {/* Removed padding adjustment logic */}

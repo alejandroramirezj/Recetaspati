@@ -65,18 +65,28 @@ const MobileCartBar: React.FC = () => {
                  </span>
              </div>
           </div>
-          <Button size="sm" className="bg-pati-burgundy hover:bg-pati-burgundy/90 text-white whitespace-nowrap flex-shrink-0">
-             Ver/Enviar Pedido
+          <Button 
+            variant="outline"
+            className="flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white border-none"
+            aria-label={isOpen ? "Cerrar resumen del carrito" : "Abrir resumen del carrito"}
+            aria-controls="cart-sheet-content"
+            aria-expanded={isOpen}
+          >
+             Ver/Enviar Pedido ({formatPrice(cartTotal)})
           </Button>
         </div>
       </SheetTrigger>
       
       {/* This is the content that slides up */}
-      <SheetContent side="bottom" className="lg:hidden flex flex-col max-h-[85vh] p-0 pt-4"> 
-        <SheetHeader className="px-4 pb-2 border-b">
-          <SheetTitle className="text-xl font-bold font-playfair text-pati-burgundy">Tu Pedido</SheetTitle>
-          {/* Optional: Add description if needed */}
-          {/* <SheetDescription>Revisa los artículos antes de enviar.</SheetDescription> */}
+      <SheetContent 
+        side="bottom" 
+        className="max-h-[80vh] flex flex-col" 
+        onOpenAutoFocus={(e) => e.preventDefault()} // Evitar focus trap inicial
+        id="cart-sheet-content"
+        aria-labelledby="cart-sheet-title"
+      >
+        <SheetHeader>
+          <SheetTitle id="cart-sheet-title">Resumen del Pedido</SheetTitle>
         </SheetHeader>
 
         {/* Scrollable list of items */}
@@ -118,18 +128,19 @@ const MobileCartBar: React.FC = () => {
                                 </p>
                             </div>
                             {/* Quantity Controls & Remove */}
-                            <div className="flex flex-col items-end gap-2 flex-shrink-0 ml-auto">
+                            <div className="flex flex-col items-end gap-1">
                                 <div className="flex items-center gap-1">
-                                    <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => handleUpdateQuantity(item.id, item.quantity, -1)}>
+                                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleUpdateQuantity(item.id, item.quantity, -1)} aria-label="Reducir cantidad">
                                         <MinusCircle className="h-4 w-4" />
                                     </Button>
-                                    <span className="font-bold text-md w-6 text-center tabular-nums">{item.quantity}</span>
-                                    <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => handleUpdateQuantity(item.id, item.quantity, 1)}>
+                                    <span className="font-semibold text-lg w-6 text-center">{item.quantity}</span>
+                                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleUpdateQuantity(item.id, item.quantity, 1)} aria-label="Aumentar cantidad">
                                         <PlusCircle className="h-4 w-4" />
                                     </Button>
                                 </div>
-                                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-1 h-auto py-0" onClick={() => handleRemoveItem(item.id)}>
-                                     <Trash2 className="h-4 w-4 mr-1"/> Quitar
+                                <Button variant="ghost" size="sm" className="text-xs text-red-600 px-1 h-auto" onClick={() => handleRemoveItem(item.id)} aria-label={`Quitar ${item.productName}`}>
+                                    <Trash2 className="h-3 w-3 mr-1" />
+                                    Quitar
                                 </Button>
                             </div>
                         </div>

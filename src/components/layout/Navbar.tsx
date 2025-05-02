@@ -39,6 +39,9 @@ const Navbar = () => {
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className="lg:hidden p-2 rounded-md text-pati-brown hover:bg-pati-cream"
+          aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -54,8 +57,8 @@ const Navbar = () => {
           <Link 
             to="/pedido" 
             className={`relative hidden lg:flex items-center justify-center p-2 rounded-full hover:bg-pati-cream transition-all duration-300 ease-in-out ml-4 ${isAnimating ? 'animate-bounce' : ''}`}
-            aria-label={`Ver carrito con ${totalItems} artículos`}
-           >
+            aria-label={totalItems > 0 ? `Ver carrito (${totalItems} artículo${totalItems !== 1 ? 's' : ''})` : "Ver carrito (vacío)"}
+          >
              <ShoppingCart className="h-6 w-6 text-pati-brown" />
              {totalItems > 0 && (
                  <Badge 
@@ -77,7 +80,10 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-t border-pati-pink py-4 px-6 shadow-lg animate-fade-in">
+        <div 
+          id="mobile-menu"
+          className="lg:hidden bg-white border-t border-pati-pink py-4 px-6 shadow-lg animate-fade-in"
+        >
           <nav className="flex flex-col space-y-4">
             {/* Use anchor tags for section links for smoother scrolling */}
             <a 

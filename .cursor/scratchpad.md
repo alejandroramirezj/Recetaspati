@@ -70,18 +70,20 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 - [x] Subir cambios visuales Navbar/MobileCartBar.
 - [x] Crear página resumen pedido (`/pedido`).
 - [x] Implementar animación en icono carrito al añadir item (quitar `alert`).
-- [ ] **Planner:** Realizar revisión general y proponer mejoras (este bloque).
-- [ ] **Executor:** Mejorar Claridad Configurador `cookiePack`/`flavorPack`.
-- [ ] **Executor:** Optimizar Imágenes Productos (Lazy Loading, etc.).
-- [ ] **Executor:** Revisión Responsividad `ProductDetail`.
-- [ ] **Executor:** Revisión Responsividad `OrderSummary`.
-- [ ] **Executor:** Añadir `alt` text descriptivos.
-- [ ] **Executor:** Mejorar Feedback `flavorCheckboxSelector`.
-- [ ] **Executor:** Revisar `aria-label`s.
+- [x] **Planner:** Realizar revisión general y proponer mejoras.
+- [x] **Executor:** Mejorar Claridad Configurador `cookiePack`/`flavorPack`.
+- [x] **Executor:** Modificar barra inferior `ItemPackConfigurator` para que sea siempre visible.
+- [x] **Executor:** Eliminar botones "Pedir Solo...".
+- [x] **Executor:** Optimizar Imágenes Productos (Lazy Loading).
+- [x] **Executor:** Revisión Responsividad `ProductDetail`.
+- [x] **Executor:** Revisión Responsividad `OrderSummary`.
+- [x] **Executor:** Añadir `alt` text descriptivos.
+- [x] **Executor:** Mejorar Feedback `flavorCheckboxSelector`.
+- [x] **Executor:** Revisar `aria-label`s.
 
 ## Executor's Feedback or Assistance Requests
 
-*Esperando instrucciones sobre qué tarea del "High-level Task Breakdown" abordar primero.* 
+*Se han aplicado las mejoras generales solicitadas (imágenes, responsividad, accesibilidad). Pendiente de revisión y próximos pasos.* 
 
 ## Lessons Learned
 
@@ -91,4 +93,7 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 - El `linter` puede dar falsos positivos o requerir varios intentos para aplicar correcciones complejas de tipos.
 - Usar `alert()` para feedback no es ideal; preferible `toast` o animaciones sutiles.
 - Siempre verificar rutas (`/pedido`) antes de enlazar a ellas.
-- La animación directa del icono del carrito es una alternativa viable al `toast` para feedback de "añadir al carrito". 
+- La animación directa del icono del carrito es una alternativa viable al `toast` para feedback de "añadir al carrito".
+- Hacer la barra inferior del configurador de packs siempre visible mejora la UX en escritorio.
+- El atributo `loading="lazy"` es una forma sencilla de mejorar el rendimiento de carga inicial de imágenes.
+- Añadir `aria-label` y otros atributos ARIA mejora la accesibilidad para usuarios de lectores de pantalla. 

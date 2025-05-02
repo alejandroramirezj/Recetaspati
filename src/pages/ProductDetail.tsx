@@ -61,38 +61,46 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
     };
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
-            <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
-            <Card className="border-pati-pink/30 shadow-md">
-                <CardHeader>
-                    <CardTitle className="text-xl text-pati-burgundy">Elige tu Caja</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {product.options?.map((option) => (
-                        <div key={option.name} className="flex items-center justify-between gap-4 border-b pb-3 last:border-b-0">
-                            <div className="flex items-center gap-3">
-                                <Box className="h-6 w-6 text-pati-brown flex-shrink-0" />
-                                <div>
-                                    <p className="font-medium text-pati-burgundy">{option.name}</p>
-                                    {option.description && <p className="text-sm text-pati-brown mt-1">{option.description}</p>}
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
+            {/* Columna 1: Info y Selección */}
+            <div className="space-y-6">
+                <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
+                <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
+                <Card className="border-pati-pink/30 shadow-md">
+                    <CardHeader>
+                        <CardTitle className="text-xl text-pati-burgundy">Elige tu Caja</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {product.options?.map((option) => (
+                            <div key={option.name} className="flex items-center justify-between gap-4 border-b pb-3 last:border-b-0">
+                                <div className="flex items-center gap-3">
+                                    <Box className="h-6 w-6 text-pati-brown flex-shrink-0" />
+                                    <div>
+                                        <p className="font-medium text-pati-burgundy">{option.name}</p>
+                                        {option.description && <p className="text-sm text-pati-brown mt-1">{option.description}</p>}
+                                    </div>
+                                </div>
+                                <div className="text-right flex flex-col items-end gap-2">
+                                    <p className="text-xl font-bold text-pati-burgundy whitespace-nowrap">{option.price}</p>
+                                    <Button size="sm" onClick={() => handleAddPack(option)}>
+                                        Añadir al Pedido
+                                    </Button>
                                 </div>
                             </div>
-                            <div className="text-right flex flex-col items-end gap-2">
-                                <p className="text-xl font-bold text-pati-burgundy whitespace-nowrap">{option.price}</p>
-                                <Button size="sm" onClick={() => handleAddPack(option)}>
-                                    Añadir al Pedido
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
-            {/* Add image display if desired */} 
-             <Card className="overflow-hidden border-pati-pink/30 shadow-md">
+                        ))}
+                    </CardContent>
+                </Card>
+            </div>
+            {/* Columna 2: Imagen */}
+            <Card className="overflow-hidden border-pati-pink/30 shadow-md md:sticky md:top-24">
                  <CardContent className="p-0">
                      <div className="aspect-square">
-                         <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                         <img 
+                            src={product.image} 
+                            alt={`Imagen de ${product.name}`}
+                            className="w-full h-full object-contain" 
+                            loading="lazy"
+                         />
                      </div>
                  </CardContent>
              </Card>
@@ -273,7 +281,7 @@ ${itemsList}
     // --- RETURN JSX for ItemPackConfigurator --- 
   return (
       <> 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Column: Pack Selection -> Items */} 
           <div className="space-y-6">
             {/* Title, Description */} 
@@ -359,7 +367,12 @@ ${itemsList}
                                  aria-disabled={!canAddMoreItems}
                                >
                                    <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full bg-gray-50"> {/* Added bg for placeholders */} 
-                                       <img src={item.image} alt={item.name} className="w-full h-full object-contain pointer-events-none" />
+                                       <img 
+                                           src={item.image} 
+                                           alt={item.name}
+                                           className="w-full h-full object-contain pointer-events-none" 
+                                           loading="lazy"
+                                       />
                                    </div>
                                    <h4 className="text-sm font-medium text-pati-burgundy px-1">{item.name}</h4>
                                 </div>
@@ -543,7 +556,7 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
     };
 
     return (
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
              {/* Columna Izquierda: Selección Pack y Sabores */}
             <div className="space-y-6">
                 <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
@@ -580,12 +593,15 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                  {selectedPackOption && (
                     <Card className="border-pati-pink/30 shadow-md">
                          <CardHeader>
-                            <CardTitle className="text-xl text-pati-burgundy">2. Elige tus {maxFlavors} Sabores</CardTitle>
-                            <CardDescription>Has elegido: {checkedFlavors.length} de {maxFlavors}</CardDescription>
-                            {isOrderComplete && (
-                                <div className="text-sm pt-2 text-green-600 font-semibold flex items-center gap-1">
-                                     <CheckCircle2 className="h-4 w-4"/> ¡Selección Completa!
-                                 </div>
+                            <CardTitle className="text-xl text-pati-burgundy">2. Elige tus {maxFlavors > 0 ? maxFlavors : ''} Sabores</CardTitle>
+                            {/* Mostrar descripción solo si maxFlavors > 0 */}
+                            {maxFlavors > 0 && (
+                                <CardDescription>
+                                    Has elegido: {checkedFlavors.length} de {maxFlavors}
+                                    {isOrderComplete && (
+                                        <span className="text-green-600 font-semibold ml-2">¡Completo!</span>
+                                    )}
+                                </CardDescription>
                             )}
                          </CardHeader>
                          <CardContent className="grid grid-cols-2 gap-3">
@@ -612,9 +628,10 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                  )}
              </div>
 
-             {/* Columna Derecha: Resumen */}
-             {selectedPackOption && (
-                <div className="sticky top-24 space-y-6">
+             {/* Columna Derecha: Resumen e Imagen */}
+             <div className="sticky top-24 space-y-6">
+                {/* Card Resumen - Botones ya tienen texto */} 
+                {selectedPackOption && (
                     <Card className="border-pati-pink/30 shadow-lg">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-xl text-pati-burgundy">Resumen: {selectedPackOption.name}</CardTitle>
@@ -653,8 +670,21 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                             </div>
                         </CardContent>
                     </Card>
-                </div>
-             )}
+                )}
+                {/* Imagen del producto */} 
+                <Card className="overflow-hidden border-pati-pink/30 shadow-md">
+                    <CardContent className="p-0">
+                        <div className="aspect-square">
+                            <img 
+                                src={product.image} 
+                                alt={`Imagen de ${product.name}`}
+                                className="w-full h-full object-contain" 
+                                loading="lazy"
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+             </div>
          </div>
      );
 };
@@ -723,14 +753,17 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
     };
 
     return (
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Columna Izquierda: Imagen */}
             <Card className="overflow-hidden border-pati-pink/30 shadow-md">
-                 {/* TODO: Maybe show a default image, as flavor isn't selected globally anymore */}
                  <CardContent className="p-0">
                      <div className="aspect-square">
-                         {/* TODO: Cambiar imagen según sabor seleccionado si hay imágenes específicas */}
-                         <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                         <img 
+                             src={product.image} 
+                             alt={`Imagen de ${product.name}`}
+                             className="w-full h-full object-contain" 
+                             loading="lazy"
+                         />
                      </div>
                  </CardContent>
             </Card>
@@ -854,12 +887,17 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
     };
 
     return (
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Columna Izquierda: Imagen */}
             <Card className="overflow-hidden border-pati-pink/30 shadow-md">
                  <CardContent className="p-0">
                      <div className="aspect-square">
-                         <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                         <img 
+                            src={product.image} 
+                            alt={`Imagen de ${product.name}`}
+                            className="w-full h-full object-contain" 
+                            loading="lazy"
+                         />
                      </div>
                  </CardContent>
             </Card>

@@ -8,11 +8,12 @@ const SimpleProductCard = ({ product }: { product: Product }) => (
   <div 
     className="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl flex flex-col h-full border border-pati-pink/50"
   >
-    <Link to={`/product/${product.category}/${product.id}`} className="block h-56 overflow-hidden">
+    <Link to={`/product/${product.category}/${product.id}`} className="block h-56 overflow-hidden group">
       <img 
         src={product.image} 
         alt={product.name} 
-        className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" // Added group-hover for Link
+        className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+        loading="lazy"
       />
     </Link>
     <div className="p-4 md:p-6 flex flex-col flex-grow">
