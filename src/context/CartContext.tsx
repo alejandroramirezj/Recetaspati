@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext, ReactNode, Dispatch } from 'react';
+import React, { createContext, useReducer, useContext, ReactNode, Dispatch, useEffect } from 'react';
 import { CartItem, CartState, CartAction } from '../types/cart';
 
 // Helper para generar IDs únicos para items del carrito (más robusto sería uuid)
@@ -82,10 +82,26 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 };
 
-// Estado inicial del carrito (usando el tipo importado CartState)
-const initialState: CartState = {
+// Estado inicial por defecto (si no hay nada en localStorage)
+const defaultInitialState: CartState = {
   items: [],
   itemAddedTimestamp: null, 
+};
+
+// Función inicializadora para useReducer que carga desde localStorage
+const initCartState = (initialState: CartState): CartState => {
+  try {
+    const storedItems = localStorage.getItem('patiCartItems');
+    if (storedItems) {
+      const parsedItems: CartItem[] = JSON.parse(storedItems);
+      // Devolvemos el estado con los items cargados y timestamp reseteado
+      return { items: parsedItems, itemAddedTimestamp: null }; 
+    }
+  } catch (error) {
+    console.error("Error cargando carrito desde localStorage:", error);
+    // Si hay error, volver al estado por defecto
+  }
+  return initialState; // Devuelve el estado por defecto si no hay nada o hay error
 };
 
 // Interfaz de Props del Contexto (usando tipos importados)
@@ -105,7 +121,18 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
+  // Usar useReducer con la función inicializadora
+  const [state, dispatch] = useReducer(cartReducer, defaultInitialState, initCartState);
+
+  // Efecto para guardar en localStorage cada vez que state.items cambie
+  useEffect(() => {
+    try {
+      // Solo guardamos los items, el timestamp no es persistente
+      localStorage.setItem('patiCartItems', JSON.stringify(state.items));
+    } catch (error) {
+      console.error("Error guardando carrito en localStorage:", error);
+    }
+  }, [state.items]); // Dependencia: se ejecuta solo si los items cambian
 
   const getCartTotal = (): number => {
     return state.items.reduce((total, item) => {

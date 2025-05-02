@@ -68,9 +68,7 @@ const MobileCartBar: React.FC = () => {
           <Button 
             variant="outline"
             className="flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white border-none"
-            aria-label={isOpen ? "Cerrar resumen del carrito" : "Abrir resumen del carrito"}
             aria-controls="cart-sheet-content"
-            aria-expanded={isOpen}
           >
              Ver/Enviar Pedido ({formatPrice(cartTotal)})
           </Button>

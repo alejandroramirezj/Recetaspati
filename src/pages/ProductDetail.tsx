@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -202,6 +202,22 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     const isOrderComplete = useMemo(() => {
          return selectedPackSize !== null && currentCount === selectedPackSize;
     }, [selectedPackSize, currentCount]);
+
+    // Ref para rastrear el estado anterior de isOrderComplete
+    const prevIsOrderCompleteRef = useRef(isOrderComplete);
+
+    // Efecto para hacer scroll cuando se completa el pedido
+    useEffect(() => {
+        // Comprobar si acaba de completarse (antes era false, ahora es true)
+        if (!prevIsOrderCompleteRef.current && isOrderComplete) {
+            const summaryButton = document.getElementById('add-pack-button');
+            if (summaryButton) {
+                summaryButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+        // Actualizar el valor anterior para la próxima comprobación
+        prevIsOrderCompleteRef.current = isOrderComplete;
+    }, [isOrderComplete]); // Ejecutar solo cuando isOrderComplete cambie
 
     // Generate WhatsApp message - TODO: Adapt later to use flavorDetails or cookieDetails
     const generateWhatsAppMessage = () => {
@@ -447,6 +463,7 @@ ${itemsList}
                    <div className="flex flex-col sm:flex-row gap-3 mt-4"> {/* Stack vertically on small, row on sm+, add gap */} 
                      {/* == Botón Añadir al Carrito (Ahora ocupa todo el ancho si el otro se quita) == */} 
                      <Button
+                         id="add-pack-button"
                          onClick={handleAddToCart}
                          size="lg"
                          className={`flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
