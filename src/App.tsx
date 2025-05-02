@@ -8,6 +8,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
 import CategoryPage from "./pages/CategoryPage";
+import ScrollToTop from './utils/ScrollToTop';
+import { CartProvider } from './context/CartContext';
+import MobileCartBar from './components/layout/MobileCartBar';
 
 const queryClient = new QueryClient();
 
@@ -35,15 +38,19 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename={baseName}>
-        <SpaRedirectHandler />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="product/:category/:id" element={<ProductDetail />} />
-          <Route path="category/:categoryName" element={<CategoryPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter basename={baseName}>
+          <ScrollToTop />
+          <SpaRedirectHandler />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="product/:category/:id" element={<ProductDetail />} />
+            <Route path="category/:categoryName" element={<CategoryPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <MobileCartBar />
+        </BrowserRouter>
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
