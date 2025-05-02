@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Cookie, ArrowLeft, PlusCircle, MinusCircle, Info, CheckCircle2, Box, ShoppingCart } from 'lucide-react';
+import { Cookie, ArrowLeft, PlusCircle, MinusCircle, Info, CheckCircle2, Box, ShoppingCart, Trash2 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { productsData, Product as ProductType, Option } from '@/data/products';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useCart } from '../context/CartContext';
 import { CartItem } from '../types/cart';
+import { getWhatsAppUrl } from '@/utils/whatsappUtils';
 
 // Define a more specific type for the details object
 interface ProductDetailsDisplay {
@@ -57,8 +58,6 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
             selectedOptions: { pack: packOption.name },
         };
         dispatch({ type: 'ADD_ITEM', payload: cartItem });
-        // Optionally show a toast notification
-        alert(`${packOption.name} añadido al pedido!`); 
     };
 
     return (
@@ -258,10 +257,56 @@ ${itemsList}
         // Use generateCartItemId or a consistent ID generation strategy if needed?
         // For now, using the simple one.
         dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } });
-        alert(`Pack de ${selectedPackSize} añadido al pedido!`); // Simple confirmation
         // Maybe reset state after adding?
         // setSelectedPackSize(null);
         // setSelectedItems({});
+    };
+
+    // Function to generate WhatsApp link for ONLY the current configuration
+    const handleOrderThisItemOnly = () => {
+        if (!selectedPackSize || !isOrderComplete) return;
+
+        // Create a temporary CartItem representing this configuration
+        let singleCartItem: CartItem;
+        const tempId = `${product.id}-pack${selectedPackSize}-whatsapp`; // Temporary unique ID
+
+        if (product.configType === 'cookiePack') {
+            singleCartItem = {
+                id: tempId,
+                productId: product.id,
+                productName: product.name,
+                quantity: 1,
+                packPrice: finalPackPrice,
+                imageUrl: product.image,
+                type: 'cookiePack',
+                cookieDetails: {
+                    packSize: selectedPackSize,
+                    cookies: selectedItems
+                }
+            };
+        } else if (product.configType === 'flavorPack') {
+            singleCartItem = {
+                id: tempId,
+                productId: product.id,
+                productName: product.name,
+                quantity: 1,
+                packPrice: finalPackPrice,
+                imageUrl: product.image,
+                type: 'flavorPack',
+                selectedOptions: { pack: packOptions.find(p => p.size === selectedPackSize)?.name || '' },
+                selectedFlavors: Object.keys(selectedItems).filter(key => selectedItems[key] > 0)
+            };
+        } else {
+            console.error("Tipo de producto no soportado para pedir individualmente desde ItemPackConfigurator");
+            alert("Error al generar el pedido para este producto.")
+            return;
+        }
+
+        // Generate WhatsApp URL for this single item
+        const whatsappUrl = getWhatsAppUrl([singleCartItem]); 
+
+        // Open WhatsApp link
+        window.open(whatsappUrl, '_blank');
     };
 
     // Function to scroll to summary
@@ -320,13 +365,16 @@ ${itemsList}
             </Card>
 
             {/* Step 2: Select Items (Flavors or Cookies) */} 
-             <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-70'}`}> 
+             <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}> 
                 <CardHeader className="pb-4">
-                   <CardTitle className="text-xl text-pati-burgundy">2. Elige tus Sabores</CardTitle>
+                   <CardTitle className="text-xl text-pati-burgundy">2. Elige tus Sabores/Galletas</CardTitle> 
                    {selectedPackSize ? (
-                     <CardDescription>Selecciona {selectedPackSize} unidad{selectedPackSize !== 1 ? 'es' : ''}. Total: {currentCount} / {selectedPackSize}</CardDescription>
+                    <CardDescription>
+                      Selecciona {selectedPackSize} unidad{selectedPackSize !== 1 ? 'es' : ''}. 
+                      <span className="font-semibold">(Pack: {finalPackPrice.toFixed(2).replace('.', ',')}€)</span> Total: {currentCount} / {selectedPackSize}
+                    </CardDescription>
                    ) : (
-                     <CardDescription>Selecciona primero un tamaño de pack para poder añadir.</CardDescription>
+                      <CardDescription>Selecciona primero un tamaño de pack para poder añadir.</CardDescription>
                    )}
                     {/* Completion check message */} 
                     {!canAddMoreItems && currentCount === selectedPackSize && (
@@ -336,39 +384,68 @@ ${itemsList}
                     )}
                  </CardHeader>
                  <CardContent>
-                    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 ${!selectedPackSize ? 'opacity-80 cursor-not-allowed' : (!canAddMoreItems ? 'opacity-75' : '')}`}> 
-                       {availableItems.map((item, index) => { // Use availableItems
-                        const count = selectedItems[item.name] || 0; // Use selectedItems
-                        const isSelected = count > 0;
-                        const isAtLimit = !canAddMoreItems;
-                        
-                        // Specific check for flavorPack: can only add if count is 0
-                        const canIncrementFlavor = product.configType !== 'flavorPack' || count === 0;
-                        
-                        return (
-                          <div key={index} className="p-1 h-full">
-                            <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${isAtLimit && !isSelected ? 'opacity-50' : ''} ${!selectedPackSize ? 'pointer-events-none' : ''}`}> 
-                              <div className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreItems || !selectedPackSize ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => canAddMoreItems && incrementItem(item.name)} aria-label={!selectedPackSize ? 'Selecciona un pack primero' : (!canAddMoreItems ? `Límite de ${selectedPackSize} unidades alcanzado` : `Añadir ${item.name}`)} role="button" tabIndex={!selectedPackSize || !canAddMoreItems ? -1 : 0}> 
-                                  <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full bg-gray-50"> {/* Added bg for placeholders */} 
-                                      <img src={item.image} alt={item.name} className="w-full h-full object-contain pointer-events-none" />
-                                  </div>
-                                  <h4 className="text-sm font-medium text-pati-burgundy px-1">{item.name}</h4>
-                               </div>
-                              {/* +/- Controls */} 
-                               <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
-                                  <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => decrementItem(item.name)} disabled={count === 0}> <MinusCircle className="h-5 w-5" /> </Button>
-                                   <Badge 
-                                     variant={isSelected ? "default" : "outline"} 
-                                     className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-125' : 'text-gray-400 border-gray-300 scale-100'}`}
+                    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 ${!canAddMoreItems ? 'opacity-75' : ''}`}> 
+                        {availableItems.map((item, index) => { // Use availableItems
+                         const count = selectedItems[item.name] || 0; // Use selectedItems
+                         const isSelected = count > 0;
+                         const isAtLimit = !canAddMoreItems;
+                         
+                         // Specific check for flavorPack: can only add if count is 0
+                         const canIncrementFlavor = (product.configType !== 'flavorPack' || count === 0);
+                         
+                         return (
+                           <div key={index} className="p-1 h-full">
+                             <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${isAtLimit && !isSelected ? 'opacity-50' : ''}`}> 
+                               {/* Wrapper div for click interaction, disabled if no pack selected */}
+                               <div 
+                                 className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreItems ? 'cursor-not-allowed' : 'cursor-pointer'}`} 
+                                 onClick={() => canAddMoreItems && incrementItem(item.name)} 
+                                 aria-label={!canAddMoreItems ? `Límite de ${selectedPackSize} unidades alcanzado` : `Añadir ${item.name}`}
+                                 role="button" 
+                                 tabIndex={!canAddMoreItems ? -1 : 0}
+                                 aria-disabled={!canAddMoreItems}
+                               >
+                                   <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full bg-gray-50"> {/* Added bg for placeholders */} 
+                                       <img src={item.image} alt={item.name} className="w-full h-full object-contain pointer-events-none" />
+                                   </div>
+                                   <h4 className="text-sm font-medium text-pati-burgundy px-1">{item.name}</h4>
+                                </div>
+                               {/* +/- Controls */}
+                                <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
+                                  {/* Decrement Button: Disabled if count is 0 */}
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                                    onClick={() => decrementItem(item.name)} 
+                                    disabled={count === 0} 
+                                    aria-label={`Quitar ${item.name}`}
+                                  >
+                                    <MinusCircle className="h-5 w-5" /> 
+                                  </Button>
+                                  <Badge 
+                                      variant={isSelected ? "default" : "outline"} 
+                                      className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}
+                                      aria-live="polite"
+                                     >
+                                       {count}
+                                    </Badge>
+                                   {/* Increment Button: Disabled if pack limit reached or flavor already added (for flavorPack) */}
+                                   <Button 
+                                     variant="ghost" 
+                                     size="icon" 
+                                     className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${!canAddMoreItems || !canIncrementFlavor ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                                     onClick={() => canAddMoreItems && incrementItem(item.name)} 
+                                     disabled={!canAddMoreItems || !canIncrementFlavor} 
+                                     aria-label={`Añadir ${item.name}`}
                                     >
-                                      {count}
-                                   </Badge>
-                                   <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${!canAddMoreItems || !canIncrementFlavor ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => canAddMoreItems && incrementItem(item.name)} disabled={!canAddMoreItems || !canIncrementFlavor}> <PlusCircle className="h-5 w-5" /> </Button>
-                               </div>
-                             </Card>
-                      </div>
-                        );
-                      })}
+                                      <PlusCircle className="h-5 w-5" /> 
+                                    </Button>
+                                </div>
+                              </Card>
+                       </div>
+                         );
+                       })}
                     </div>
                  </CardContent>
               </Card>
@@ -400,18 +477,34 @@ ${itemsList}
                       </div>
                   </div> */}
                   
-                  {/* Option 2: Use Add to Cart button */}
-                   <Button 
-                     onClick={handleAddToCart} 
-                     size="lg" 
-                     className={`w-full bg-pati-accent hover:bg-pati-accent/90 text-white py-3 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pati-accent ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                     disabled={!isOrderComplete} 
-                     aria-disabled={!isOrderComplete}
-                   > 
-                     <ShoppingCart className="mr-2 h-5 w-5" /> 
-                     {isOrderComplete ? `Añadir Pack ${selectedPackSize} al Pedido` : `Completa tu Pack ${selectedPackSize}`}
-                   </Button>
-                   
+                   {/* == Contenedor para los dos botones (Flexbox) == */}
+                   <div className="flex flex-col sm:flex-row gap-3 mt-4"> {/* Stack vertically on small, row on sm+, add gap */} 
+                     {/* == Botón Añadir al Carrito (Restaurado) == */} 
+                     <Button
+                         onClick={handleAddToCart}
+                         size="lg"
+                         className={`flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                         disabled={!isOrderComplete}
+                         aria-disabled={!isOrderComplete}
+                     >
+                         <ShoppingCart className="mr-2 h-5 w-5" />
+                         {isOrderComplete ? `Añadir Pack ${selectedPackSize} al Carrito` : `Completa tu Pack ${selectedPackSize}`}
+                     </Button>
+                     {/* ===================================== */}
+
+                     {/* Botón Pedir Solo Este Pack (Ahora único botón) */}
+                     <Button 
+                       onClick={handleOrderThisItemOnly}
+                       variant="outline"
+                       size="lg"
+                       className={`w-full border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                       disabled={!isOrderComplete} 
+                       aria-disabled={!isOrderComplete}
+                     > 
+                       <FaWhatsapp className="mr-2 h-5 w-5" /> 
+                       {isOrderComplete ? `Pedir Solo Este Pack` : `Completa tu Pack ${selectedPackSize}`}
+                     </Button>
+                   </div>
                 </CardContent>
               </Card>
                   </div>
@@ -509,6 +602,27 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
         // setCheckedFlavors([]);
     };
 
+    // Function to generate WhatsApp link for ONLY the current configuration
+    const handleOrderThisItemOnly = () => {
+        if (!isOrderComplete || !selectedPackOption) return;
+
+        const tempId = `${product.id}-${selectedPackOption.name.replace(/\s+/g, '-')}-whatsapp`;
+        const singleCartItem: CartItem = {
+            id: tempId,
+            productId: product.id,
+            productName: product.name,
+            quantity: 1,
+            packPrice: finalPackPrice,
+            imageUrl: product.image,
+            type: 'flavorPack',
+            selectedOptions: { pack: selectedPackOption.name },
+            selectedFlavors: checkedFlavors,
+        };
+
+        const whatsappUrl = getWhatsAppUrl([singleCartItem]);
+        window.open(whatsappUrl, '_blank');
+    };
+
     return (
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
              {/* Columna Izquierda: Selección Pack y Sabores */}
@@ -531,14 +645,14 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                                 const isSelected = selectedPackOption?.name === pack.name;
                                 return (
                                     <Label key={pack.name} htmlFor={pack.name} className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${selectedPackOption && !isSelected ? 'opacity-70' : ''}`}>
-                                        <RadioGroupItem value={pack.name} id={pack.name} className="sr-only" />
-                                        {isSelected && <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />} 
-                                        <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">{pack.name}</span>
-                                        <span className="text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center">Elige {pack.name.includes('25') ? '2' : '4'} sabores</span>
-                                        <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price}</span>
-                                    </Label>
-                                );
-                            })}
+                                            <RadioGroupItem value={pack.name} id={pack.name} className="sr-only" />
+                                            {isSelected && <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />} 
+                                            <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">{pack.name}</span>
+                                            <span className="text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center">Elige {pack.name.includes('25') ? '2' : '4'} sabores</span>
+                                            <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price}</span>
+                                        </Label>
+                                    );
+                                })}
                         </RadioGroup>
                     </CardContent>
                 </Card>
@@ -605,15 +719,31 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                                  </div>
                             )}
                             
-                            <Button 
-                                onClick={handleAddToCart}
-                                size="lg" 
-                                className={`w-full bg-pati-accent hover:bg-pati-accent/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                disabled={!isOrderComplete} 
-                            > 
-                                <ShoppingCart className="mr-2 h-5 w-5" /> 
-                                {isOrderComplete ? `Añadir Caja al Pedido` : `Elige ${maxFlavors} sabores`}
-                            </Button>
+                            {/* Contenedor para los dos botones */} 
+                            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                                 {/* Botón Añadir Selección al Carrito (Restaurado) */} 
+                                 <Button 
+                                     onClick={handleAddToCart}
+                                     size="lg" 
+                                     className={`flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                     disabled={!isOrderComplete} 
+                                 > 
+                                     <ShoppingCart className="mr-2 h-5 w-5" /> 
+                                     {isOrderComplete ? `Añadir Caja al Carrito` : `Elige ${maxFlavors} sabores`}
+                                 </Button>
+
+                                  {/* Botón Pedir Solo Esta Caja (WhatsApp) */} 
+                                  <Button 
+                                    onClick={handleOrderThisItemOnly}
+                                    variant="outline"
+                                    size="lg" 
+                                    className={`flex-1 border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    disabled={!isOrderComplete} 
+                                  > 
+                                    <FaWhatsapp className="mr-2 h-5 w-5" /> 
+                                    {isOrderComplete ? `Pedir Solo Esta Caja` : `Elige ${maxFlavors} sabores`}
+                                  </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
@@ -644,9 +774,21 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
         });
     };
 
+    const handleOrderThisItemOnly = () => {
+        const itemsToOrder = createFlavorQuantityWhatsAppItems(product, quantities);
+        if (itemsToOrder.length === 0) {
+            alert("No has seleccionado ninguna Mini-Tarta para pedir.");
+            return;
+        }
+        const whatsappUrl = getWhatsAppUrl(itemsToOrder);
+        window.open(whatsappUrl, '_blank');
+    };
+
+    const totalSelectedCount = Object.values(quantities).reduce((s, q) => s + q, 0);
+
+    // Función handleAddToCart (Restaurada y adaptada)
     const handleAddToCart = () => {
         let itemsAddedCount = 0;
-        // Iterar sobre las cantidades seleccionadas
         Object.entries(quantities).forEach(([flavor, quantity]) => {
             if (quantity > 0 && unitPrice > 0) {
                 const cartItemId = `${product.id}-${flavor.replace(/\s+/g, '-')}`;
@@ -656,7 +798,7 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
                     productName: product.name,
                     quantity: quantity,
                     unitPrice: unitPrice,
-                    imageUrl: product.image, // Usar imagen principal
+                    imageUrl: product.image,
                     type: 'flavorQuantity',
                     selectedOptions: { flavor: flavor },
                 };
@@ -666,13 +808,11 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
         });
 
         if (itemsAddedCount > 0) {
-           alert(`${itemsAddedCount} tipo(s) de ${product.name} añadidos/actualizados en el pedido!`);
-           // Reset quantities after adding?
-           // setQuantities({});
+            alert(`${itemsAddedCount} tipo(s) de ${product.name} añadidos/actualizados al carrito!`); // Mensaje Carrito
+            // setQuantities({}); // Opcional resetear
         } else {
-             alert(`No has seleccionado ninguna ${product.name} para añadir.`);
-             return;
-         }
+            alert(`No has seleccionado ninguna ${product.name} para añadir al carrito.`);
+        }
     };
 
     return (
@@ -732,21 +872,56 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
                     </CardContent>
                 </Card>
 
-                {/* Botón Añadir Todo lo Seleccionado */} 
-                {/* Calcular total seleccionado para el botón? */}
-                {/* const totalSelectedCount = Object.values(quantities).reduce((s, q) => s + q, 0); */}
-                <Button 
-                    onClick={handleAddToCart}
-                    size="lg" 
-                    className={`w-full bg-pati-accent hover:bg-pati-accent/90 text-white py-3`}
-                    // disabled={totalSelectedCount === 0} // Opcional: deshabilitar si no hay nada
-                > 
-                    <ShoppingCart className="mr-2 h-5 w-5" /> 
-                    Añadir Selección al Pedido
-                </Button>
+                {/* Contenedor para los dos botones */} 
+                <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                     {/* Botón Añadir Selección al Carrito (Restaurado) */} 
+                    <Button 
+                        onClick={handleAddToCart}
+                        size="lg" 
+                        className={`flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${totalSelectedCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={totalSelectedCount === 0} 
+                    > 
+                        <ShoppingCart className="mr-2 h-5 w-5" /> 
+                        {totalSelectedCount > 0 ? `Añadir ${totalSelectedCount} al Carrito` : 'Elige Sabores/Cantidad'}
+                    </Button>
+
+                    {/* Botón Pedir Solo Esta Selección (WhatsApp) */}
+                    <Button 
+                      onClick={handleOrderThisItemOnly} 
+                      variant="outline" 
+                      size="lg" 
+                      className={`flex-1 border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 ${totalSelectedCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      disabled={totalSelectedCount === 0} 
+                    >
+                       <FaWhatsapp className="mr-2 h-5 w-5" /> 
+                       {totalSelectedCount > 0 ? `Pedir ${totalSelectedCount} Mini-Tarta(s)` : 'Elige Sabores/Cantidad'}
+                    </Button>
+                </div>
             </div>
         </div>
     );
+};
+
+// Helper function to create CartItem array for single flavorQuantity item order
+const createFlavorQuantityWhatsAppItems = (product: ProductType, quantities: Record<string, number>): CartItem[] => {
+    const items: CartItem[] = [];
+    const unitPrice = product.unitPrice || 0;
+    Object.entries(quantities).forEach(([flavor, quantity]) => {
+        if (quantity > 0 && unitPrice > 0) {
+            const tempId = `${product.id}-${flavor.replace(/\s+/g, '-')}-whatsapp`;
+            items.push({
+                id: tempId,
+                productId: product.id,
+                productName: product.name,
+                quantity: quantity,
+                unitPrice: unitPrice,
+                imageUrl: product.image,
+                type: 'flavorQuantity',
+                selectedOptions: { flavor: flavor },
+            });
+        }
+    });
+    return items;
 };
 
 // --- NUEVO COMPONENTE para productos simples que se añaden directamente ---
@@ -783,6 +958,31 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
         alert(`${product.name} añadido al pedido!`);
     };
 
+    // Function to generate WhatsApp link for ONLY the current configuration
+    const handleOrderThisItemOnly = () => {
+        // Extraer precio unitario
+        const unitPrice = parseFloat(product.price.replace('€', '').replace(',', '.'));
+        if (isNaN(unitPrice)) {
+            alert("Error al generar el pedido, precio no válido.");
+            return;
+        }
+
+        const tempId = `${product.id}-whatsapp`; 
+        const singleCartItem: CartItem = {
+            id: tempId,
+            productId: product.id,
+            productName: product.name,
+            quantity: 1, 
+            unitPrice: unitPrice,
+            imageUrl: product.image,
+            type: 'flavorOnly',
+            selectedOptions: { flavor: product.name } 
+        };
+
+        const whatsappUrl = getWhatsAppUrl([singleCartItem]);
+        window.open(whatsappUrl, '_blank');
+    };
+
     return (
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Columna Izquierda: Imagen */}
@@ -804,10 +1004,21 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
                  <Button 
                     onClick={handleAddToCart}
                     size="lg" 
-                    className={`w-full bg-pati-accent hover:bg-pati-accent/90 text-white py-3`}
+                    className={`w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3`}
                  > 
                     <ShoppingCart className="mr-2 h-5 w-5" /> 
-                    Añadir al Pedido
+                    Añadir al Carrito
+                 </Button>
+
+                 {/* Added Button: Order This Item Only via WhatsApp */}
+                 <Button 
+                   onClick={handleOrderThisItemOnly}
+                   variant="outline"
+                   size="lg" 
+                   className={`w-full border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 mt-3`}
+                 > 
+                   <FaWhatsapp className="mr-2 h-5 w-5" /> 
+                   Pedir Solo Esta Tarta
                  </Button>
             </div>
         </div>
