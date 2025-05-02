@@ -113,7 +113,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     // State for selected items (flavors or cookies)
     const [selectedItems, setSelectedItems] = useState<Record<string, number>>({}); // Renamed 
     const [selectedPackSize, setSelectedPackSize] = useState<number | null>(null); 
-    const { dispatch } = useCart(); // Added useCart hook
+    const { dispatch, getTotalItems } = useCart(); // Added useCart hook
     const phoneNumber = "+34671266981"; 
   
     const [isSummaryVisible, setIsSummaryVisible] = useState(false);
@@ -467,21 +467,40 @@ ${itemsList}
         {/* Sticky Footer Bar - Ahora visible siempre que haya pack seleccionado y en todas las pantallas */} 
         {selectedPackSize && (
             <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm px-4 py-3 border-t border-gray-200 shadow-lg flex items-center justify-between gap-3 min-h-[70px]">
-                <div className="flex flex-col text-sm flex-shrink">
-                    <span className="font-semibold text-pati-dark-brown whitespace-nowrap">Pack {selectedPackSize} ({currentCount}/{selectedPackSize})</span>
-                    <span className="font-bold text-lg text-pati-burgundy">{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
-                </div>
-                <Button 
-                    onClick={handleAddToCart} // Llama directamente a añadir al carrito
-                    className={`whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`} 
-                    size="sm"
-                    disabled={!isOrderComplete}
-                >
-                    {isOrderComplete ? <ShoppingCart className="mr-2 h-4 w-4"/> : <Info className="mr-2 h-4 w-4" />} 
-                    {isOrderComplete ? "Añadir Pack al Carrito" : `Completa (${currentCount}/${selectedPackSize})`}
-                </Button>
-              </div>
-            )}
+                 {/* Info del Pack Actual */}
+                 <div className="flex flex-col text-sm flex-shrink mr-2">
+                     <span className="font-semibold text-pati-dark-brown whitespace-nowrap">Pack {selectedPackSize} ({currentCount}/{selectedPackSize})</span>
+                     <span className="font-bold text-lg text-pati-burgundy">{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
+                 </div>
+                 
+                 {/* Grupo de Botones */}
+                 <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* Botón Ver Pedido Global (NUEVO) */}
+                    <Button 
+                        asChild 
+                        variant="outline" 
+                        size="sm" 
+                        className="whitespace-nowrap border-pati-accent text-pati-accent hover:bg-pati-accent/10 focus-visible:ring-pati-accent"
+                    >
+                       <Link to="/pedido">
+                            <ShoppingCart className="mr-1.5 h-4 w-4"/>
+                            Ver Pedido ({getTotalItems()})
+                       </Link>
+                    </Button>
+
+                    {/* Botón Añadir Pack al Carrito */}
+                    <Button 
+                        onClick={handleAddToCart} // Llama directamente a añadir al carrito
+                        className={`whitespace-nowrap focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white focus-visible:ring-pati-burgundy' : 'bg-gray-400 text-gray-700 cursor-not-allowed focus-visible:ring-gray-500'}`} 
+                        size="sm"
+                        disabled={!isOrderComplete}
+                    >
+                        {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />} 
+                        {isOrderComplete ? "Añadir Pack" : `Completa`}
+                    </Button>
+                 </div>
+               </div>
+             )}
       </> 
     );
 };
@@ -549,10 +568,7 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
         };
 
         dispatch({ type: 'ADD_ITEM', payload: cartItem });
-        alert(`Caja de ${selectedPackOption.name} añadida al pedido!`);
-        // Reset state?
-        // setSelectedPackOption(null);
-        // setCheckedFlavors([]);
+        // alert(`Caja de ${selectedPackOption.name} añadida al pedido!`); // ELIMINAR ALERT
     };
 
     return (
@@ -745,10 +761,10 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
         });
 
         if (itemsAddedCount > 0) {
-            alert(`${itemsAddedCount} tipo(s) de ${product.name} añadidos/actualizados al carrito!`); // Mensaje Carrito
-            // setQuantities({}); // Opcional resetear
+            // alert(`${itemsAddedCount} tipo(s) de ${product.name} añadidos/actualizados al carrito!`); // ELIMINAR ALERT
         } else {
-            alert(`No has seleccionado ninguna ${product.name} para añadir al carrito.`);
+            // alert(`No has seleccionado ninguna ${product.name} para añadir al carrito.`); // ELIMINAR ALERT (opcional, quizás mantener feedback si no se añade nada?)
+             // --> Mejor quitarlo también para consistencia
         }
     };
 
@@ -883,7 +899,7 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
         };
 
         dispatch({ type: 'ADD_ITEM', payload: cartItem });
-        alert(`${product.name} añadido al pedido!`);
+        // alert(`${product.name} añadido al pedido!`); // ELIMINAR ALERT
     };
 
     return (
