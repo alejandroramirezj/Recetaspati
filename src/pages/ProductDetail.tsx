@@ -4,15 +4,17 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Cookie, ArrowLeft, PlusCircle, MinusCircle, Info, CheckCircle2 } from 'lucide-react';
+import { Cookie, ArrowLeft, PlusCircle, MinusCircle, Info, CheckCircle2, Box } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
-import { productsData, Product as ProductType } from '@/data/products';
+import { productsData, Product as ProductType, Option } from '@/data/products';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useInView } from 'react-intersection-observer';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useCart } from '../context/CartContext';
+import { CartItem } from '../types/cart';
 
 // Define a more specific type for the details object
 interface ProductDetailsDisplay {
@@ -33,12 +35,78 @@ interface CookieConfiguratorProps {
     id: string;       // Add id prop
 }
 
+// Sub-component for Fixed Pack Selection (e.g., Palmeritas)
+interface FixedPackSelectorProps {
+    product: ProductType;
+}
+const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
+    const { dispatch } = useCart();
+
+    const handleAddPack = (packOption: Option) => {
+        // Assuming Option has name and price
+        const price = parseFloat(packOption.price.replace('€', '').replace(',', '.'));
+        const cartItem: CartItem = {
+            // Generate a unique ID based on product and pack name
+            id: `${product.id}-${packOption.name.replace(/\s+/g, '-')}`,
+            productId: product.id,
+            productName: product.name,
+            quantity: 1, // Add one pack at a time
+            packPrice: price,
+            imageUrl: product.image,
+            type: 'fixedPack',
+            selectedOptions: { pack: packOption.name },
+        };
+        dispatch({ type: 'ADD_ITEM', payload: cartItem });
+        // Optionally show a toast notification
+        alert(`${packOption.name} añadido al pedido!`); 
+    };
+
+    return (
+        <div className="space-y-6">
+            <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
+            <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
+            <Card className="border-pati-pink/30 shadow-md">
+                <CardHeader>
+                    <CardTitle className="text-xl text-pati-burgundy">Elige tu Caja</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {product.options?.map((option) => (
+                        <div key={option.name} className="flex items-center justify-between gap-4 border-b pb-3 last:border-b-0">
+                            <div className="flex items-center gap-3">
+                                <Box className="h-6 w-6 text-pati-brown flex-shrink-0" />
+                                <div>
+                                    <p className="font-medium text-pati-burgundy">{option.name}</p>
+                                    {option.description && <p className="text-sm text-pati-brown mt-1">{option.description}</p>}
+                                </div>
+                            </div>
+                            <div className="text-right flex flex-col items-end gap-2">
+                                <p className="text-xl font-bold text-pati-burgundy whitespace-nowrap">{option.price}</p>
+                                <Button size="sm" onClick={() => handleAddPack(option)}>
+                                    Añadir al Pedido
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+                </CardContent>
+            </Card>
+            {/* Add image display if desired */} 
+             <Card className="overflow-hidden border-pati-pink/30 shadow-md">
+                 <CardContent className="p-0">
+                     <div className="aspect-square">
+                         <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                     </div>
+                 </CardContent>
+             </Card>
+        </div>
+    );
+};
+
 // Inner Component handling configuration logic and UI - Accept props
 const CookieConfigurator: React.FC<CookieConfiguratorProps> = ({ product, category, id }) => {
     // All state and logic related to configuration goes here
     const [selectedCookies, setSelectedCookies] = useState<Record<string, number>>({}); 
     const [selectedPackSize, setSelectedPackSize] = useState<number | null>(null); 
-    const phoneNumber = "+34644180213"; 
+    const phoneNumber = "+34671266981"; 
   
     const [isSummaryVisible, setIsSummaryVisible] = useState(false);
     const { ref: summaryRef, inView } = useInView({ threshold: 0.5 });
@@ -177,57 +245,65 @@ ${selectedItems}
               </CardContent>
             </Card>
 
-            {/* Step 2: Select Cookies - Enhanced Counter Animation */} 
-            {selectedPackSize && (
-              <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}> 
-                 <CardHeader className="pb-4">
-                    <CardTitle className="text-xl text-pati-burgundy">2. Elige tus Sabores</CardTitle>
-                    <CardDescription>Selecciona {selectedPackSize} galleta{selectedPackSize !== 1 ? 's' : ''}. Total: {currentCount} / {selectedPackSize}</CardDescription>
-                    {!canAddMoreCookies && currentCount === selectedPackSize && (
-                         <div className="text-sm pt-2 text-green-600 font-semibold flex items-center gap-1">
-                             <CheckCircle2 className="h-4 w-4"/> ¡Caja Completa!
-                         </div>
-                    )}
-                 </CardHeader>
-                 <CardContent>
-                    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 ${!canAddMoreCookies ? 'opacity-75' : ''}`}> 
-                      {product.individualCookies?.map((cookie, index) => { // Use product prop here
-                        const count = selectedCookies[cookie.name] || 0;
-                        const isSelected = count > 0;
-                        const isAtLimit = !canAddMoreCookies;
-                        
-                        return (
-                          <div key={index} className="p-1 h-full">
-                            <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${isAtLimit && !isSelected ? 'opacity-50' : ''}`}>
-                              {/* Clickable Area */} 
-                              <div className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreCookies ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => canAddMoreCookies && incrementCookie(cookie.name)} aria-label={!canAddMoreCookies ? `Límite de ${selectedPackSize} galletas alcanzado` : `Añadir una galleta ${cookie.name}`} role="button" tabIndex={!canAddMoreCookies ? -1 : 0}>
-                                 {/* Image */} 
-                                 <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full">
-                                     <img src={cookie.image} alt={cookie.name} className="w-full h-full object-contain pointer-events-none" />
-                                 </div>
-                                 {/* Name */} 
-                                 <h4 className="text-sm font-medium text-pati-burgundy px-1">{cookie.name}</h4>
-                              </div>
-                              {/* +/- Controls Area - Enhanced Badge Animation */}
-                              <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
-                                  <Button variant="ghost" size="icon" className={`... ${count === 0 ? '...' : ''}`} onClick={() => decrementCookie(cookie.name)} disabled={count === 0}> <MinusCircle className="h-5 w-5" /> </Button>
-                                  <Badge 
-                                    variant={isSelected ? "default" : "outline"} 
-                                    className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-125' : 'text-gray-400 border-gray-300 scale-100'}`}
-                                   >
-                                     {count}
-                                  </Badge>
-                                  <Button variant="ghost" size="icon" className={`... ${!canAddMoreCookies ? '...' : ''}`} onClick={() => canAddMoreCookies && incrementCookie(cookie.name)} disabled={!canAddMoreCookies}> <PlusCircle className="h-5 w-5" /> </Button>
-                              </div>
-                            </Card>
+            {/* Step 2: Select Cookies - REMOVED conditional rendering based on selectedPackSize */}
+             {/* Make card slightly less prominent if no pack selected */} 
+             <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-70'}`}> 
+                <CardHeader className="pb-4">
+                   <CardTitle className="text-xl text-pati-burgundy">2. Elige tus Sabores</CardTitle>
+                   {/* Show description only if pack is selected */} 
+                   {selectedPackSize ? (
+                     <CardDescription>Selecciona {selectedPackSize} galleta{selectedPackSize !== 1 ? 's' : ''}. Total: {currentCount} / {selectedPackSize}</CardDescription>
+                   ) : (
+                     <CardDescription>Selecciona primero un tamaño de pack para poder añadir galletas.</CardDescription>
+                   )}
+                     {!canAddMoreCookies && currentCount === selectedPackSize && (
+                          <div className="text-sm pt-2 text-green-600 font-semibold flex items-center gap-1">
+                              <CheckCircle2 className="h-4 w-4"/> ¡Caja Completa!
+                          </div>
+                     )}
+                  </CardHeader>
+                  <CardContent>
+                     {/* Disable grid interaction slightly if no pack selected */} 
+                    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 ${!selectedPackSize ? 'opacity-80 cursor-not-allowed' : (!canAddMoreCookies ? 'opacity-75' : '')}`}> 
+                       {product.individualCookies?.map((cookie, index) => { // Use product prop here
+                         const count = selectedCookies[cookie.name] || 0;
+                         const isSelected = count > 0;
+                         const isAtLimit = !canAddMoreCookies;
+                         
+                         return (
+                           <div key={index} className="p-1 h-full">
+                             {/* Add pointer-events-none if no pack selected */} 
+                             <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${isAtLimit && !isSelected ? 'opacity-50' : ''} ${!selectedPackSize ? 'pointer-events-none' : ''}`}> 
+                               {/* Clickable Area */} 
+                               {/* Adjust aria-label and tabIndex if no pack selected */} 
+                               <div className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreCookies || !selectedPackSize ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => canAddMoreCookies && incrementCookie(cookie.name)} aria-label={!selectedPackSize ? 'Selecciona un pack primero' : (!canAddMoreCookies ? `Límite de ${selectedPackSize} galletas alcanzado` : `Añadir una galleta ${cookie.name}`)} role="button" tabIndex={!selectedPackSize || !canAddMoreCookies ? -1 : 0}> 
+                                   {/* Image */} 
+                                   <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full">
+                                       <img src={cookie.image} alt={cookie.name} className="w-full h-full object-contain pointer-events-none" />
+                                   </div>
+                                   {/* Name */} 
+                                   <h4 className="text-sm font-medium text-pati-burgundy px-1">{cookie.name}</h4>
+                                </div>
+                                {/* +/- Controls Area - Enhanced Badge Animation */} 
+                                {/* Ensure buttons are disabled if no pack selected */}
+                                <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
+                                    <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => decrementCookie(cookie.name)} disabled={count === 0}> <MinusCircle className="h-5 w-5" /> </Button>
+                                    <Badge 
+                                      variant={isSelected ? "default" : "outline"} 
+                                      className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-125' : 'text-gray-400 border-gray-300 scale-100'}`}
+                                     >
+                                       {count}
+                                    </Badge>
+                                    <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${!canAddMoreCookies ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => canAddMoreCookies && incrementCookie(cookie.name)} disabled={!canAddMoreCookies}> <PlusCircle className="h-5 w-5" /> </Button>
+                                </div>
+                              </Card>
+                        </div>
+                          );
+                        })}
                       </div>
-                        );
-                      })}
-                    </div>
-                 </CardContent>
-              </Card>
-            )} 
-          </div>
+                   </CardContent>
+                </Card>
+              </div>
 
           {/* Right Column: Virtual Box & Pricing (Simplified) */} 
           {selectedPackSize && (
@@ -323,17 +399,41 @@ const ProductDetail = () => {
     return foundProduct || null;
   }, [category, id]);
 
-  // Early return if product not found or not a cookie product (for this specific UI)
-  if (!product || product.category !== 'galletas' || !id || !category) {
-    // TODO: Maybe show a different view for non-cookie products later?
-    // For now, treat as not found or redirect?
-    // Let's show the 'Not Found' for simplicity.
+  // Select which configurator to render based on product.configType
+  const renderConfigurator = () => {
+      if (!product) return null;
+
+      switch (product.configType) {
+          case 'cookiePack':
+              // Need to pass category and id if CookieConfigurator expects them
+              return <CookieConfigurator product={product} category={category || ''} id={id || ''} />;
+          case 'fixedPack':
+              return <FixedPackSelector product={product} />;
+          // Add cases for 'flavorQuantity' and 'flavorOnly' later
+          // case 'flavorQuantity':
+          //     return <IndividualFlavorSelector product={product} />;
+          // case 'flavorOnly':
+          //     return <FlavorOptionSelector product={product} />;
+          default:
+              // Simple product view or fallback
+              console.warn("Configurador no implementado para tipo:", product.configType);
+              // Render a simple display for now?
+              return (
+                <div className="text-center text-pati-brown">Configuración no disponible para este producto.</div>
+              );
+      }
+  };
+
+  // Loading / Not Found Logic
+  if (!product) {
+    // Check if ID is valid before showing not found? 
+    // Maybe add a loading state later?
     return (
        <div className="min-h-screen flex flex-col">
           <Navbar />
            <main className="flex-grow container mx-auto px-4 py-16 text-center">
                 <h1 className="text-2xl font-bold text-pati-burgundy mb-4">Oops! Producto no encontrado</h1>
-                <p className="text-pati-brown mb-6">No pudimos encontrar la configuración de galletas.</p>
+                <p className="text-pati-brown mb-6">No pudimos encontrar el producto que buscas.</p>
                 <Button asChild>
                    <Link to="/">Volver al inicio</Link>
             </Button>
@@ -343,7 +443,7 @@ const ProductDetail = () => {
     );
   }
 
-  // Render the configurator only when we have a valid cookie product
+  // Render the correct configurator
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-pati-cream">
       <Navbar />
@@ -355,7 +455,8 @@ const ProductDetail = () => {
            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
            Volver al catálogo
          </Link>
-        <CookieConfigurator product={product} category={category} id={id} />
+         {/* Render the selected configurator */} 
+         {renderConfigurator()} 
       </main>
       <Footer />
     </div>
