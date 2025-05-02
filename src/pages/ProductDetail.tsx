@@ -425,7 +425,7 @@ ${itemsList}
                                     </Button>
                                 </div>
                               </Card>
-                       </div>
+                      </div>
                          );
                        })}
                     </div>
@@ -538,7 +538,10 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
     // Determinar max sabores basado en el pack
     const maxFlavors = useMemo(() => {
         if (!selectedPackOption) return 0;
-        return selectedPackOption.name.includes('25') ? 2 : (selectedPackOption.name.includes('50') ? 4 : 0);
+        // Asumiendo que el nombre contiene el número, o ajustar lógica si es diferente
+        if (selectedPackOption.name.includes('50')) return 4; 
+        if (selectedPackOption.name.includes('25')) return 2;
+        return 0; // O un default si no encuentra número
     }, [selectedPackOption]);
 
     const handlePackSelect = (value: string) => {
@@ -554,9 +557,8 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                 if (prev.length < maxFlavors) {
                     return [...prev, flavor];
                 } else {
-                    // Optional: show a message or prevent checking visually
-                    console.warn(`Ya has seleccionado el máximo de ${maxFlavors} sabores.`);
-                    return prev; // Do not add if max reached
+                    console.warn(`Máximo de ${maxFlavors} sabores alcanzado.`);
+                    return prev; // No añadir si se alcanzó el máximo
                 }
             } else {
                 // Remove flavor
@@ -565,10 +567,14 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
         });
     };
 
-    const isOrderComplete = selectedPackOption && checkedFlavors.length === maxFlavors;
+    // -- Condición de completado MODIFICADA --
+    // Ahora es completo si hay pack y al menos 1 sabor seleccionado.
+    const isOrderComplete = selectedPackOption !== null && checkedFlavors.length >= 1;
+    
     const finalPackPrice = selectedPackOption ? parseFloat(selectedPackOption.price.replace('€', '').replace(',', '.')) : 0;
 
     const handleAddToCart = () => {
+        // La guarda sigue siendo válida: necesita estar completo y tener pack
         if (!isOrderComplete || !selectedPackOption) return;
 
         const cartItemId = `${product.id}-${selectedPackOption.name.replace(/\s+/g, '-')}`;
@@ -580,12 +586,11 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
             packPrice: finalPackPrice,
             imageUrl: product.image,
             type: 'flavorPack',
-            selectedOptions: { pack: selectedPackOption.name }, // Store pack name
-            selectedFlavors: checkedFlavors, // Store selected flavors list
+            selectedOptions: { pack: selectedPackOption.name },
+            selectedFlavors: checkedFlavors,
         };
 
         dispatch({ type: 'ADD_ITEM', payload: cartItem });
-        // alert(`Caja de ${selectedPackOption.name} añadida al pedido!`); // ELIMINAR ALERT
     };
 
     return (
@@ -626,13 +631,14 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                  {selectedPackOption && (
                     <Card className="border-pati-pink/30 shadow-md">
                          <CardHeader>
-                            <CardTitle className="text-xl text-pati-burgundy">2. Elige tus {maxFlavors > 0 ? maxFlavors : ''} Sabores</CardTitle>
-                            {/* Mostrar descripción solo si maxFlavors > 0 */}
+                             {/* Ajustar título si maxFlavors es 0? */}
+                            <CardTitle className="text-xl text-pati-burgundy">2. Elige {maxFlavors > 0 ? `hasta ${maxFlavors}` : ''} Sabores</CardTitle> 
                             {maxFlavors > 0 && (
                                 <CardDescription>
-                                    Has elegido: {checkedFlavors.length} de {maxFlavors}
-                                    {isOrderComplete && (
-                                        <span className="text-green-600 font-semibold ml-2">¡Completo!</span>
+                                    {/* Modificar texto */} 
+                                    Seleccionados: {checkedFlavors.length} (Máximo: {maxFlavors})
+                                    {checkedFlavors.length > 0 && (
+                                        <span className="text-green-600 font-semibold ml-2">¡Listo para añadir!</span>
                                     )}
                                 </CardDescription>
                             )}
@@ -663,7 +669,6 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
 
              {/* Columna Derecha: Resumen e Imagen */}
              <div className="sticky top-24 space-y-6">
-                {/* Card Resumen - Botones ya tienen texto */} 
                 {selectedPackOption && (
                     <Card className="border-pati-pink/30 shadow-lg">
                         <CardHeader className="pb-2">
@@ -672,7 +677,8 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                         <CardContent className="space-y-4 pt-2">
                             <div className="flex justify-between items-center font-medium border-b pb-3 border-pati-pink/20">
                                 <span>Sabores Seleccionados:</span>
-                                <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>{checkedFlavors.length} / {maxFlavors}</Badge>
+                                {/* Mostrar número seleccionado */} 
+                                <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>{checkedFlavors.length}</Badge>
                             </div>
                             <div className="flex justify-between items-center text-2xl font-bold text-pati-burgundy">
                                 <span>Precio Total Pack:</span>
@@ -688,9 +694,9 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                                  </div>
                             )}
                             
-                            {/* Contenedor para los dos botones */} 
+                            {/* Contenedor para el botón (ya no son dos) */} 
                             <div className="flex flex-col sm:flex-row gap-3 mt-4">
-                                 {/* Botón Añadir Selección al Carrito (Ahora ocupa todo el ancho) */} 
+                                 {/* Botón Añadir: Habilitado si isOrderComplete (pack + >=1 sabor) */} 
                                  <Button 
                                      onClick={handleAddToCart}
                                      size="lg" 
@@ -698,7 +704,8 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                                      disabled={!isOrderComplete} 
                                  > 
                                      <ShoppingCart className="mr-2 h-5 w-5" /> 
-                                     {isOrderComplete ? `Añadir Caja al Carrito` : `Elige ${maxFlavors} sabores`}
+                                     {/* Modificar texto botón */} 
+                                     {isOrderComplete ? `Añadir Caja al Carrito` : `Elige al menos 1 sabor`}
                                  </Button>
                             </div>
                         </CardContent>
@@ -839,7 +846,7 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
                                             <PlusCircle className="h-4 w-4" /> 
                                         </Button>
                                     </div>
-                                </div>
+                </div>
                             );
                         })}
                     </CardContent>
@@ -858,7 +865,7 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
                         {totalSelectedCount > 0 ? `Añadir ${totalSelectedCount} al Carrito` : 'Elige Sabores/Cantidad'}
                     </Button>
                 </div>
-            </div>
+              </div>
         </div>
     );
 };
@@ -949,8 +956,8 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
                  > 
                     <ShoppingCart className="mr-2 h-5 w-5" /> 
                     Añadir al Carrito
-                 </Button>
-            </div>
+            </Button>
+          </div>
         </div>
     );
 };
