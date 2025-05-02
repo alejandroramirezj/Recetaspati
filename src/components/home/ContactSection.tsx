@@ -11,10 +11,10 @@ const ContactSection = () => {
     <section id="contacto" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-4">Ponte en contacto con nosotros</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-4">Ponte en contacto con nosotros</h2>
           <p className="text-pati-brown mb-10">
-            ¿Quieres hacer un pedido o tienes alguna pregunta? Estamos aquí para ayudarte.
-          </p>
+              ¿Quieres hacer un pedido o tienes alguna pregunta? Estamos aquí para ayudarte.
+            </p>
           
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6">
             

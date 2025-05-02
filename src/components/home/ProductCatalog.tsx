@@ -77,7 +77,7 @@ const ProductCatalog = () => {
             Todos nuestros productos están elaborados de forma artesanal con ingredientes de primera calidad.
           </p>
         </div>
-
+        
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Added overflow-x-auto and modified grid for better mobile tab view */}
           <div className="overflow-x-auto pb-2 mb-8">
@@ -87,7 +87,7 @@ const ProductCatalog = () => {
                 <TabsTrigger value="galletas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Galletas</TabsTrigger>
                 <TabsTrigger value="palmeritas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Palmeritas</TabsTrigger>
                 <TabsTrigger value="mini-tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Mini Tartas</TabsTrigger>
-             </TabsList>
+          </TabsList>
           </div>
           
           {/* Render TabsContent dynamically based on filteredCards */}
@@ -97,7 +97,7 @@ const ProductCatalog = () => {
                 {filteredCards.map(cardInfo => (
                   // Pass category card info to ProductCard
                   <ProductCard key={cardInfo.categoryName} product={cardInfo as CategoryInfo} /> 
-                ))}
+                  ))}
               </div>
             </TabsContent>
           </div>
@@ -126,7 +126,7 @@ const ProductCard = ({ product }: { product: CategoryInfo }) => {
   const cardContent = (
     <>
       {/* Removed conditional rendering for image: Show image for all */}
-      <div className="h-56 overflow-hidden"> 
+      <div className="h-56 overflow-hidden">
         <img 
           src={product.image} 
           alt={product.name} 
@@ -142,7 +142,7 @@ const ProductCard = ({ product }: { product: CategoryInfo }) => {
 
         <div className="font-bold text-xl text-pati-burgundy mb-4 mt-auto"> 
           {product.priceRange || product.price} 
-        </div>
+          </div>
         
         {/* Use Link component within Button for Tartas */}
         <Button 
