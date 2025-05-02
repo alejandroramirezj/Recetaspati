@@ -17,10 +17,10 @@ const Testimonials = () => {
           </p>
         </div>
         
-        {/* Main Testimonial Video - Replaced Carousel */}
-        <div className="mb-16 flex justify-center"> {/* Centering container */}
-          {/* Apply similar styling as reaction videos but potentially larger max-width */}
-          <div className="w-full max-w-md md:max-w-lg aspect-[9/16] bg-white rounded-lg shadow-xl overflow-hidden border-2 border-pati-pink/50">
+        {/* Main Testimonial Video - Adjusted size to match reaction videos */}
+        <div className="mb-16 flex justify-center">
+          {/* Changed max-width to match reaction videos (max-w-xs) */}
+          <div className="w-full max-w-xs aspect-[9/16] bg-white rounded-lg shadow-xl overflow-hidden border-2 border-pati-pink/50">
             <video 
               autoPlay
               loop
