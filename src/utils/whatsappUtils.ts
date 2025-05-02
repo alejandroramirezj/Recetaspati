@@ -35,6 +35,19 @@ export const generateUnifiedWhatsAppMessage = (items: CartItem[]): string => {
     } else if (item.type === 'flavorOnly' && item.selectedOptions?.flavor) {
       message += `   Opción: ${item.selectedOptions.flavor}
 `; // O 'Sabor' si aplica
+    } else if (item.type === 'flavorPack' && item.selectedOptions?.pack) {
+      // Mensaje específico para Palmeritas con selección de sabores
+      message += `   Caja: ${item.selectedOptions.pack}
+`;
+      if (item.selectedFlavors && item.selectedFlavors.length > 0) {
+        message += `   Sabores elegidos:
+`;
+        item.selectedFlavors.forEach(flavor => {
+            message += `     - ${flavor}\n`;
+        });
+      } else {
+        message += `   (Error: No se seleccionaron sabores)\n`;
+      }
     } else if (item.type === 'cookiePack' && item.cookieDetails) {
       message += `   Pack: ${item.cookieDetails.packSize} unidades
 `;

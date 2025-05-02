@@ -95,8 +95,19 @@ const MobileCartBar: React.FC = () => {
                                 <p className="font-semibold text-pati-burgundy leading-tight">{item.productName}</p>
                                 {/* Display options */} 
                                 {item.selectedOptions?.pack && <p className="text-xs text-gray-500">Pack: {item.selectedOptions.pack}</p>}
-                                {item.selectedOptions?.flavor && <p className="text-xs text-gray-500">Sabor: {item.selectedOptions.flavor}</p>}
-                                {item.cookieDetails && <p className="text-xs text-gray-500">Pack {item.cookieDetails.packSize} Galletas</p>}
+                                {item.type === 'flavorQuantity' && item.selectedOptions?.flavor && <p className="text-xs text-gray-500">Sabor: {item.selectedOptions.flavor}</p>} {/* Flavor for Mini-Tarta */}
+                                {item.type === 'flavorOnly' && item.selectedOptions?.flavor && <p className="text-xs text-gray-500">Opción: {item.selectedOptions.flavor}</p>} {/* Flavor for Tarta */}
+                                {/* Display selected flavors for Palmeritas */}
+                                {item.type === 'flavorPack' && item.selectedFlavors && (
+                                     <div className="text-xs text-gray-500">
+                                         Sabores: {item.selectedFlavors.join(', ')}
+                                     </div>
+                                )}
+                                {/* Display cookie details */}
+                                {item.type === 'cookiePack' && item.cookieDetails && (
+                                     <p className="text-xs text-gray-500">Pack {item.cookieDetails.packSize} Galletas</p>
+                                     /* Optionally list cookies here too if needed */
+                                )}
                                 {/* TODO: Show individual cookies if needed? */} 
                                 
                                 <p className="text-sm font-bold text-pati-accent">
