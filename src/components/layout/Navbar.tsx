@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { Menu, X, Instagram, Phone } from 'lucide-react';
+import { Menu, X, Instagram, Phone, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useCart } from '@/context/CartContext';
+import { Badge } from '@/components/ui/badge';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const instagramUrl = "https://instagram.com/recetaspati"; // Define URL once
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md shadow-sm">
@@ -39,6 +43,14 @@ const Navbar = () => {
           <a href="/Recetaspati/#contacto" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Contacto
           </a>
+          <Link to="/pedido" className="relative hidden lg:flex items-center justify-center p-2 rounded-full hover:bg-pati-cream transition-colors ml-4">
+             <ShoppingCart className="h-6 w-6 text-pati-brown" />
+             {totalItems > 0 && (
+                 <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 min-w-[1.25rem] p-0 flex items-center justify-center text-xs rounded-full">
+                     {totalItems}
+                 </Badge>
+             )}
+          </Link>
           {/* Wrap Button in an anchor tag for external link */}
           <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
             <Button className="bg-pati-burgundy hover:bg-pati-brown text-white ml-2 flex items-center gap-2">

@@ -34,10 +34,13 @@ const MobileCartBar: React.FC = () => {
   
   // Handler to update quantity (simplified: +1 / -1)
   const handleUpdateQuantity = (itemId: string, currentQuantity: number, change: number) => {
+      console.log('[MobileCartBar] handleUpdateQuantity called:', { itemId, currentQuantity, change });
       const newQuantity = currentQuantity + change;
       if (newQuantity <= 0) {
+          console.log('[MobileCartBar] Removing item due to quantity <= 0');
           handleRemoveItem(itemId);
       } else {
+          console.log('[MobileCartBar] Dispatching UPDATE_QUANTITY:', { id: itemId, quantity: newQuantity });
           dispatch({ type: 'UPDATE_QUANTITY', payload: { id: itemId, quantity: newQuantity } });
       }
   };
@@ -62,8 +65,8 @@ const MobileCartBar: React.FC = () => {
                  </span>
              </div>
           </div>
-          <Button size="sm" variant="outline" className="border-pati-accent text-pati-accent whitespace-nowrap flex-shrink-0">
-            Ver/Enviar Pedido
+          <Button size="sm" className="bg-pati-burgundy hover:bg-pati-burgundy/90 text-white whitespace-nowrap flex-shrink-0">
+             Ver/Enviar Pedido
           </Button>
         </div>
       </SheetTrigger>
