@@ -1,6 +1,6 @@
 import { CartItem } from '@/types/cart';
 
-const phoneNumber = "+34671266981"; // Asegúrate que este es el número correcto
+const phoneNumber = "+34671266981"; // Número actualizado
 
 // Helper para formatear el precio
 const formatPrice = (price: number | undefined): string => {

@@ -17,69 +17,89 @@ const generateCartItemId = (item: Omit<CartItem, 'id'>): string => {
   return id;
 };
 
+// Añadir nueva propiedad al tipo CartState
+export interface CartState {
+    items: CartItem[];
+    itemAddedTimestamp: number | null; // Timestamp de la última adición
+}
+
+// Añadir nueva acción al tipo CartAction
+export type CartAction =
+  | { type: 'ADD_ITEM'; payload: CartItem }
+  | { type: 'REMOVE_ITEM'; payload: { id: string } }
+  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
+  | { type: 'CLEAR_CART' }
+  | { type: 'RESET_TIMESTAMP' }; // Nueva acción
+
 // Reducer para manejar las acciones del carrito
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
       const newItem = action.payload;
-      // Generar ID basado en producto y opciones, si no viene ya con uno específico (ej cookie pack)
       const itemId = newItem.id || generateCartItemId(newItem);
       const existingItemIndex = state.items.findIndex(item => item.id === itemId);
+      let updatedItems;
 
       if (existingItemIndex > -1) {
-        // Actualizar cantidad si el item ya existe
-        const updatedItems = [...state.items];
+        updatedItems = [...state.items];
         const existingItem = updatedItems[existingItemIndex];
         updatedItems[existingItemIndex] = { 
             ...existingItem, 
             quantity: existingItem.quantity + newItem.quantity 
         };
-        return { ...state, items: updatedItems };
       } else {
-        // Añadir nuevo item con su ID único
-        return { ...state, items: [...state.items, { ...newItem, id: itemId }] };
+        updatedItems = [...state.items, { ...newItem, id: itemId }];
       }
+      // Devolver estado actualizado CON el nuevo timestamp
+      return { ...state, items: updatedItems, itemAddedTimestamp: Date.now() }; 
     }
     case 'REMOVE_ITEM': {
       return { 
         ...state, 
-        items: state.items.filter(item => item.id !== action.payload.id)
+        items: state.items.filter(item => item.id !== action.payload.id),
+        itemAddedTimestamp: null // Resetear timestamp
       };
     }
     case 'UPDATE_QUANTITY': {
+      const updatedItems = state.items.map(item =>
+        item.id === action.payload.id
+          ? { ...item, quantity: Math.max(0, action.payload.quantity) }
+          : item
+      ).filter(item => item.quantity > 0);
       return {
-        ...state,
-        items: state.items.map(item =>
-          item.id === action.payload.id
-            ? { ...item, quantity: Math.max(0, action.payload.quantity) } // Ensure quantity doesn't go below 0
-            : item
-        ).filter(item => item.quantity > 0) // Remove item if quantity becomes 0
+          ...state,
+          items: updatedItems,
+          itemAddedTimestamp: null // Resetear timestamp
       };
     }
     case 'CLEAR_CART':
-      return { ...state, items: [] };
+      return { ...state, items: [], itemAddedTimestamp: null }; // Resetear timestamp
+    case 'RESET_TIMESTAMP':
+      return { ...state, itemAddedTimestamp: null };
     default:
-      return state;
+      // Simplemente devolver el estado si la acción no es reconocida
+      return state; 
   }
 };
 
-// Estado inicial del carrito
+// Estado inicial del carrito (usando el tipo importado CartState)
 const initialState: CartState = {
   items: [],
+  itemAddedTimestamp: null, 
 };
 
-// Crear el contexto
+// Interfaz de Props del Contexto (usando tipos importados)
 interface CartContextProps {
   state: CartState;
   dispatch: Dispatch<CartAction>;
-  // Podríamos añadir helpers aquí, ej: getCartTotal, getItemCount
   getCartTotal: () => number;
   getTotalItems: () => number;
+  resetItemAddedTimestamp: () => void; // Añadir función para resetear
 }
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
 
-// Crear el Provider del contexto
+// Provider (sin cambios en la lógica principal, solo asegurar tipos)
 interface CartProviderProps {
   children: ReactNode;
 }
@@ -87,7 +107,6 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  // Helper functions
   const getCartTotal = (): number => {
     return state.items.reduce((total, item) => {
         const price = item.packPrice ?? item.unitPrice ?? 0;
@@ -96,18 +115,27 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const getTotalItems = (): number => {
-      // Suma las cantidades de todos los items
       return state.items.reduce((total, item) => total + item.quantity, 0);
   };
 
+  const resetItemAddedTimestamp = () => {
+    dispatch({ type: 'RESET_TIMESTAMP' });
+  };
+
   return (
-    <CartContext.Provider value={{ state, dispatch, getCartTotal, getTotalItems }}>
+    <CartContext.Provider value={{ 
+        state, 
+        dispatch, 
+        getCartTotal, 
+        getTotalItems, 
+        resetItemAddedTimestamp 
+    }}>
       {children}
     </CartContext.Provider>
   );
 };
 
-// Hook personalizado para usar el contexto del carrito
+// Hook useCart (sin cambios)
 export const useCart = (): CartContextProps => {
   const context = useContext(CartContext);
   if (context === undefined) {

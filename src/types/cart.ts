@@ -31,6 +31,7 @@ export interface CartItem {
 // Define la estructura del estado del contexto del carrito
 export interface CartState {
   items: CartItem[];
+  itemAddedTimestamp: number | null; // Timestamp de la última adición
 }
 
 // Define las acciones que se pueden realizar en el carrito
@@ -38,4 +39,5 @@ export type CartAction =
   | { type: 'ADD_ITEM'; payload: CartItem }
   | { type: 'REMOVE_ITEM'; payload: { id: string } } // Usar el id único del carrito
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
-  | { type: 'CLEAR_CART' }; 
+  | { type: 'CLEAR_CART' }
+  | { type: 'RESET_TIMESTAMP' }; 

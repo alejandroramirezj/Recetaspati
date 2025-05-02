@@ -11,6 +11,7 @@ import CategoryPage from "./pages/CategoryPage";
 import ScrollToTop from './utils/ScrollToTop';
 import { CartProvider } from './context/CartContext';
 import MobileCartBar from './components/layout/MobileCartBar';
+import OrderSummary from "./pages/OrderSummary";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="product/:category/:id" element={<ProductDetail />} />
             <Route path="category/:categoryName" element={<CategoryPage />} />
+            <Route path="/pedido" element={<OrderSummary />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <MobileCartBar />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, Instagram, Phone, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -8,8 +8,22 @@ import { Badge } from '@/components/ui/badge';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const instagramUrl = "https://instagram.com/recetaspati"; // Define URL once
-  const { getTotalItems } = useCart();
+  const { state, getTotalItems, resetItemAddedTimestamp } = useCart();
   const totalItems = getTotalItems();
+  const [isAnimating, setIsAnimating] = useState(false); // Estado para controlar animación
+
+  // Efecto para manejar la animación
+  useEffect(() => {
+    if (state.itemAddedTimestamp) {
+      setIsAnimating(true); // Activar animación
+      const timer = setTimeout(() => {
+        setIsAnimating(false); // Desactivar animación después de un tiempo
+        resetItemAddedTimestamp(); // Resetear el timestamp en el contexto
+      }, 600); // Duración de la animación (ej. 600ms)
+
+      return () => clearTimeout(timer); // Limpiar timeout si el componente se desmonta o el estado cambia
+    }
+  }, [state.itemAddedTimestamp, resetItemAddedTimestamp]);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md shadow-sm">
@@ -43,10 +57,17 @@ const Navbar = () => {
           <a href="/Recetaspati/#contacto" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Contacto
           </a>
-          <Link to="/pedido" className="relative hidden lg:flex items-center justify-center p-2 rounded-full hover:bg-pati-cream transition-colors ml-4">
+          <Link 
+            to="/pedido" 
+            className={`relative hidden lg:flex items-center justify-center p-2 rounded-full hover:bg-pati-cream transition-all duration-300 ease-in-out ml-4 ${isAnimating ? 'animate-bounce' : ''}`}
+            aria-label={`Ver carrito con ${totalItems} artículos`}
+           >
              <ShoppingCart className="h-6 w-6 text-pati-brown" />
              {totalItems > 0 && (
-                 <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 min-w-[1.25rem] p-0 flex items-center justify-center text-xs rounded-full">
+                 <Badge 
+                    variant="destructive" 
+                    className={`absolute -top-1 -right-1 h-5 w-5 min-w-[1.25rem] p-0 flex items-center justify-center text-xs rounded-full transition-transform ${isAnimating ? 'scale-110' : ''}`}
+                 >
                      {totalItems}
                  </Badge>
              )}
