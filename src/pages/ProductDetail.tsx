@@ -262,53 +262,6 @@ ${itemsList}
         // setSelectedItems({});
     };
 
-    // Function to generate WhatsApp link for ONLY the current configuration
-    const handleOrderThisItemOnly = () => {
-        if (!selectedPackSize || !isOrderComplete) return;
-
-        // Create a temporary CartItem representing this configuration
-        let singleCartItem: CartItem;
-        const tempId = `${product.id}-pack${selectedPackSize}-whatsapp`; // Temporary unique ID
-
-        if (product.configType === 'cookiePack') {
-            singleCartItem = {
-                id: tempId,
-                productId: product.id,
-                productName: product.name,
-                quantity: 1,
-                packPrice: finalPackPrice,
-                imageUrl: product.image,
-                type: 'cookiePack',
-                cookieDetails: {
-                    packSize: selectedPackSize,
-                    cookies: selectedItems
-                }
-            };
-        } else if (product.configType === 'flavorPack') {
-            singleCartItem = {
-                id: tempId,
-                productId: product.id,
-                productName: product.name,
-                quantity: 1,
-                packPrice: finalPackPrice,
-                imageUrl: product.image,
-                type: 'flavorPack',
-                selectedOptions: { pack: packOptions.find(p => p.size === selectedPackSize)?.name || '' },
-                selectedFlavors: Object.keys(selectedItems).filter(key => selectedItems[key] > 0)
-            };
-        } else {
-            console.error("Tipo de producto no soportado para pedir individualmente desde ItemPackConfigurator");
-            alert("Error al generar el pedido para este producto.")
-            return;
-        }
-
-        // Generate WhatsApp URL for this single item
-        const whatsappUrl = getWhatsAppUrl([singleCartItem]); 
-
-        // Open WhatsApp link
-        window.open(whatsappUrl, '_blank');
-    };
-
     // Function to scroll to summary
     const scrollToSummary = () => {
         document.getElementById('summary-card')?.scrollIntoView({ 
@@ -479,7 +432,7 @@ ${itemsList}
                   
                    {/* == Contenedor para los dos botones (Flexbox) == */}
                    <div className="flex flex-col sm:flex-row gap-3 mt-4"> {/* Stack vertically on small, row on sm+, add gap */} 
-                     {/* == Botón Añadir al Carrito (Restaurado) == */} 
+                     {/* == Botón Añadir al Carrito (Ahora ocupa todo el ancho si el otro se quita) == */} 
                      <Button
                          onClick={handleAddToCart}
                          size="lg"
@@ -491,19 +444,6 @@ ${itemsList}
                          {isOrderComplete ? `Añadir Pack ${selectedPackSize} al Carrito` : `Completa tu Pack ${selectedPackSize}`}
                      </Button>
                      {/* ===================================== */}
-
-                     {/* Botón Pedir Solo Este Pack (Ahora único botón) */}
-                     <Button 
-                       onClick={handleOrderThisItemOnly}
-                       variant="outline"
-                       size="lg"
-                       className={`w-full border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                       disabled={!isOrderComplete} 
-                       aria-disabled={!isOrderComplete}
-                     > 
-                       <FaWhatsapp className="mr-2 h-5 w-5" /> 
-                       {isOrderComplete ? `Pedir Solo Este Pack` : `Completa tu Pack ${selectedPackSize}`}
-                     </Button>
                    </div>
                 </CardContent>
               </Card>
@@ -511,21 +451,21 @@ ${itemsList}
           )}
                 </div>
 
-        {/* Sticky Footer Bar */}
-        {selectedPackSize && !isSummaryVisible && (
-            <div className="fixed bottom-0 left-0 right-0 z-20 bg-white px-4 py-3 border-t border-gray-200 shadow-lg lg:hidden flex items-center justify-between gap-3 min-h-[70px]">
+        {/* Sticky Footer Bar - Ahora visible siempre que haya pack seleccionado y en todas las pantallas */} 
+        {selectedPackSize && (
+            <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm px-4 py-3 border-t border-gray-200 shadow-lg flex items-center justify-between gap-3 min-h-[70px]">
                 <div className="flex flex-col text-sm flex-shrink">
                     <span className="font-semibold text-pati-dark-brown whitespace-nowrap">Pack {selectedPackSize} ({currentCount}/{selectedPackSize})</span>
                     <span className="font-bold text-lg text-pati-burgundy">{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
                 </div>
                 <Button 
-                    onClick={scrollToSummary} // Scroll to summary OR directly Add to Cart?
-                    className={`whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-green-500 flex-shrink-0 ${isOrderComplete ? 'bg-pati-accent hover:bg-pati-accent/90 text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`}
+                    onClick={handleAddToCart} // Llama directamente a añadir al carrito
+                    className={`whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`} 
                     size="sm"
-                    disabled={!isOrderComplete} // Disable if not complete
+                    disabled={!isOrderComplete}
                 >
                     {isOrderComplete ? <ShoppingCart className="mr-2 h-4 w-4"/> : <Info className="mr-2 h-4 w-4" />} 
-                    {isOrderComplete ? "Añadir al Pedido" : "Completa la Caja"}
+                    {isOrderComplete ? "Añadir Pack al Carrito" : `Completa (${currentCount}/${selectedPackSize})`}
                 </Button>
               </div>
             )}
@@ -600,27 +540,6 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
         // Reset state?
         // setSelectedPackOption(null);
         // setCheckedFlavors([]);
-    };
-
-    // Function to generate WhatsApp link for ONLY the current configuration
-    const handleOrderThisItemOnly = () => {
-        if (!isOrderComplete || !selectedPackOption) return;
-
-        const tempId = `${product.id}-${selectedPackOption.name.replace(/\s+/g, '-')}-whatsapp`;
-        const singleCartItem: CartItem = {
-            id: tempId,
-            productId: product.id,
-            productName: product.name,
-            quantity: 1,
-            packPrice: finalPackPrice,
-            imageUrl: product.image,
-            type: 'flavorPack',
-            selectedOptions: { pack: selectedPackOption.name },
-            selectedFlavors: checkedFlavors,
-        };
-
-        const whatsappUrl = getWhatsAppUrl([singleCartItem]);
-        window.open(whatsappUrl, '_blank');
     };
 
     return (
@@ -721,7 +640,7 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                             
                             {/* Contenedor para los dos botones */} 
                             <div className="flex flex-col sm:flex-row gap-3 mt-4">
-                                 {/* Botón Añadir Selección al Carrito (Restaurado) */} 
+                                 {/* Botón Añadir Selección al Carrito (Ahora ocupa todo el ancho) */} 
                                  <Button 
                                      onClick={handleAddToCart}
                                      size="lg" 
@@ -731,18 +650,6 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                                      <ShoppingCart className="mr-2 h-5 w-5" /> 
                                      {isOrderComplete ? `Añadir Caja al Carrito` : `Elige ${maxFlavors} sabores`}
                                  </Button>
-
-                                  {/* Botón Pedir Solo Esta Caja (WhatsApp) */} 
-                                  <Button 
-                                    onClick={handleOrderThisItemOnly}
-                                    variant="outline"
-                                    size="lg" 
-                                    className={`flex-1 border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    disabled={!isOrderComplete} 
-                                  > 
-                                    <FaWhatsapp className="mr-2 h-5 w-5" /> 
-                                    {isOrderComplete ? `Pedir Solo Esta Caja` : `Elige ${maxFlavors} sabores`}
-                                  </Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -874,7 +781,7 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
 
                 {/* Contenedor para los dos botones */} 
                 <div className="flex flex-col sm:flex-row gap-3 mt-4">
-                     {/* Botón Añadir Selección al Carrito (Restaurado) */} 
+                     {/* Botón Añadir Selección al Carrito (Ahora ocupa todo el ancho) */} 
                     <Button 
                         onClick={handleAddToCart}
                         size="lg" 
@@ -883,18 +790,6 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
                     > 
                         <ShoppingCart className="mr-2 h-5 w-5" /> 
                         {totalSelectedCount > 0 ? `Añadir ${totalSelectedCount} al Carrito` : 'Elige Sabores/Cantidad'}
-                    </Button>
-
-                    {/* Botón Pedir Solo Esta Selección (WhatsApp) */}
-                    <Button 
-                      onClick={handleOrderThisItemOnly} 
-                      variant="outline" 
-                      size="lg" 
-                      className={`flex-1 border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 ${totalSelectedCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      disabled={totalSelectedCount === 0} 
-                    >
-                       <FaWhatsapp className="mr-2 h-5 w-5" /> 
-                       {totalSelectedCount > 0 ? `Pedir ${totalSelectedCount} Mini-Tarta(s)` : 'Elige Sabores/Cantidad'}
                     </Button>
                 </div>
             </div>
@@ -958,31 +853,6 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
         alert(`${product.name} añadido al pedido!`);
     };
 
-    // Function to generate WhatsApp link for ONLY the current configuration
-    const handleOrderThisItemOnly = () => {
-        // Extraer precio unitario
-        const unitPrice = parseFloat(product.price.replace('€', '').replace(',', '.'));
-        if (isNaN(unitPrice)) {
-            alert("Error al generar el pedido, precio no válido.");
-            return;
-        }
-
-        const tempId = `${product.id}-whatsapp`; 
-        const singleCartItem: CartItem = {
-            id: tempId,
-            productId: product.id,
-            productName: product.name,
-            quantity: 1, 
-            unitPrice: unitPrice,
-            imageUrl: product.image,
-            type: 'flavorOnly',
-            selectedOptions: { flavor: product.name } 
-        };
-
-        const whatsappUrl = getWhatsAppUrl([singleCartItem]);
-        window.open(whatsappUrl, '_blank');
-    };
-
     return (
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Columna Izquierda: Imagen */}
@@ -1008,17 +878,6 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
                  > 
                     <ShoppingCart className="mr-2 h-5 w-5" /> 
                     Añadir al Carrito
-                 </Button>
-
-                 {/* Added Button: Order This Item Only via WhatsApp */}
-                 <Button 
-                   onClick={handleOrderThisItemOnly}
-                   variant="outline"
-                   size="lg" 
-                   className={`w-full border-green-600 text-green-700 hover:bg-green-50 hover:text-green-800 py-3 mt-3`}
-                 > 
-                   <FaWhatsapp className="mr-2 h-5 w-5" /> 
-                   Pedir Solo Esta Tarta
                  </Button>
             </div>
         </div>
