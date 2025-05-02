@@ -23,14 +23,14 @@ const Index = () => {
         {/* Ensured consistent large padding for main sections */}
         <ProductCatalog /> {/* Component has py-16 */}
         <RecommendationWizard /> {/* Component has py-16 */}
-        <MothersDay /> {/* Component has py-16 */}
+        {/* <MothersDay /> */} {/* Component has py-16 - ELIMINADO */}
         <Testimonials /> {/* Component has py-16 */}
         <LastMinuteOffers /> {/* Use the renamed component */}
         {/* Slightly reduced padding for social feeds? */}
         <InstagramFeed /> {/* Let's adjust this component */}
         <TikTokFeed /> {/* Let's adjust this component */}
         {/* <ExpansionForm /> */} {/* Commented out usage */}
-        <ContactSection /> {/* Component has py-16 */}
+        {/* <ContactSection /> */} {/* Component has py-16 - ELIMINADO */}
       </main>
       <Footer />
     </div>

@@ -51,12 +51,6 @@ const Navbar = () => {
           <a href="/Recetaspati/#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Testimonios
           </a>
-          <a href="/Recetaspati/#dia-madre" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
-            Día de la Madre
-          </a>
-          <a href="/Recetaspati/#contacto" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
-            Contacto
-          </a>
           <Link 
             to="/pedido" 
             className={`relative hidden lg:flex items-center justify-center p-2 rounded-full hover:bg-pati-cream transition-all duration-300 ease-in-out ml-4 ${isAnimating ? 'animate-bounce' : ''}`}
@@ -99,20 +93,6 @@ const Navbar = () => {
               onClick={() => setIsOpen(false)}
             >
               Testimonios
-            </a>
-            <a 
-              href="/Recetaspati/#dia-madre" 
-              className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Día de la Madre
-            </a>
-            <a 
-              href="/Recetaspati/#contacto" 
-              className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Contacto
             </a>
             <div className="flex space-x-2 pt-2">
               {/* Phone Button (Assuming it should be a link) */}
