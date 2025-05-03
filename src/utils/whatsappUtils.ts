@@ -1,13 +1,24 @@
 import { CartItem } from '@/types/cart';
+import { productsData } from '@/data/products'; // Importar datos de productos
 
 const phoneNumber = "+34671266981"; // Número actualizado
 
 // Helper para formatear el precio
 const formatPrice = (price: number | undefined): string => {
-  return price ? `${price.toFixed(2).replace('.', ',')}€` : 'Precio no disponible';
+  return price ? `${price.toFixed(2).replace('.', ',')}€` : '--'; // Más corto
 };
 
-// Función para generar el mensaje de WhatsApp unificado
+// Emojis para categorías
+const categoryEmojis: Record<string, string> = {
+  tartas: '🎂',
+  galletas: '🍪',
+  palmeritas: '🥨',
+  'mini-tartas': '🍰',
+  bundtcake: '🍩', // Añadir si existe como categoría
+  default: '✨'
+};
+
+// Función MEJORADA para generar el mensaje de WhatsApp
 export const generateUnifiedWhatsAppMessage = (items: CartItem[]): string => {
   if (!items || items.length === 0) {
     return "¡Hola Pati! 👋 Quería hacer un pedido pero mi carrito está vacío.";
@@ -16,64 +27,72 @@ export const generateUnifiedWhatsAppMessage = (items: CartItem[]): string => {
   let message = "¡Hola Pati! 👋 Me gustaría hacer el siguiente pedido:\n\n";
   let totalOrderPrice = 0;
 
-  items.forEach((item, index) => {
-    const itemPrice = (item.packPrice ?? item.unitPrice ?? 0) * item.quantity;
-    totalOrderPrice += itemPrice;
-
-    message += `*${index + 1}. ${item.productName}*
-`;
-    message += `   Cantidad: ${item.quantity}
-`;
-
-    // Añadir detalles específicos según el tipo
-    if (item.type === 'fixedPack' && item.selectedOptions?.pack) {
-      message += `   Pack: ${item.selectedOptions.pack}
-`;
-    } else if (item.type === 'flavorQuantity' && item.selectedOptions?.flavor) {
-      message += `   Sabor: ${item.selectedOptions.flavor}
-`;
-    } else if (item.type === 'flavorOnly' && item.selectedOptions?.flavor) {
-      message += `   Opción: ${item.selectedOptions.flavor}
-`; // O 'Sabor' si aplica
-    } else if (item.type === 'flavorPack' && item.selectedOptions?.pack) {
-      // Mensaje específico para Palmeritas con selección de sabores
-      message += `   Caja: ${item.selectedOptions.pack}
-`;
-      if (item.selectedFlavors && item.selectedFlavors.length > 0) {
-        message += `   Sabores elegidos:
-`;
-        item.selectedFlavors.forEach(flavor => {
-            message += `     - ${flavor}\n`;
-        });
-      } else {
-        message += `   (Error: No se seleccionaron sabores)\n`;
+  // 1. Agrupar items por categoría (o nombre de producto si es más útil)
+  const groupedItems: { [key: string]: CartItem[] } = {};
+  items.forEach(item => {
+      // Usaremos productName como clave principal de agrupación
+      const key = item.productName;
+      if (!groupedItems[key]) {
+          groupedItems[key] = [];
       }
-    } else if (item.type === 'cookiePack' && item.cookieDetails) {
-      message += `   Pack: ${item.cookieDetails.packSize} unidades
-`;
-      message += `   Galletas elegidas:
-`;
-      for (const [cookieName, count] of Object.entries(item.cookieDetails.cookies)) {
-        if (count > 0) {
-          message += `     - ${cookieName} (x${count})
-`;
-        }
-      }
-    } else if (item.selectedOptions) {
-        // Opciones genéricas si las hubiera
-        for (const [key, value] of Object.entries(item.selectedOptions)) {
-            message += `   ${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}\n`;
-        }
-    }
-
-    message += `   Precio item: ${formatPrice(itemPrice)}
-\n`;
+      groupedItems[key].push(item);
   });
 
-  message += `*Total Pedido: ${formatPrice(totalOrderPrice)}*
+  // 2. Construir el mensaje por grupos
+  for (const productName in groupedItems) {
+    const itemsInGroup = groupedItems[productName];
+    const firstItem = itemsInGroup[0]; // Tomar el primero como referencia para emoji
+    
+    // Buscar producto original para obtener categoría
+    const originalProduct = productsData.find(p => p.id === firstItem.productId);
+    const category = originalProduct?.category || 'default';
+    const emoji = categoryEmojis[category] || categoryEmojis.default;
+    
+    message += `*${emoji} ${productName}*
+`;
+
+    itemsInGroup.forEach(item => {
+        const itemSubtotal = (item.packPrice ?? item.unitPrice ?? 0) * item.quantity;
+        totalOrderPrice += itemSubtotal;
+
+        // Detalles concisos
+        let details = `  - x${item.quantity}`;
+        if (item.type === 'fixedPack' && item.selectedOptions?.pack) {
+          details += ` (${item.selectedOptions.pack})`;
+        } else if (item.type === 'flavorQuantity' && item.selectedOptions?.flavor) {
+          details += ` (Sabor: ${item.selectedOptions.flavor})`;
+        } else if (item.type === 'flavorOnly' && item.selectedOptions?.flavor && item.productName !== item.selectedOptions.flavor) {
+           // Para Tartas, el "sabor" ya suele ser el productName, no repetir si es igual
+           details += ` (Opción: ${item.selectedOptions.flavor})`;
+        } else if (item.type === 'flavorPack' && item.selectedOptions?.pack) {
+           details += ` (${item.selectedOptions.pack}`;
+           if (item.selectedFlavors && item.selectedFlavors.length > 0) {
+             details += `: ${item.selectedFlavors.join(', ')}`;
+           }
+           details += `)`;
+        } else if (item.type === 'cookiePack' && item.cookieDetails) {
+           details += ` (Pack ${item.cookieDetails.packSize}: `;
+           const cookiesList = Object.entries(item.cookieDetails.cookies)
+                                  .filter(([, count]) => count > 0)
+                                  .map(([name, count]) => `${name} x${count}`)
+                                  .join(', ');
+           details += `${cookiesList})`;
+        }
+        // Añadir subtotal de la línea
+        details += `: *${formatPrice(itemSubtotal)}*
+`;
+        message += details;
+    });
+    message += `\n`; // Espacio entre grupos
+  }
+
+  // 3. Añadir Total
+  message += `--------------------
+`;
+  message += `💰 *Total Pedido: ${formatPrice(totalOrderPrice)}*
 
 `;
-  message += "¿Podrías confirmarme disponibilidad y detalles para la entrega? ¡Gracias! 😊";
+  message += "¿Me confirmas disponibilidad? ¡Gracias! 😊";
 
   return message;
 };
