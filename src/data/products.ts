@@ -40,7 +40,7 @@ export const productsData: Product[] = [
       name: "Bundtcake de Chocolate", 
       description: "Exquisito bizcocho de chocolate elaborado artesanalmente.", 
       price: "32€", // Price for the whole cake
-      image: "/Recetaspati/images/Bundcake.JPG", 
+      image: "/Recetaspati/images/Bundcake.png", // UPDATE: Corrected image path with original structure
       category: "tartas", 
       configType: 'flavorOnly', // Treat as selecting one flavor/item
       availableFlavors: ["Chocolate Bundtcake"], // Only one option essentially
