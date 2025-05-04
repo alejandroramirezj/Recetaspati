@@ -36,7 +36,7 @@ const categoryCards: CategoryInfo[] = categories.map(category => {
   } else if (category === 'galletas') {
       description = "Cajas de 6 y 12 unidades. Sabores variados.";
       priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`;
-      imageOverride = '/images/Galleta-Kinderbueno.png';
+      imageOverride = '/Recetaspati/images/Galleta-Kinderbueno.png';
   } else if (category === 'palmeritas') {
        description = "Packs de 25 y 50 unidades. Varios sabores.";
        priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`;
