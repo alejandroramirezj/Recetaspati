@@ -40,6 +40,16 @@ El objetivo es crear/mejorar una web sencilla para "Pati Sweet Creations" que mu
     - Contraste de colores (parece bueno en general con la paleta actual, pero verificar).
     - **Files to check:** Todos los componentes con imágenes y elementos interactivos.
 
+### 5. Space Optimization (Planner Input - Review)
+- **Challenge:** La web utiliza bastante espacio vertical y horizontal, lo que podría compactarse para mejorar la densidad de información y reducir el scroll.
+- **Analysis:**
+    - **Vertical Spacing (Homepage):** Las secciones principales (`#productos`, `#recomendador`, `#testimonios`, etc.) usan `py-16` o `py-20`, lo cual es generoso. Reducir a `py-12 md:py-16` podría mejorar la cohesión.
+    - **Component Spacing:** Las tarjetas (`Card`), configuradores y el asistente usan `space-y-6`, `gap-8`, `p-6`, etc. Reducciones incrementales (`space-y-5`, `gap-6`, `p-5`) podrían ser beneficiosas.
+    - **Wizard Height:** El `min-h` en `RecommendationWizard` podría ajustarse dinámicamente o reducirse más si el paso más corto lo permite.
+    - **Grid Gaps:** Los `gap` en grids de productos (`ProductCatalog`, `CategoryPage`, `ProductDetail`) pueden ser reducidos para mayor densidad.
+    - **Layout Elements:** `Navbar` y barras inferiores parecen tener alturas razonables, pero el `Footer` podría revisarse.
+- **Files to check:** `src/pages/Index.tsx`, `src/pages/ProductDetail.tsx`, `src/components/home/RecommendationWizard.tsx`, `src/pages/OrderSummary.tsx`, `src/pages/CategoryPage.tsx`, `src/components/layout/Footer.tsx`, Tailwind config (si hay valores base definidos).
+
 ## High-level Task Breakdown (Planner Input - Initial Suggestions)
 
 Basado en el análisis anterior, se proponen las siguientes tareas (prioridad sugerida de arriba abajo):
@@ -51,6 +61,21 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 5.  **Añadir `alt` text descriptivos:** Revisar todas las imágenes (productos, cookies individuales) y añadir textos `alt` significativos.
 6.  **Mejorar Feedback `flavorCheckboxSelector`:** Si el límite de selección es > 3, mostrar contador `(seleccionados/límite)`. 
 7.  **Revisar `aria-label`s:** Asegurar que todos los botones sin texto claro (iconos) tengan `aria-label`.
+
+**Bloque de Mejoras Generales (Post-Funcionalidad):**
+- [x] Optimizar Imágenes Productos (Lazy Loading).
+- [x] Revisión Responsividad `ProductDetail`.
+- [x] Revisión Responsividad `OrderSummary`.
+- [x] Añadir `alt` text descriptivos.
+- [x] Mejorar Feedback `flavorCheckboxSelector`.
+- [x] Revisar `aria-label`s.
+
+**Bloque de Optimización de Espacio (Nuevo):**
+- [ ] **Executor:** Reducir padding vertical secciones Homepage (`Index.tsx`).
+- [ ] **Executor:** Compactar espaciado en `ProductDetail` (grid gap, space-y, card padding).
+- [ ] **Executor:** Ajustar altura mínima y espaciado en `RecommendationWizard`.
+- [ ] **Executor:** Reducir gaps en grids de `OrderSummary` y `CategoryPage`.
+- [ ] **Executor:** Revisar y ajustar padding del `Footer`.
 
 ## Project Status Board
 
@@ -80,10 +105,18 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 - [x] **Executor:** Añadir `alt` text descriptivos.
 - [x] **Executor:** Mejorar Feedback `flavorCheckboxSelector`.
 - [x] **Executor:** Revisar `aria-label`s.
+- [x] **Executor:** Aplicar mejoras generales (lazy-load, alt text, responsividad, a11y).
+- [x] **Executor:** Modificar animación chat `LastMinuteOffers`.
+- [x] **Executor:** Corregir error linter `Progress`.
+- [ ] **Executor:** Reducir padding vertical secciones Homepage.
+- [ ] **Executor:** Compactar espaciado en `ProductDetail`.
+- [ ] **Executor:** Ajustar altura/espaciado en `RecommendationWizard`.
+- [ ] **Executor:** Reducir gaps en grids `OrderSummary`/`CategoryPage`.
+- [ ] **Executor:** Ajustar padding `Footer`.
 
 ## Executor's Feedback or Assistance Requests
 
-*Se han aplicado las mejoras generales solicitadas (imágenes, responsividad, accesibilidad). Pendiente de revisión y próximos pasos.* 
+*Análisis de optimización de espacio completado. Esperando instrucciones sobre qué tarea de optimización abordar primero.*
 
 ## Lessons Learned
 
@@ -96,4 +129,6 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 - La animación directa del icono del carrito es una alternativa viable al `toast` para feedback de "añadir al carrito".
 - Hacer la barra inferior del configurador de packs siempre visible mejora la UX en escritorio.
 - El atributo `loading="lazy"` es una forma sencilla de mejorar el rendimiento de carga inicial de imágenes.
-- Añadir `aria-label` y otros atributos ARIA mejora la accesibilidad para usuarios de lectores de pantalla. 
+- Añadir `aria-label` y otros atributos ARIA mejora la accesibilidad para usuarios de lectores de pantalla.
+- La optimización del espacio es un equilibrio entre densidad y legibilidad; cambios pequeños pueden tener impacto acumulativo.
+- Es útil revisar paddings, márgenes, gaps y alturas mínimas globalmente. 
