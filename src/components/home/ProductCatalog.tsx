@@ -26,6 +26,7 @@ const categoryCards: CategoryInfo[] = categories.map(category => {
   let description = firstProduct.description;
   let priceRange = firstProduct.price;
   // let availableTypes: string[] = []; // Removed
+  let imageOverride: string | undefined = undefined;
 
   if (category === 'tartas') {
     // Revert to simpler description for the category card
@@ -34,8 +35,8 @@ const categoryCards: CategoryInfo[] = categories.map(category => {
     priceRange = `Desde ${Math.min(...prices).toFixed(2).replace('.', ',' )}€`;
   } else if (category === 'galletas') {
       description = "Cajas de 6 y 12 unidades. Sabores variados.";
-      // Prices defined in options
-      priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`; 
+      priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`;
+      imageOverride = '/images/Galleta-Kinderbueno.png';
   } else if (category === 'palmeritas') {
        description = "Packs de 25 y 50 unidades. Varios sabores.";
        priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`;
@@ -56,6 +57,7 @@ const categoryCards: CategoryInfo[] = categories.map(category => {
     size: undefined, // Size doesn't apply to the category card
     options: undefined, // Options shown in detail page
     individualCookies: undefined, // Shown in detail page
+    image: imageOverride || firstProduct.image, // Usar override si existe
   };
 });
 
@@ -93,7 +95,7 @@ const ProductCatalog = () => {
           {/* Render TabsContent dynamically based on filteredCards */}
           <div className="mt-8">
             <TabsContent value={activeTab} className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {filteredCards.map(cardInfo => (
                   // Pass category card info to ProductCard
                   <ProductCard key={cardInfo.categoryName} product={cardInfo as CategoryInfo} /> 
@@ -111,63 +113,50 @@ const ProductCatalog = () => {
 const ProductCard = ({ product }: { product: CategoryInfo }) => {
   const navigate = useNavigate();
 
-  // Navigate to the detail page of the *first product* in the category as a starting point
-  // For Tartas, this function won't be called directly by clicking the card div itself
-  const handleCardClick = () => {
-     const firstProductInCategory = productsData.find(p => p.category === product.categoryName);
-     if (firstProductInCategory) {
-        navigate(`/product/${firstProductInCategory.category}/${firstProductInCategory.id}`);
-     } else {
-         console.warn(`No product found for category: ${product.categoryName}`);
-     }
-  };
+  // Determinar el destino del enlace (para imagen y botón)
+  let linkDestination = '#';
+  if (product.categoryName === 'tartas') {
+    linkDestination = '/category/tartas';
+  } else {
+    const firstProductInCategory = productsData.find(p => p.category === product.categoryName);
+    if (firstProductInCategory) {
+      linkDestination = `/product/${firstProductInCategory.category}/${firstProductInCategory.id}`;
+    }
+  }
 
-  // Define content separate from the clickable wrapper for non-tartas cards
   const cardContent = (
     <>
-      <div className="h-56 overflow-hidden">
+      {/* Envolver imagen en Link */}
+      <Link to={linkDestination} className="block h-56 overflow-hidden group">
         <img 
           src={product.image} 
           alt={`Categoría ${product.name}`}
           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
           loading="lazy"
         />
-      </div>
-       {/* Removed padding adjustment logic */}
-      <div className={`p-6 flex flex-col flex-grow`}> 
-        <h3 className="font-bold text-xl text-pati-burgundy mb-2">{product.name}</h3>
-        
-        {/* Removed list rendering for Tartas, show simple description */} 
-        <p className="text-pati-brown text-sm mb-4 flex-grow">{product.description}</p>
-
-        <div className="font-bold text-xl text-pati-burgundy mb-4 mt-auto"> 
+      </Link>
+      <div className={`p-4 flex flex-col flex-grow`}> 
+        <h3 className="font-semibold text-base text-pati-burgundy mb-1">{product.name}</h3> 
+        <div className="font-semibold text-base text-pati-dark-brown mt-auto pt-2"> 
           {product.priceRange || product.price} 
-          </div>
-        
-        {/* Use Link component within Button for Tartas */}
+        </div>
         <Button 
-           asChild={product.categoryName === 'tartas'} // Use asChild only for tartas link
-           className="w-full bg-pati-pink hover:bg-pati-burgundy text-pati-burgundy hover:text-white border border-pati-burgundy mt-2"
-           onClick={product.categoryName !== 'tartas' ? handleCardClick : undefined} // Keep original onClick for others
+           asChild 
+           size="sm" 
+           className="w-full bg-white hover:bg-gray-100 text-pati-dark-brown border border-gray-300 mt-3" 
         >
-          {product.categoryName === 'tartas' ? (
-              <Link to={`/category/tartas`}>Ver Tartas</Link>
-          ) : (
-              'Ver Opciones'
-          )} 
-        </Button>
+            <Link to={linkDestination}>
+              {product.categoryName === 'tartas' ? 'Ver Tartas' : 'Ver Opciones'}
+            </Link>
+         </Button>
       </div>
     </>
   );
 
-  // Render logic: Wrap content in Link only for non-tartas cards
   return (
     <div 
-      className="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl product-card flex flex-col h-full group" // Added group for hover effect
-      // Remove onClick from the main div
-      style={{ cursor: product.categoryName === 'tartas' ? 'default' : 'pointer' }}
+      className="bg-white rounded-lg overflow-hidden product-card flex flex-col h-full group transition-opacity hover:opacity-90" 
     >
-        {/* Tartas card isn't a link itself, only the button is */} 
         {cardContent} 
     </div>
   );
