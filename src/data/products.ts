@@ -175,8 +175,8 @@ export const productsData: Product[] = [
     name: "Minicookies",
     description: "Deliciosas galletas en tamaño mini, perfectas para picar. ¡Como las Chips Ahoy! pero más ricas y caseras!",
     price: "5€", 
-    image: "/images/minicookies.png", 
-    video: "/videos/minicookies.mp4",
+    image: "/Recetaspati/images/minicookies.png", // CORRECTED PATH
+    video: "/Recetaspati/videos/minicookies.mp4", // CORRECTED VIDEO PATH
     category: "minicookies",
     configType: 'flavorMultiSelect', // Select one or both flavors for the bag
     availableFlavors: ["Chocolate", "Chocolate Blanco"] 
