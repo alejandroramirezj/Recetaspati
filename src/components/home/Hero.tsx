@@ -14,7 +14,7 @@ interface FallingCookie {
 
 const Hero = () => {
   const [cookies, setCookies] = useState<FallingCookie[]>([]);
-  const cookieImages = ['/images/minicookie1.png', '/images/minicookie2.png', '/images/minicookie3.png'];
+  const cookieImages = ['/Recetaspati/images/minicookie1.png', '/Recetaspati/images/minicookie2.png', '/Recetaspati/images/minicookie3.png'];
   const numCookies = 30; // Adjust number of cookies
 
   useEffect(() => {
