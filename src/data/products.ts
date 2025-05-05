@@ -1,7 +1,7 @@
 // src/data/products.ts
 
 // Define Configuration Types
-type ProductConfigType = 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple';
+type ProductConfigType = 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple' | 'flavorCheckbox';
 
 // Define the types needed for products
 // It's good practice to define types in a dedicated types file, but for simplicity here:
@@ -23,6 +23,7 @@ export type Product = {
   description: string;
   price: string; // Price reference (can be base price, pack price, unit price)
   image: string;
+  video?: string; // ADDED: Optional video path
   category: 'tartas' | 'galletas' | 'palmeritas' | 'mini-tartas';
   configType: ProductConfigType; // ADDED: How to configure this product
   size?: string; // Mainly for display
@@ -167,5 +168,17 @@ export const productsData: Product[] = [
     unitPrice: 5, // Set unit price for calculations
     availableFlavors: ["Lotus", "Fresas con Nata"] // Define available flavors
     // Removed options array which was for a fixed pack
+  },
+  // ADDED: Minicookies
+  {
+    id: 11, // Assign a new unique ID
+    name: "Minicookies",
+    description: "Deliciosas galletas en tamaño mini, perfectas para picar. Como las Chips Ahoy pero más ricas y caseras.",
+    price: "5€", // Price per bag
+    image: "/images/minicookies.png",
+    video: "/videos/minicookies.mp4",
+    category: "galletas",
+    configType: 'flavorCheckbox', // Allows selecting flavors for the bag
+    availableFlavors: ["Chocolate", "Chocolate Blanco"] // Define available flavors
   },
 ]; 
