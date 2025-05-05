@@ -131,4 +131,38 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 - El atributo `loading="lazy"` es una forma sencilla de mejorar el rendimiento de carga inicial de imágenes.
 - Añadir `aria-label` y otros atributos ARIA mejora la accesibilidad para usuarios de lectores de pantalla.
 - La optimización del espacio es un equilibrio entre densidad y legibilidad; cambios pequeños pueden tener impacto acumulativo.
-- Es útil revisar paddings, márgenes, gaps y alturas mínimas globalmente. 
+- Es útil revisar paddings, márgenes, gaps y alturas mínimas globalmente.
+
+## Nueva Funcionalidad: Minijuego "Cookie Catcher"
+
+### Background and Motivation
+
+El usuario ha solicitado la creación de un minijuego interactivo en el sitio web. El objetivo es aumentar la participación del usuario y ofrecer una recompensa divertida. El concepto es un juego donde el usuario debe "atrapar" galletas que caen por la pantalla. Al alcanzar una puntuación objetivo (10 galletas), el usuario gana una "bolsa de minicookies gratis" que debería añadirse a su pedido/carrito. Se busca que el juego sea visualmente atractivo y divertido ("muy guay").
+
+### Key Challenges and Analysis (Initial)
+
+*   **Implementación del Juego:** Requiere lógica de juego (movimiento, colisiones/captura, puntuación, estados de juego), gráficos/animaciones y manejo de interacciones del usuario dentro de un entorno React. Se debe elegir una tecnología adecuada (CSS, SVG, Canvas, librería tipo Framer Motion o similar) que equilibre simplicidad y el efecto "muy guay" deseado.
+*   **Integración con Carrito:** La recompensa (minicookies gratis) debe añadirse al estado global del carrito (`CartContext`). Hay que definir cómo representar este item (¿producto con precio 0?) y cómo prevenir que se añada múltiples veces.
+*   **UI/UX:** ¿Dónde y cómo se accede al juego? ¿Es una sección permanente, un pop-up, un easter egg? ¿Cómo se informa al usuario de la recompensa?
+*   **Rendimiento:** Asegurar que el juego no impacte negativamente el rendimiento general del sitio.
+
+### High-level Task Breakdown (Initial Sketch)
+
+1.  **Diseño Conceptual y UI:** Definir flujo, aspecto visual, mecánicas detalladas.
+2.  **Selección Tecnológica:** Elegir librería/método de implementación.
+3.  **Desarrollo del Núcleo del Juego:** Crear componente, lógica de caída, captura, puntuación.
+4.  **Implementación de Recompensa:** Modificar `CartContext` y lógica de adición del premio.
+5.  **Integración en la Web:** Añadir el juego al sitio.
+6.  **Pruebas y Refinamiento:** Asegurar funcionalidad y diversión.
+
+### Project Status Board
+
+*   [ ] **Planificación Inicial - Minijuego Cookie Catcher** (Tarea Actual)
+
+### Executor's Feedback or Assistance Requests
+
+*   Pendiente de aprobación del plan inicial.
+
+### Lessons
+
+*   (Añadir lecciones aprendidas durante el desarrollo) 
