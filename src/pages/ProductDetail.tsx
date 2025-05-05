@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { useCart } from '../context/CartContext';
 import { CartItem } from '../types/cart';
 import { getWhatsAppUrl } from '@/utils/whatsappUtils';
+import FlavorMultiSelector from '@/components/product/FlavorMultiSelector';
 
 // Define a more specific type for the details object
 interface ProductDetailsDisplay {
@@ -551,6 +552,7 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
         };
 
         dispatch({ type: 'ADD_ITEM', payload: cartItem });
+        // alert(`Caja de ${selectedPackOption.name} añadida al pedido!`); // ELIMINAR ALERT
     };
 
     return (
@@ -887,20 +889,16 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
     };
 
     return (
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="space-y-6">
              <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
              <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
              {product.size && <p className="text-md text-pati-brown"><span className="font-semibold">Tamaño:</span> {product.size}</p>}
              <p className="text-3xl font-bold text-pati-accent mb-6">{product.price}</p>
 
-             <Button 
-                onClick={handleAddToCart}
-                size="lg" 
-                className={`w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3`}
-             > 
+             <Button onClick={handleAddToCart} size="lg" className={`w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3`}> 
                 <ShoppingCart className="mr-2 h-5 w-5" /> 
                 Añadir al Carrito
-            </Button>
+             </Button>
       </div>
     );
 };
@@ -933,9 +931,8 @@ const ProductDetail = () => {
             return <FlavorQuantitySelector product={product} />;
           case 'flavorOnly':
             return <SimpleProductDisplay product={product} />;
-          case 'flavorMultiSelect': // ADDED: Handle new config type - Needs a dedicated component
-            // Placeholder for now, will need a new component similar to FlavorCheckboxSelector but allows multiple choices
-            return <FlavorCheckboxSelector product={product} />; // TEMPORARY - Reuse for now, needs update!
+          case 'flavorMultiSelect': 
+              return <FlavorMultiSelector product={product} />;
           default:
             // Fallback for 'simple' or undefined types
             return <SimpleProductDisplay product={product} />;
@@ -974,11 +971,59 @@ const ProductDetail = () => {
            Volver al catálogo
          </Link>
 
-        {/* RENDER configurator directly - No extra grid here */}
-        {renderConfigurator()} 
+        {/* Main Grid: Image/Video Column + Configurator Column */}
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
+           {/* Column 1: Configurator */}
+           <div>
+              {renderConfigurator()} 
+           </div>
 
-        {/* RESTORED: Conditional Video Display block */}
-        {product.video && (
+           {/* Column 2: Image or Vertical Video (Sticky on Desktop) */}
+           <div className="md:sticky md:top-24">
+              {product.category === 'minicookies' && product.video ? (
+                  // Minicookies Vertical Video (Right Column)
+                  <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
+                     <CardContent className="p-0 h-full">
+                         <video 
+                             src={product.video} 
+                             autoPlay 
+                             loop 
+                             muted 
+                             playsInline
+                             className="w-full h-full object-cover"
+                             aria-label={`Vídeo de ${product.name}`}
+                         >
+                             Tu navegador no soporta la etiqueta de vídeo.
+                         </video>
+                     </CardContent>
+                  </Card>
+              ) : product.image ? (
+                  // Default Product Image (Right Column)
+                  <Card className="overflow-hidden border-pati-pink/30 shadow-md">
+                      <CardContent className="p-0">
+                          <div className="aspect-square">
+                              <img 
+                                 src={product.image} 
+                                 alt={`Imagen de ${product.name}`}
+                                 className="w-full h-full object-contain" 
+                                 loading="lazy"
+                              />
+                          </div>
+                      </CardContent>
+                  </Card>
+              ) : (
+                  // Placeholder (Right Column)
+                   <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-square flex items-center justify-center bg-gray-50">
+                       <CardContent className="p-4 text-center text-gray-400">
+                         Imagen no disponible
+                      </CardContent>
+                   </Card>
+              )}
+           </div>
+        </div>
+
+        {/* Regular Video Display (Only if NOT Minicookies AND has video) */}
+        {product.category !== 'minicookies' && product.video && (
            <div className="mt-8 md:mt-12">
              <Card className="overflow-hidden border-pati-pink/30 shadow-md">
                <CardHeader>
@@ -989,7 +1034,7 @@ const ProductDetail = () => {
                    src={product.video}
                    controls
                    playsInline
-                   muted={false} // Allow sound by default, user can mute
+                   muted={false}
                    className="w-full rounded-lg aspect-video"
                    aria-label={`Vídeo de ${product.name}`}
                  >
