@@ -1,7 +1,7 @@
 // src/data/products.ts
 
 // Define Configuration Types
-type ProductConfigType = 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple' | 'flavorCheckbox';
+type ProductConfigType = 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple' | 'flavorMultiSelect';
 
 // Define the types needed for products
 // It's good practice to define types in a dedicated types file, but for simplicity here:
@@ -23,8 +23,8 @@ export type Product = {
   description: string;
   price: string; // Price reference (can be base price, pack price, unit price)
   image: string;
-  video?: string; // ADDED: Optional video path
-  category: 'tartas' | 'galletas' | 'palmeritas' | 'mini-tartas';
+  video?: string; // ADDED optional video field
+  category: 'tartas' | 'galletas' | 'palmeritas' | 'mini-tartas' | 'minicookies'; // ADDED minicookies category
   configType: ProductConfigType; // ADDED: How to configure this product
   size?: string; // Mainly for display
   options?: Option[]; // Used for display, packs, or flavor choices
@@ -171,14 +171,14 @@ export const productsData: Product[] = [
   },
   // ADDED: Minicookies
   {
-    id: 11, // Assign a new unique ID
+    id: 11, 
     name: "Minicookies",
-    description: "Deliciosas galletas en tamaño mini, perfectas para picar. Como las Chips Ahoy pero más ricas y caseras.",
-    price: "5€", // Price per bag
-    image: "/images/minicookies.png",
+    description: "Deliciosas galletas en tamaño mini, perfectas para picar. ¡Como las Chips Ahoy! pero más ricas y caseras!",
+    price: "5€", 
+    image: "/images/minicookies.png", 
     video: "/videos/minicookies.mp4",
-    category: "galletas",
-    configType: 'flavorCheckbox', // Allows selecting flavors for the bag
-    availableFlavors: ["Chocolate", "Chocolate Blanco"] // Define available flavors
+    category: "minicookies",
+    configType: 'flavorMultiSelect', // Select one or both flavors for the bag
+    availableFlavors: ["Chocolate", "Chocolate Blanco"] 
   },
 ]; 

@@ -7,7 +7,7 @@ import { productsData, Product } from '@/data/products'; // Import centralized d
 // --- Remove local Product type definition and products array ---
 
 // --- Generate representative products for categories ---
-const categories = ['tartas', 'galletas', 'palmeritas', 'mini-tartas'] as const;
+const categories = ['tartas', 'galletas', 'palmeritas', 'mini-tartas', 'minicookies'] as const;
 type Category = typeof categories[number];
 
 interface CategoryInfo extends Product {
@@ -43,6 +43,9 @@ const categoryCards: CategoryInfo[] = categories.map(category => {
   } else if (category === 'mini-tartas') {
        description = firstProduct.options?.[0]?.description || firstProduct.description;
        priceRange = `${firstProduct.options?.[0]?.price || firstProduct.price}`;
+  } else if (category === 'minicookies') {
+      description = "Bolsita de galletas mini. ¡Elige tus sabores!";
+      priceRange = firstProduct.price;
   }
 
   return {
@@ -83,12 +86,13 @@ const ProductCatalog = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Added overflow-x-auto and modified grid for better mobile tab view */}
           <div className="overflow-x-auto pb-2 mb-8">
-             <TabsList className="w-max min-w-full grid grid-cols-5 gap-2 md:w-full md:max-w-3xl mx-auto md:gap-0">
+             <TabsList className="w-max min-w-full grid grid-cols-6 gap-2 md:w-full md:max-w-4xl mx-auto md:gap-0">
                 <TabsTrigger value="todos" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Todos</TabsTrigger>
                 <TabsTrigger value="tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Tartas</TabsTrigger>
                 <TabsTrigger value="galletas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Galletas</TabsTrigger>
                 <TabsTrigger value="palmeritas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Palmeritas</TabsTrigger>
                 <TabsTrigger value="mini-tartas" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Mini Tartas</TabsTrigger>
+                <TabsTrigger value="minicookies" className="data-[state=active]:bg-pati-burgundy data-[state=active]:text-white px-2">Minicookies</TabsTrigger>
           </TabsList>
           </div>
           
@@ -139,16 +143,16 @@ const ProductCard = ({ product }: { product: CategoryInfo }) => {
         <h3 className="font-semibold text-base text-pati-burgundy mb-1">{product.name}</h3> 
         <div className="font-semibold text-base text-pati-dark-brown mt-auto pt-2"> 
           {product.priceRange || product.price} 
-        </div>
+      </div>
         <Button 
            asChild 
            size="sm" 
            className="w-full bg-white hover:bg-gray-100 text-pati-dark-brown border border-gray-300 mt-3" 
         >
             <Link to={linkDestination}>
-              {product.categoryName === 'tartas' ? 'Ver Tartas' : 'Ver Opciones'}
+              {product.categoryName === 'tartas' ? 'Ver Tartas' : (product.categoryName === 'minicookies' ? 'Ver Minicookies' : 'Ver Opciones')}
             </Link>
-         </Button>
+        </Button>
       </div>
     </>
   );

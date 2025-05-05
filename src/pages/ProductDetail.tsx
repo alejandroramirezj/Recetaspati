@@ -91,7 +91,7 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
                     </CardContent>
                 </Card>
             </div>
-            {/* Columna 2: Imagen */}
+            {/* Columna 2: Imagen - RESTORED */}
             <Card className="overflow-hidden border-pati-pink/30 shadow-md md:sticky md:top-24">
                  <CardContent className="p-0">
                      <div className="aspect-square">
@@ -296,8 +296,7 @@ ${itemsList}
 
     // --- RETURN JSX for ItemPackConfigurator --- 
   return (
-      <> 
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Column: Pack Selection -> Items */} 
           <div className="space-y-6">
             {/* Title, Description */} 
@@ -480,46 +479,7 @@ ${itemsList}
                   </div>
           )}
                 </div>
-
-        {/* Sticky Footer Bar - Ahora visible siempre que haya pack seleccionado y en todas las pantallas */} 
-        {selectedPackSize && (
-            <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm px-4 py-3 border-t border-gray-200 shadow-lg flex items-center justify-between gap-3 min-h-[70px]">
-                 {/* Info del Pack Actual */}
-                 <div className="flex flex-col text-sm flex-shrink mr-2">
-                     <span className="font-semibold text-pati-dark-brown whitespace-nowrap">Pack {selectedPackSize} ({currentCount}/{selectedPackSize})</span>
-                     <span className="font-bold text-lg text-pati-burgundy">{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
-                 </div>
-                 
-                 {/* Grupo de Botones */}
-                 <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Botón Ver Pedido Global (NUEVO) */}
-                    <Button 
-                        asChild 
-                        variant="outline" 
-                        size="sm" 
-                        className="whitespace-nowrap border-pati-accent text-pati-accent hover:bg-pati-accent/10 focus-visible:ring-pati-accent"
-                    >
-                       <Link to="/pedido">
-                            <ShoppingCart className="mr-1.5 h-4 w-4"/>
-                            Ver Pedido ({getTotalItems()})
-                       </Link>
-                    </Button>
-
-                    {/* Botón Añadir Pack al Carrito */}
-                    <Button 
-                        onClick={handleAddToCart} // Llama directamente a añadir al carrito
-                        className={`whitespace-nowrap focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white focus-visible:ring-pati-burgundy' : 'bg-gray-400 text-gray-700 cursor-not-allowed focus-visible:ring-gray-500'}`} 
-                        size="sm"
-                        disabled={!isOrderComplete}
-                    >
-                        {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />} 
-                        {isOrderComplete ? "Añadir Pack" : `Completa`}
-                    </Button>
-                 </div>
-               </div>
-             )}
-      </> 
-    );
+      );
 };
 
 // --- NUEVO COMPONENTE para seleccionar N sabores fijos --- 
@@ -928,37 +888,20 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
 
     return (
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
-            {/* Columna Izquierda: Imagen */}
-            <Card className="overflow-hidden border-pati-pink/30 shadow-md">
-                 <CardContent className="p-0">
-                     <div className="aspect-square">
-                         <img 
-                            src={product.image} 
-                            alt={`Imagen de ${product.name}`}
-                            className="w-full h-full object-contain" 
-                            loading="lazy"
-                         />
-                     </div>
-                 </CardContent>
-            </Card>
+             <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
+             <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
+             {product.size && <p className="text-md text-pati-brown"><span className="font-semibold">Tamaño:</span> {product.size}</p>}
+             <p className="text-3xl font-bold text-pati-accent mb-6">{product.price}</p>
 
-            {/* Columna Derecha: Info y Botón */}
-            <div className="space-y-6">
-                 <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
-                 <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
-                 {product.size && <p className="text-md text-pati-brown"><span className="font-semibold">Tamaño:</span> {product.size}</p>}
-                 <p className="text-3xl font-bold text-pati-accent mb-6">{product.price}</p>
-
-                 <Button 
-                    onClick={handleAddToCart}
-                    size="lg" 
-                    className={`w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3`}
-                 > 
-                    <ShoppingCart className="mr-2 h-5 w-5" /> 
-                    Añadir al Carrito
+             <Button 
+                onClick={handleAddToCart}
+                size="lg" 
+                className={`w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3`}
+             > 
+                <ShoppingCart className="mr-2 h-5 w-5" /> 
+                Añadir al Carrito
             </Button>
-          </div>
-        </div>
+      </div>
     );
 };
 
@@ -981,26 +924,21 @@ const ProductDetail = () => {
       if (!product) return null;
 
       switch (product.configType) {
-          case 'cookiePack': // Galletas usan el configurador de items
-              return <ItemPackConfigurator product={product} category={category || ''} id={id || ''} />;
-          case 'flavorPack': // Palmeritas usan el nuevo selector de checkboxes
-              return <FlavorCheckboxSelector product={product} />;
+          case 'cookiePack':
+          case 'flavorPack':
+            return <ItemPackConfigurator product={product} category={product.category} id={product.id.toString()} />;
           case 'fixedPack':
-              return <FixedPackSelector product={product} />;
-          case 'flavorOnly': // Tartas individuales usan este display simple
-              return <SimpleProductDisplay product={product} />;
-          case 'flavorQuantity': // Mini-tartas usan este selector
-              return <FlavorQuantitySelector product={product} />;
-          // Add cases for 'flavorQuantity' and 'flavorOnly' later
-          // case 'flavorQuantity':
-          //     return <IndividualFlavorSelector product={product} />;
-          // case 'flavorOnly':
-          //     return <FlavorOptionSelector product={product} />;
+            return <FixedPackSelector product={product} />;
+          case 'flavorQuantity':
+            return <FlavorQuantitySelector product={product} />;
+          case 'flavorOnly':
+            return <SimpleProductDisplay product={product} />;
+          case 'flavorMultiSelect': // ADDED: Handle new config type - Needs a dedicated component
+            // Placeholder for now, will need a new component similar to FlavorCheckboxSelector but allows multiple choices
+            return <FlavorCheckboxSelector product={product} />; // TEMPORARY - Reuse for now, needs update!
           default:
-              console.warn("Configurador no implementado para tipo:", product.configType);
-              return (
-                <div className="text-center text-pati-brown">Configuración no disponible para este producto.</div>
-              );
+            // Fallback for 'simple' or undefined types
+            return <SimpleProductDisplay product={product} />;
       }
   };
 
@@ -1023,7 +961,7 @@ const ProductDetail = () => {
     );
   }
 
-  // Render the correct configurator
+  // Render the main layout with MediaGallery and Configurator
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-pati-cream">
       <Navbar />
@@ -1035,8 +973,33 @@ const ProductDetail = () => {
            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
            Volver al catálogo
          </Link>
-         {/* Render the selected configurator */} 
-         {renderConfigurator()} 
+
+        {/* RENDER configurator directly - No extra grid here */}
+        {renderConfigurator()} 
+
+        {/* RESTORED: Conditional Video Display block */}
+        {product.video && (
+           <div className="mt-8 md:mt-12">
+             <Card className="overflow-hidden border-pati-pink/30 shadow-md">
+               <CardHeader>
+                 <CardTitle className="text-xl text-pati-burgundy">Vídeo del Producto</CardTitle>
+               </CardHeader>
+               <CardContent>
+                 <video 
+                   src={product.video}
+                   controls
+                   playsInline
+                   muted={false} // Allow sound by default, user can mute
+                   className="w-full rounded-lg aspect-video"
+                   aria-label={`Vídeo de ${product.name}`}
+                 >
+                   Tu navegador no soporta la etiqueta de vídeo.
+                 </video>
+               </CardContent>
+             </Card>
+           </div>
+         )}
+         
       </main>
       <Footer />
     </div>

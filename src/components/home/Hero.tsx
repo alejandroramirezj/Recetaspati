@@ -1,11 +1,63 @@
+import React, { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+// Define interface for a falling cookie
+interface FallingCookie {
+  id: number;
+  imageUrl: string;
+  left: string;
+  animationDuration: string;
+  animationDelay: string;
+  size: number; // For scaling
+}
+
 const Hero = () => {
+  const [cookies, setCookies] = useState<FallingCookie[]>([]);
+  const cookieImages = ['/images/minicookie1.png', '/images/minicookie2.png', '/images/minicookie3.png'];
+  const numCookies = 30; // Adjust number of cookies
+
+  useEffect(() => {
+    const generatedCookies: FallingCookie[] = [];
+    for (let i = 0; i < numCookies; i++) {
+      generatedCookies.push({
+        id: i,
+        imageUrl: cookieImages[Math.floor(Math.random() * cookieImages.length)],
+        left: `${Math.random() * 100}%`,
+        animationDuration: `${Math.random() * 8 + 7}s`, // 7s to 15s
+        animationDelay: `${Math.random() * 10}s`, // 0s to 10s delay
+        size: Math.random() * 0.5 + 0.7 // Scale between 0.7 and 1.2
+      });
+    }
+    setCookies(generatedCookies);
+  }, []);
+
   return (
-    // Simplified background, reduced padding, centered single column
-    <div className="bg-gradient-to-br from-pati-light-pink via-white to-pati-cream py-16 md:py-20">
-      <div className="container mx-auto px-4 flex flex-col items-center text-center">
+    // ADDED: relative and overflow-hidden
+    <div className="relative overflow-hidden bg-gradient-to-br from-pati-light-pink via-white to-pati-cream py-16 md:py-20">
+      {/* ADDED: Cookie Animation Layer */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {cookies.map((cookie) => (
+          <img
+            key={cookie.id}
+            src={cookie.imageUrl}
+            alt=""
+            className="absolute top-[-10%] animate-fall opacity-70"
+            style={{
+              left: cookie.left,
+              width: `${20 * cookie.size}px`, // Base size 20px, scaled
+              height: `${20 * cookie.size}px`,
+              animationDuration: cookie.animationDuration,
+              animationDelay: cookie.animationDelay,
+              transform: 'translateY(0%)', // Initial position above screen
+            }}
+            aria-hidden="true"
+          />
+        ))}
+      </div>
+
+      {/* Main content with higher z-index */}
+      <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center">
         
         {/* Centered Text Content */} 
         <div className="w-full max-w-3xl space-y-6"> {/* Increased max-width slightly */}
