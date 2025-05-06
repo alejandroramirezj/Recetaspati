@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,6 +7,7 @@ import { Product as ProductType } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { CartItem } from '@/types/cart';
 import { ShoppingCart, CheckCircle2 } from 'lucide-react';
+import { useReward } from 'react-rewards';
 
 interface FlavorMultiSelectorProps {
   product: ProductType;
@@ -15,6 +16,12 @@ interface FlavorMultiSelectorProps {
 const FlavorMultiSelector: React.FC<FlavorMultiSelectorProps> = ({ product }) => {
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const { dispatch } = useCart();
+
+  const rewardId = `reward-multiselect-${product.id}`;
+  const { reward, isAnimating } = useReward(rewardId, 'emoji', {
+      emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
+      elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
+  });
 
   const availableFlavors = product.availableFlavors || [];
   const unitPrice = useMemo(() => {
@@ -54,8 +61,7 @@ const FlavorMultiSelector: React.FC<FlavorMultiSelectorProps> = ({ product }) =>
     };
 
     dispatch({ type: 'ADD_ITEM', payload: cartItem });
-    // Optionally reset selection after adding
-    // setSelectedFlavors([]); 
+    reward(); // Trigger animation
   };
 
   return (
@@ -95,9 +101,10 @@ const FlavorMultiSelector: React.FC<FlavorMultiSelectorProps> = ({ product }) =>
       <Button
         onClick={handleAddToCart}
         size="lg"
-        className={`w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isSelectionMade ? 'opacity-50 cursor-not-allowed' : ''}`}
-        disabled={!isSelectionMade}
+        className={`relative w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isSelectionMade ? 'opacity-50 cursor-not-allowed' : ''}`}
+        disabled={!isSelectionMade || isAnimating}
       >
+        <span id={rewardId} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
         <ShoppingCart className="mr-2 h-5 w-5" />
         {isSelectionMade ? 'Añadir al Carrito' : 'Selecciona al menos un sabor'}
       </Button>
