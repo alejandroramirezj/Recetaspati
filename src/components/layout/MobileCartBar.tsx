@@ -168,3 +168,4 @@ const MobileCartBar: React.FC = () => {
 };
 
 export default MobileCartBar;
+ 

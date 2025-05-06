@@ -389,10 +389,10 @@ ${itemsList}
                                              alt={item.name}
                                              className="w-full h-full object-contain pointer-events-none" 
                                              loading="lazy"
-                                         />
-                                     </div>
+              />
+            </div>
                                      <h4 className="text-sm font-medium text-pati-burgundy px-1">{item.name}</h4>
-                                  </div>
+          </div>
                                  {/* +/- Controls */}
                                   <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
                                     {/* Decrement Button: Disabled if count is 0 */}
@@ -424,7 +424,7 @@ ${itemsList}
                                       >
                                         <PlusCircle className="h-5 w-5" /> 
                                       </Button>
-                                  </div>
+                      </div>
                                 </Card>
                         </div>
                            );
@@ -479,7 +479,7 @@ ${itemsList}
                      </div>
                   </CardContent>
                 </Card>
-                    </div>
+                </div>
             )}
           </div>
 
@@ -507,9 +507,9 @@ ${itemsList}
                         {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />} 
                         {isOrderComplete ? "Añadir Pack" : `Completa`}
                     </Button>
-                 </div>
-               </div>
-             )}
+                </div>
+              </div>
+            )}
       </>
     );
 };
@@ -700,19 +700,6 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                         </CardContent>
                     </Card>
                 )}
-                {/* Imagen del producto */} 
-                <Card className="overflow-hidden border-pati-pink/30 shadow-md">
-                    <CardContent className="p-0">
-                        <div className="aspect-square">
-                            <img 
-                                src={product.image} 
-                                alt={`Imagen de ${product.name}`}
-                                className="w-full h-full object-contain" 
-                                loading="lazy"
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
              </div>
          </div>
      );
@@ -761,71 +748,52 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
     };
 
     return (
-        // RESTORED original grid layout with image
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
-            {/* Columna Izquierda: Imagen */}
-            <Card className="overflow-hidden border-pati-pink/30 shadow-md md:sticky md:top-24">
-                 <CardContent className="p-0">
-                     <div className="aspect-square">
-                         <img 
-                             src={product.image} 
-                             alt={`Imagen de ${product.name}`}
-                             className="w-full h-full object-contain" 
-                             loading="lazy"
-                         />
-                     </div>
-                 </CardContent>
+        <div className="space-y-6">
+            <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
+            <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
+            <p className="text-lg text-pati-brown mb-4">Precio: <span className="text-2xl font-bold text-pati-accent">{unitPrice.toFixed(2).replace('.', ',')}€</span> / unidad</p>
+
+            {/* Selección de Sabores y Cantidades */}
+            <Card className="border-pati-pink/30 shadow-md">
+                <CardHeader>
+                    <CardTitle className="text-xl text-pati-burgundy">Elige Sabores y Cantidades</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {availableFlavors.map((flavor) => {
+                        const count = quantities[flavor] || 0;
+                        const isSelected = count > 0;
+                        return (
+                            <div key={flavor} className={`flex items-center justify-between gap-4 border-b pb-3 last:border-b-0 transition-colors ${isSelected ? 'bg-pati-pink/10' : ''}`}> 
+                                <p className={`font-medium ${isSelected ? 'text-pati-burgundy font-semibold' : 'text-pati-dark-brown'}`}>{flavor}</p>
+                                <div className="flex items-center justify-center gap-2">
+                                    <Button variant="outline" size="icon" className={`h-8 w-8 rounded-full ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => handleQuantityChange(flavor, -1)} disabled={count === 0}> 
+                                        <MinusCircle className="h-4 w-4" /> 
+                                    </Button>
+                                    <Badge variant={isSelected ? "default" : "outline"} className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[40px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}>
+                                        {count}
+                                    </Badge>
+                                    <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => handleQuantityChange(flavor, 1)}> 
+                                        <PlusCircle className="h-4 w-4" /> 
+                                    </Button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </CardContent>
             </Card>
 
-            {/* Columna Derecha: Info, Selección y Botón */} 
-            <div className="space-y-6">
-                <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
-                <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
-                <p className="text-lg text-pati-brown mb-4">Precio: <span className="text-2xl font-bold text-pati-accent">{unitPrice.toFixed(2).replace('.', ',')}€</span> / unidad</p>
-
-                {/* Selección de Sabores y Cantidades */}
-                <Card className="border-pati-pink/30 shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl text-pati-burgundy">Elige Sabores y Cantidades</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {/* RESTORED rendering logic for flavor rows */}
-                        {availableFlavors.map((flavor) => {
-                            const count = quantities[flavor] || 0;
-                            const isSelected = count > 0;
-                            return (
-                                <div key={flavor} className={`flex items-center justify-between gap-4 border-b pb-3 last:border-b-0 transition-colors ${isSelected ? 'bg-pati-pink/10' : ''}`}> 
-                                    <p className={`font-medium ${isSelected ? 'text-pati-burgundy font-semibold' : 'text-pati-dark-brown'}`}>{flavor}</p>
-                                    <div className="flex items-center justify-center gap-2">
-                                        <Button variant="outline" size="icon" className={`h-8 w-8 rounded-full ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => handleQuantityChange(flavor, -1)} disabled={count === 0}> 
-                                            <MinusCircle className="h-4 w-4" /> 
-                                        </Button>
-                                        <Badge variant={isSelected ? "default" : "outline"} className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[40px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}>
-                                            {count}
-                                        </Badge>
-                                        <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => handleQuantityChange(flavor, 1)}> 
-                                            <PlusCircle className="h-4 w-4" /> 
-                                        </Button>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </CardContent>
-                </Card>
-
-                {/* Botón Añadir Selección al Carrito */} 
-                <div className="flex flex-col sm:flex-row gap-3 mt-4">
-                    <Button 
-                        onClick={handleAddToCart}
-                        size="lg" 
-                        className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${totalSelectedCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        disabled={totalSelectedCount === 0 || isAnimating}
-                    > 
-                        <span id={rewardId} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
-                        <ShoppingCart className="mr-2 h-5 w-5" /> 
-                        {totalSelectedCount > 0 ? `Añadir ${totalSelectedCount} al Carrito` : 'Elige Sabores/Cantidad'}
-                    </Button>
-                </div>
+            {/* Botón Añadir Selección al Carrito */} 
+            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                <Button 
+                    onClick={handleAddToCart}
+                    size="lg" 
+                    className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${totalSelectedCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={totalSelectedCount === 0 || isAnimating}
+                > 
+                    <span id={rewardId} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
+                    <ShoppingCart className="mr-2 h-5 w-5" /> 
+                    {totalSelectedCount > 0 ? `Añadir ${totalSelectedCount} al Carrito` : 'Elige Sabores/Cantidad'}
+                </Button>
             </div>
         </div>
     );
@@ -983,7 +951,7 @@ const ProductDetail = () => {
                        <CardContent className="p-4 text-center text-gray-400">Imagen no disponible</CardContent>
                    </Card>
               )}
-           </div>
+          </div>
         </div>
 
         {/* REMOVED the separate video block that was below */}
