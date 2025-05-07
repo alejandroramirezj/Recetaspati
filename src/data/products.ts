@@ -133,7 +133,8 @@ export const productsData: Product[] = [
         { name: "Galleta de Oreo", image: "/Recetaspati/images/Galleta-oreo.png", description: "Con trozos de Oreo." },
         { name: "Galleta de Pistacho", image: "/Recetaspati/images/Galleta-Pistacho.png", description: "Con crema de pistacho." },
         { name: "Galleta de Lotus", image: "/Recetaspati/images/Galleta-lotus.png", description: "Con sabor Lotus Biscoff." },
-        { name: "Galleta Choco Negro Salado", image: "/Recetaspati/images/Galleta-chocolate-salado.png", description: "Intenso chocolate negro con un toque de sal." }
+        { name: "Galleta Choco Negro Salado", image: "/Recetaspati/images/Galleta-chocolate-salado.png", description: "Intenso chocolate negro con un toque de sal." },
+        { name: "Galleta Happy Hippo", image: "/Recetaspati/images/Galleta Happy Hippo.png", description: "Crujiente galleta con relleno cremoso y el divertido sabor de Happy Hippo." }
     ]
   },
   // Palmeritas - REVISED
@@ -181,4 +182,38 @@ export const productsData: Product[] = [
     configType: 'flavorMultiSelect', // Select one or both flavors for the bag
     availableFlavors: ["Chocolate", "Chocolate Blanco"] 
   },
+  // NUEVAS TARTAS
+  { 
+      id: 12, 
+      name: "Tarta de Lotus", 
+      description: "Increíble tarta con el sabor único de las galletas Lotus Biscoff, una delicia caramelizada.", 
+      price: "30€", 
+      image: "/Recetaspati/images/Tarta Lotus.png", 
+      category: "tartas", 
+      configType: 'flavorOnly',
+      availableFlavors: ["Lotus"],
+      size: "8-10 personas" 
+  },
+  { 
+      id: 13, 
+      name: "Tarta de Happy Hippo", 
+      description: "Divertida y deliciosa tarta inspirada en los sabores de Happy Hippo, con avellana y cacao.", 
+      price: "32€", 
+      image: "/Recetaspati/images/Tarta Happy Hippo.png", 
+      category: "tartas", 
+      configType: 'flavorOnly',
+      availableFlavors: ["Happy Hippo"],
+      size: "8-10 personas" 
+  },
+  { 
+      id: 14, 
+      name: "Tarta de Nutella", 
+      description: "Irresistible tarta para los amantes de Nutella, con una suave crema de avellanas y cacao.", 
+      price: "30€", 
+      image: "/Recetaspati/images/Tarta Nutela.png", 
+      category: "tartas", 
+      configType: 'flavorOnly',
+      availableFlavors: ["Nutella"],
+      size: "8-10 personas" 
+  }
 ]; 

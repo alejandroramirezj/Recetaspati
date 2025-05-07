@@ -362,7 +362,7 @@ ${itemsList}
                       )}
                    </CardHeader>
                    <CardContent>
-                      <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 ${!canAddMoreItems ? 'opacity-75' : ''}`}> 
+                      <div className={`grid grid-cols-2 gap-4 ${!canAddMoreItems ? 'opacity-75' : ''}`}> 
                           {availableItems.map((item, index) => { // Use availableItems
                            const count = selectedItems[item.name] || 0; // Use selectedItems
                            const isSelected = count > 0;
@@ -656,7 +656,7 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
                  )}
              </div>
 
-             {/* Columna Derecha: Resumen e Imagen */}
+             {/* Columna Derecha: Resumen */}
              <div className="sticky top-24 space-y-6">
                 {selectedPackOption && (
                     <Card className="border-pati-pink/30 shadow-lg">
@@ -908,53 +908,53 @@ const ProductDetail = () => {
            Volver al catálogo
          </Link>
 
-        {/* RESTORE Main Grid: Configurator Left, Media Right */}
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
+        {/* Main Grid: Conditionally 1 or 2 columns */}
+        <div className={`grid ${product.configType === 'cookiePack' || product.configType === 'fixedPack' || product.configType === 'flavorPack' ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-8 lg:gap-12 items-start`}>
            {/* Column 1: Configurator */}
            <div>
               {renderConfigurator()} 
            </div>
 
-           {/* Column 2: Image or Vertical Video (Sticky on Desktop) */}
-           <div className="md:sticky md:top-24">
-              {product.category === 'minicookies' && product.video ? (
-                  // Minicookies Vertical Video
-                  <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
-                     <CardContent className="p-0 h-full">
-                         <video 
-                             src={product.video} 
-                             autoPlay loop muted playsInline
-                             className="w-full h-full object-cover"
-                             aria-label={`Vídeo de ${product.name}`}
-                         >
-                             Tu navegador no soporta la etiqueta de vídeo.
-                         </video>
-                     </CardContent>
-                  </Card>
-              ) : product.image ? (
-                  // Default Product Image
-                  <Card className="overflow-hidden border-pati-pink/30 shadow-md">
-                     <CardContent className="p-0">
-                         <div className="aspect-square">
-                             <img 
-                                src={product.image} 
-                                alt={`Imagen de ${product.name}`}
-                                className="w-full h-full object-contain" 
-                                loading="lazy"
-                             />
-                         </div>
-                     </CardContent>
-                  </Card>
-              ) : (
-                  // Placeholder
-                   <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-square flex items-center justify-center bg-gray-50">
-                       <CardContent className="p-4 text-center text-gray-400">Imagen no disponible</CardContent>
-                   </Card>
-              )}
-          </div>
+           {/* Column 2: Image or Vertical Video (Sticky on Desktop) - Conditional Rendering */}
+           {product.configType !== 'cookiePack' && product.configType !== 'fixedPack' && product.configType !== 'flavorPack' && (
+             <div className="md:sticky md:top-24">
+                {product.category === 'minicookies' && product.video ? (
+                    // Minicookies Vertical Video
+                    <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
+                       <CardContent className="p-0 h-full">
+                           <video 
+                               src={product.video} 
+                               autoPlay loop muted playsInline
+                               className="w-full h-full object-cover"
+                               aria-label={`Vídeo de ${product.name}`}
+                           >
+                               Tu navegador no soporta la etiqueta de vídeo.
+                           </video>
+                       </CardContent>
+                    </Card>
+                ) : product.image ? (
+                    // Default Product Image
+                    <Card className="overflow-hidden border-pati-pink/30 shadow-md">
+                       <CardContent className="p-0">
+                           <div className="aspect-square">
+                               <img 
+                                  src={product.image} 
+                                  alt={`Imagen de ${product.name}`}
+                                  className="w-full h-full object-contain" 
+                                  loading="lazy"
+                               />
+                           </div>
+                       </CardContent>
+                    </Card>
+                ) : (
+                    // Placeholder
+                     <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-square flex items-center justify-center bg-gray-50">
+                         <CardContent className="p-4 text-center text-gray-400">Imagen no disponible</CardContent>
+                     </Card>
+                )}
+             </div>
+           )}
         </div>
-
-        {/* REMOVED the separate video block that was below */}
          
       </main>
       <Footer />
