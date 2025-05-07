@@ -66,6 +66,7 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
         <div className="space-y-6">
             <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
             <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
+            <MobileVideoPlayer product={product} />
             <Card className="border-pati-pink/30 shadow-md">
                 <CardHeader>
                     <CardTitle className="text-xl text-pati-burgundy">Elige tu Caja</CardTitle>
@@ -94,37 +95,61 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
     );
 };
 
+// --- Helper Component for Mobile Video --- (NUEVO)
+const MobileVideoPlayer = ({ product }: { product: ProductType | null }) => {
+  if (!product?.video) return null;
+  return (
+    <div className="md:hidden mt-6"> {/* Visible solo en móvil, con margen superior */}
+      <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
+        <CardContent className="p-0 h-full">
+          <video 
+            src={product.video} 
+            autoPlay loop muted playsInline
+            className="w-full h-full object-cover"
+            aria-label={`Vídeo de ${product.name}`}
+          >
+            Tu navegador no soporta la etiqueta de vídeo.
+          </video>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Inner Component handling configuration logic and UI - NOW GENERIC
-const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, category, id }) => { // Renamed
-    const [selectedItems, setSelectedItems] = useState<Record<string, number>>({}); // Renamed 
-    const [selectedPackSize, setSelectedPackSize] = useState<number | null>(null); 
-    const { dispatch, getTotalItems } = useCart(); // Added useCart hook
-    const phoneNumber = "+34671266981"; 
-  
+const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, category, id }) => {
+    // --- STATE ---
+    // State for cookiePack quantity selection
+    const [selectedItems, setSelectedItems] = useState<Record<string, number>>({});
+    // State for flavorPack checkbox selection
+    const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
+    // General state
+    const [selectedPackSize, setSelectedPackSize] = useState<number | null>(null);
+    const [maxFlavors, setMaxFlavors] = useState<number>(0); // Max flavors for flavorPack
+    const { dispatch, getTotalItems } = useCart();
+    const phoneNumber = "+34671266981";
     const [isSummaryVisible, setIsSummaryVisible] = useState(false);
     const { ref: summaryRef, inView } = useInView({ threshold: 0.5 });
     useEffect(() => { setIsSummaryVisible(inView); }, [inView]);
 
-    // Reward hook setup - For MAIN button in summary card
+    // --- REWARD HOOKS ---
     const rewardIdSummary = `reward-itempack-summary-${product.id}`;
     const { reward: rewardSummary, isAnimating: isAnimatingSummary } = useReward(rewardIdSummary, 'emoji', {
-        emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
-        elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
+         emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
+         elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
     });
-
-    // Reward hook setup - For STICKY BAR button
     const rewardIdSticky = `reward-itempack-sticky-${product.id}`;
     const { reward: rewardSticky, isAnimating: isAnimatingSticky } = useReward(rewardIdSticky, 'emoji', {
         emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
         elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
     });
 
-    // Extract pack options and available items from product
+    // --- DATA DERIVATION ---
     const packOptions = useMemo(() => {
         return product.options?.map(opt => ({
-            size: parseInt(opt.name.match(/\d+/)?.[0] || '0'), // Extract number from name (e.g., "Caja 25 unidades")
+            size: parseInt(opt.name.match(/\d+/)?.[0] || '0'),
             price: parseFloat(opt.price.replace('€', '').replace(',', '.')),
-            name: opt.name, // Keep original name for display
+            name: opt.name,
             description: opt.description || `Elige hasta ${parseInt(opt.name.match(/\d+/)?.[0] || '0')} unidades`
         })) || [];
     }, [product.options]);
@@ -133,421 +158,69 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         if (product.configType === 'cookiePack') {
             return product.individualCookies?.map(cookie => ({ name: cookie.name, image: cookie.image })) || [];
         } else if (product.configType === 'flavorPack') {
-            // Use a placeholder image or generic icon for flavors since images are missing
-            return product.availableFlavors?.map(flavor => ({ name: flavor, image: '/Recetaspati/placeholder.svg' /* TODO: Get real images or use icons */ })) || [];
-        } 
-        return []; // Return empty array if neither type matches
+            // For flavorPack, we only need the names
+            return product.availableFlavors?.map(flavor => ({ name: flavor, image: '' })) || []; // Image not used
+        }
+        return [];
     }, [product.configType, product.individualCookies, product.availableFlavors]);
-    
-    // Calculate current count
+
+    // --- CALCULATIONS ---
     const currentCount = useMemo(() => {
-        return Object.values(selectedItems).reduce((sum, count) => sum + count, 0); // Use selectedItems
-    }, [selectedItems]);
+        if (product.configType === 'flavorPack') {
+            return selectedFlavors.length; // Count selected distinct flavors
+        } else { // Default for cookiePack
+            return Object.values(selectedItems).reduce((sum, count) => sum + count, 0); // Sum quantities
+        }
+    }, [selectedItems, selectedFlavors, product.configType]);
 
-    // Check if more items can be added
-    const canAddMoreItems = useMemo(() => { // Renamed
-         return selectedPackSize !== null && currentCount < selectedPackSize;
-    }, [selectedPackSize, currentCount]);
+    const canAddMoreItems = useMemo(() => {
+         if (!selectedPackSize) return false;
+         if (product.configType === 'flavorPack') {
+             return selectedFlavors.length < maxFlavors; // Can add if below max distinct flavors
+         } else { // Default for cookiePack
+             return currentCount < selectedPackSize; // Can add if below total quantity limit
+         }
+    }, [selectedPackSize, currentCount, selectedFlavors.length, maxFlavors, product.configType]);
 
-    // Handlers for +/- 
-    const decrementItem = (itemName: string) => { // Renamed
-        setSelectedItems(prev => { // Use setSelectedItems
-            const currentCount = prev[itemName] || 0;
-
-            // If flavorPack, decrementing means removing it entirely (set to 0)
-            if (product.configType === 'flavorPack') {
-                const { [itemName]: _, ...rest } = prev;
-                return rest; 
-            }
-
-            if (currentCount <= 1) {
-                const { [itemName]: _, ...rest } = prev;
-                return rest;
-            } else {
-                return { ...prev, [itemName]: currentCount - 1 };
-            }
-        });
-    };
-
-    const incrementItem = (itemName: string) => { // Renamed
-        if (canAddMoreItems) { 
-             // If flavorPack, only allow increment if count is 0
-            if (product.configType === 'flavorPack' && (selectedItems[itemName] || 0) >= 1) {
-                console.log("Flavor pack: Solo se puede añadir una unidad de cada sabor.");
-                return; // Do nothing if already added
-            }
-
-           setSelectedItems(prev => ({ // Use setSelectedItems
-               ...prev,
-               [itemName]: (prev[itemName] || 0) + 1
-           }));
-       }
-    };
-    
-    const handlePackSelect = (value: string) => {
-        const size = parseInt(value);
-        setSelectedPackSize(size);
-        // Reset items when changing pack size
-        setSelectedItems({}); 
-    };
-
-    // Calculate final price based on selected pack
     const finalPackPrice = useMemo(() => {
         if (!selectedPackSize) return 0;
         return packOptions.find(p => p.size === selectedPackSize)?.price || 0;
     }, [selectedPackSize, packOptions]);
 
-    // Check if order is complete
     const isOrderComplete = useMemo(() => {
-         return selectedPackSize !== null && currentCount === selectedPackSize;
-    }, [selectedPackSize, currentCount]);
+        if (!selectedPackSize) return false;
+        if (product.configType === 'flavorPack') {
+            // Considered complete if at least one flavor is selected (up to the max)
+            return selectedFlavors.length > 0 && selectedFlavors.length <= maxFlavors;
+        } else { // Default for cookiePack
+            return currentCount === selectedPackSize; // Must reach exact quantity
+        }
+    }, [selectedPackSize, currentCount, selectedFlavors.length, maxFlavors, product.configType]);
 
-    // Ref para rastrear el estado anterior de isOrderComplete
-    const prevIsOrderCompleteRef = useRef(isOrderComplete);
-
-    // Efecto para hacer scroll cuando se completa el pedido
-    useEffect(() => {
-        // Comprobar si acaba de completarse (antes era false, ahora es true)
-        if (!prevIsOrderCompleteRef.current && isOrderComplete) {
-            const summaryButton = document.getElementById('add-pack-button');
-            if (summaryButton) {
-                summaryButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // --- HANDLERS ---
+    const decrementItem = (itemName: string) => { // Only for cookiePack
+        setSelectedItems(prev => {
+            const current = prev[itemName] || 0;
+            if (current <= 1) {
+                const { [itemName]: _, ...rest } = prev;
+                return rest;
+            } else {
+                return { ...prev, [itemName]: current - 1 };
             }
-        }
-        // Actualizar el valor anterior para la próxima comprobación
-        prevIsOrderCompleteRef.current = isOrderComplete;
-    }, [isOrderComplete]); // Ejecutar solo cuando isOrderComplete cambie
-
-    // Generate WhatsApp message - TODO: Adapt later to use flavorDetails or cookieDetails
-    const generateWhatsAppMessage = () => {
-        if (!selectedPackSize || !isOrderComplete) return "Error: Selección incompleta";
-        const itemsList = Object.entries(selectedItems).filter(([, count]) => count > 0).map(([name, count]) => `- ${name} (x${count})`).join('\n');
-        // Determine product type label (Galletas/Palmeritas)
-        const productLabel = product.category === 'galletas' ? 'Galletas' : (product.category === 'palmeritas' ? 'Palmeritas' : 'productos'); 
-        return `¡Hola Pati! 👋 Quiero mi Pack de ${selectedPackSize} ${productLabel} (${finalPackPrice?.toFixed(2)}€):
-
-${itemsList}
-
-¿Confirmamos el pedido? 😊`;
-    };
-    
-    const finalWhatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(generateWhatsAppMessage())}`;
-    
-    const whatsappMessagePreview = useMemo(() => {
-        if (!selectedPackSize) return "Selecciona un tamaño de pack para empezar.";
-        const itemLabel = product.category === 'galletas' ? 'galleta(s)' : (product.category === 'palmeritas' ? 'palmerita(s)' : 'unidad(es)');
-        if (currentCount < selectedPackSize) return `Selecciona ${selectedPackSize - currentCount} ${itemLabel} más.`;
-        if (currentCount > selectedPackSize) return `Error: Has superado el límite de ${itemLabel}.`;
-        return generateWhatsAppMessage();
-    }, [selectedItems, selectedPackSize, currentCount, finalPackPrice, isOrderComplete, product.category]);
-    
-    // Modified handleAddToCart to trigger rewards
-    const handleAddToCart = (triggerSource: 'summary' | 'sticky') => {
-        if (!selectedPackSize || !isOrderComplete) return;
-
-        const cartItemId = `${product.id}-pack${selectedPackSize}`;
-        let cartItemPayload: Omit<CartItem, 'id'>;
-
-        if (product.configType === 'cookiePack') {
-            cartItemPayload = {
-                productId: product.id,
-                productName: product.name,
-                quantity: 1, // Add one pack
-                packPrice: finalPackPrice,
-                imageUrl: product.image,
-                type: 'cookiePack',
-                cookieDetails: {
-                    packSize: selectedPackSize,
-                    cookies: selectedItems
-                }
-            };
-        } else if (product.configType === 'flavorPack') {
-             cartItemPayload = {
-                productId: product.id,
-                productName: product.name,
-                quantity: 1, // Add one pack
-                packPrice: finalPackPrice,
-                imageUrl: product.image,
-                type: 'flavorPack',
-                selectedOptions: { pack: packOptions.find(p => p.size === selectedPackSize)?.name || '' }, // Save pack name
-                selectedFlavors: Object.keys(selectedItems).filter(key => selectedItems[key] > 0) // Store selected flavors list from the Record 
-            };
-        } else {
-            console.error("Tipo de producto no soportado para añadir al carrito desde ItemPackConfigurator");
-            return;
-        }
-        
-        dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } });
-        
-        // Trigger specific reward
-        if (triggerSource === 'summary') {
-            rewardSummary();
-        } else if (triggerSource === 'sticky') {
-            rewardSticky();
-        }
-    };
-
-    // Function to scroll to summary
-    const scrollToSummary = () => {
-        document.getElementById('summary-card')?.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start'
         });
     };
 
-    // --- RETURN JSX for ItemPackConfigurator --- 
-  return (
-      <>
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
-            {/* Left Column: Pack Selection -> Items */} 
-            <div className="space-y-6">
-              {/* Title, Description */} 
-              <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
-              <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
-              
-              {/* Step 1: Select Pack Size */} 
-              <Card className="border-pati-pink/30 shadow-md">
-                <CardHeader>
-                   <CardTitle className="text-xl text-pati-burgundy">1. Elige tu Pack</CardTitle>
-                   <CardDescription>Selecciona el tamaño de tu caja.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                   <RadioGroup 
-                       onValueChange={handlePackSelect} 
-                       value={selectedPackSize?.toString()} 
-                       className="grid grid-cols-2 gap-3 md:gap-4" 
-                   >
-                      {packOptions.map((pack) => {
-                          const isSelected = selectedPackSize === pack.size;
-                          return (
-                               <Label 
-                                   key={pack.size} 
-                                   htmlFor={`pack-${pack.size}`} 
-                                   className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${selectedPackSize && !isSelected ? 'opacity-70' : ''}`}
-                               >
-                                   <RadioGroupItem value={pack.size.toString()} id={`pack-${pack.size}`} className="sr-only" />
-                                   {isSelected && (
-                                       <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />
-                                   )}
-                                   <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">{pack.name}</span>
-                                   {/* Use pack.description for potential details */}
-                                   <span className={`text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center`}>
-                                       {pack.description}
-                                   </span>
-                                   <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price.toFixed(2).replace('.', ',')}€</span>
-                               </Label>
-                          );
-                      })}
-                    </RadioGroup>
-                </CardContent>
-              </Card>
-
-              {/* Step 2: Select Items (Flavors or Cookies) */} 
-               <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}> 
-                  <CardHeader className="pb-4">
-                     <CardTitle className="text-xl text-pati-burgundy">2. Elige tus Sabores/Galletas</CardTitle> 
-                     {selectedPackSize ? (
-                      <CardDescription>
-                        Selecciona {selectedPackSize} unidad{selectedPackSize !== 1 ? 'es' : ''}. 
-                        <span className="font-semibold">(Pack: {finalPackPrice.toFixed(2).replace('.', ',')}€)</span> Total: {currentCount} / {selectedPackSize}
-                      </CardDescription>
-                     ) : (
-                        <CardDescription>Selecciona primero un tamaño de pack para poder añadir.</CardDescription>
-                     )}
-                      {/* Completion check message */} 
-                      {!canAddMoreItems && currentCount === selectedPackSize && (
-                           <div className="text-sm pt-2 text-green-600 font-semibold flex items-center gap-1">
-                               <CheckCircle2 className="h-4 w-4"/> ¡Caja Completa!
-                           </div>
-                      )}
-                   </CardHeader>
-                   <CardContent>
-                      <div className={`grid grid-cols-2 gap-4 ${!canAddMoreItems ? 'opacity-75' : ''}`}> 
-                          {availableItems.map((item, index) => { // Use availableItems
-                           const count = selectedItems[item.name] || 0; // Use selectedItems
-                           const isSelected = count > 0;
-                           const isAtLimit = !canAddMoreItems;
-                           
-                           // Specific check for flavorPack: can only add if count is 0
-                           const canIncrementFlavor = (product.configType !== 'flavorPack' || count === 0);
-                           
-                           return (
-                             <div key={index} className="p-1 h-full">
-                               <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${isAtLimit && !isSelected ? 'opacity-50' : ''}`}> 
-                                 {/* Wrapper div for click interaction, disabled if no pack selected */}
-                                 <div 
-                                   className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreItems ? 'cursor-not-allowed' : 'cursor-pointer'}`} 
-                                   onClick={() => canAddMoreItems && incrementItem(item.name)} 
-                                   aria-label={!canAddMoreItems ? `Límite de ${selectedPackSize} unidades alcanzado` : `Añadir ${item.name}`}
-                                   role="button" 
-                                   tabIndex={!canAddMoreItems ? -1 : 0}
-                                   aria-disabled={!canAddMoreItems}
-                                 >
-                                     <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full bg-gray-50"> {/* Added bg for placeholders */} 
-                                         <img 
-                                             src={item.image} 
-                                             alt={item.name}
-                                             className="w-full h-full object-contain pointer-events-none" 
-                                             loading="lazy"
-              />
-            </div>
-                                     <h4 className="text-sm font-medium text-pati-burgundy px-1">{item.name}</h4>
-          </div>
-                                 {/* +/- Controls */}
-                                  <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
-                                    {/* Decrement Button: Disabled if count is 0 */}
-                                    <Button 
-                                      variant="ghost" 
-                                      size="icon" 
-                                      className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
-                                      onClick={() => decrementItem(item.name)} 
-                                      disabled={count === 0} 
-                                      aria-label={`Quitar ${item.name}`}
-                                    >
-                                      <MinusCircle className="h-5 w-5" /> 
-                                    </Button>
-                                    <Badge 
-                                        variant={isSelected ? "default" : "outline"} 
-                                        className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md transition-all duration-150 ease-in-out ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}
-                                        aria-live="polite"
-                                       >
-                                         {count}
-                                      </Badge>
-                                     {/* Increment Button: Disabled if pack limit reached or flavor already added (for flavorPack) */}
-                                     <Button 
-                                       variant="ghost" 
-                                       size="icon" 
-                                       className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${!canAddMoreItems || !canIncrementFlavor ? 'opacity-50 cursor-not-allowed' : ''}`} 
-                                       onClick={() => canAddMoreItems && incrementItem(item.name)} 
-                                       disabled={!canAddMoreItems || !canIncrementFlavor} 
-                                       aria-label={`Añadir ${item.name}`}
-                                      >
-                                        <PlusCircle className="h-5 w-5" /> 
-                                      </Button>
-                      </div>
-                                </Card>
-                        </div>
-                           );
-                         })}
-                      </div>
-                   </CardContent>
-                </Card>
-              </div>
-
-            {/* Right Column: Summary Card */}
-            {selectedPackSize && (
-              <div ref={summaryRef} id="summary-card" className={`space-y-6 sticky top-24 transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}> 
-                <Card className="border-pati-pink/30 shadow-lg">
-                  <CardHeader className="pb-2">
-                     <CardTitle className="text-xl text-pati-burgundy">Resumen del Pack {selectedPackSize}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4 pt-2">
-                     <div className="flex justify-between items-center font-medium border-b pb-3 border-pati-pink/20">
-                       <span>Unidades Seleccionadas:</span>
-                       <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>{currentCount} / {selectedPackSize}</Badge>
-                  </div>
-
-                     <div className="flex justify-between items-center text-2xl font-bold text-pati-burgundy">
-                        <span>Precio Total Pack:</span>
-                        <span>{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
-                          </div>
-                     
-                     {/* Option 1: Keep simple WhatsApp Preview */}
-                     {/* <div className="space-y-2">
-                        <p className="text-sm font-medium text-pati-brown">Vista previa del mensaje:</p>
-                        <div className={`...`}>
-                           {whatsappMessagePreview}
-                        </div>
-                    </div> */}
-                    
-                     {/* == Contenedor para los dos botones (Flexbox) == */}
-                     <div className="flex flex-col sm:flex-row gap-3 mt-4"> {/* Stack vertically on small, row on sm+, add gap */} 
-                       {/* == Botón Añadir al Carrito (Ahora ocupa todo el ancho si el otro se quita) == */} 
-                       <Button
-                           id="add-pack-button"
-                           onClick={() => handleAddToCart('summary')}
-                           size="lg"
-                           className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                           disabled={!isOrderComplete || isAnimatingSummary}
-                           aria-disabled={!isOrderComplete}
-                       >
-                           <span id={rewardIdSummary} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
-                           <ShoppingCart className="mr-2 h-5 w-5" />
-                           {isOrderComplete ? `Añadir Pack ${selectedPackSize} al Carrito` : `Completa tu Pack ${selectedPackSize}`}
-                       </Button>
-                       {/* ===================================== */}
-                     </div>
-                  </CardContent>
-                </Card>
-                </div>
-            )}
-          </div>
-
-        {/* Sticky Footer Bar */} 
-        {selectedPackSize && (
-            <div className="fixed bottom-0 left-0 right-0 z-20 ... ">
-                 {/* ... Pack Info ... */}
-                 {/* Grupo de Botones */}
-                 <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Botón Ver Pedido Global */}
-                    <Button asChild variant="outline" size="sm" className="...">
-                       <Link to="/pedido">
-                            <ShoppingCart className="mr-1.5 h-4 w-4"/>
-                            Ver Pedido ({getTotalItems()})
-                       </Link>
-                    </Button>
-                    {/* Botón Añadir Pack al Carrito (Sticky Bar) */}
-                    <Button 
-                        onClick={() => handleAddToCart('sticky')} // Pass trigger source
-                        className={`relative whitespace-nowrap focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white focus-visible:ring-pati-burgundy' : 'bg-gray-400 text-gray-700 cursor-not-allowed focus-visible:ring-gray-500'}`} // Added relative
-                        size="sm"
-                        disabled={!isOrderComplete || isAnimatingSticky} // Use specific isAnimating
-                    >
-                         <span id={rewardIdSticky} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/> {/* Span for sticky button */}
-                        {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />} 
-                        {isOrderComplete ? "Añadir Pack" : `Completa`}
-                    </Button>
-                </div>
-              </div>
-            )}
-      </>
-    );
-};
-
-// --- NUEVO COMPONENTE para seleccionar N sabores fijos --- 
-interface FlavorCheckboxSelectorProps {
-    product: ProductType;
-}
-
-const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product }) => {
-    const [selectedPackOption, setSelectedPackOption] = useState<Option | null>(null);
-    const [checkedFlavors, setCheckedFlavors] = useState<string[]>([]);
-    const { dispatch } = useCart();
-
-    // Reward hook setup
-    const rewardId = `reward-flavorcheckbox-${product.id}`;
-    const { reward, isAnimating } = useReward(rewardId, 'emoji', {
-        emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
-        elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
-    });
-
-    const packOptions = product.options || [];
-    const availableFlavors = product.availableFlavors || [];
-    const maxFlavors = useMemo(() => {
-        if (!selectedPackOption) return 0;
-        if (selectedPackOption.name.includes('50')) return 4; 
-        if (selectedPackOption.name.includes('25')) return 2;
-        return 0;
-    }, [selectedPackOption]);
-
-    const handlePackSelect = (value: string) => {
-        const selectedOpt = packOptions.find(opt => opt.name === value) || null;
-        setSelectedPackOption(selectedOpt);
-        setCheckedFlavors([]);
+    const incrementItem = (itemName: string) => { // Only for cookiePack
+        if (canAddMoreItems) {
+           setSelectedItems(prev => ({
+               ...prev,
+               [itemName]: (prev[itemName] || 0) + 1
+           }));
+       }
     };
 
-    const handleFlavorCheck = (flavor: string, checked: boolean) => {
-        setCheckedFlavors(prev => {
+    const handleFlavorCheck = (flavor: string, checked: boolean) => { // For flavorPack
+        setSelectedFlavors(prev => {
             if (checked) {
                 if (prev.length < maxFlavors) {
                     return [...prev, flavor];
@@ -561,149 +234,300 @@ const FlavorCheckboxSelector: React.FC<FlavorCheckboxSelectorProps> = ({ product
         });
     };
 
-    const isOrderComplete = selectedPackOption !== null && checkedFlavors.length >= 1;
-    const finalPackPrice = selectedPackOption ? parseFloat(selectedPackOption.price.replace('€', '').replace(',', '.')) : 0;
-
-    const handleAddToCart = () => {
-        if (!isOrderComplete || !selectedPackOption) return;
-        const cartItemId = `${product.id}-${selectedPackOption.name.replace(/\s+/g, '-')}`;
-        const cartItem: CartItem = {
-            id: cartItemId,
-            productId: product.id,
-            productName: product.name,
-            quantity: 1,
-            packPrice: finalPackPrice,
-            imageUrl: product.image,
-            type: 'flavorPack',
-            selectedOptions: { pack: selectedPackOption.name },
-            selectedFlavors: checkedFlavors,
-        };
-        dispatch({ type: 'ADD_ITEM', payload: cartItem });
-        reward();
+    const handlePackSelect = (value: string) => {
+        const size = parseInt(value);
+        const selectedOpt = packOptions.find(p => p.size === size);
+        setSelectedPackSize(size);
+        if(product.configType === 'flavorPack') {
+             const packName = selectedOpt?.name || '';
+             // Determine max flavors based on pack name (assuming 2 for 25, 4 for 50)
+             if (packName.includes('50')) setMaxFlavors(4);
+             else if (packName.includes('25')) setMaxFlavors(2);
+             else setMaxFlavors(0);
+            setSelectedFlavors([]); // Reset flavors
+        } else {
+            setSelectedItems({}); // Reset cookie quantities
+        }
     };
 
-    return (
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
-             {/* Columna Izquierda: Selección Pack y Sabores */}
-            <div className="space-y-6">
-                <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
-                <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
+    const handleAddToCart = (triggerSource: 'summary' | 'sticky') => {
+        if (!selectedPackSize || !isOrderComplete) return;
+        const cartItemId = `${product.id}-pack${selectedPackSize}`;
+        let cartItemPayload: Omit<CartItem, 'id'>;
 
-                {/* 1. Seleccionar Pack */}
-                <Card className="border-pati-pink/30 shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl text-pati-burgundy">1. Elige tu Caja</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <RadioGroup 
-                            onValueChange={handlePackSelect} 
-                            value={selectedPackOption?.name}
-                            className="grid grid-cols-2 gap-3 md:gap-4"
+        if (product.configType === 'cookiePack') {
+             cartItemPayload = {
+                productId: product.id, productName: product.name, quantity: 1,
+                packPrice: finalPackPrice, imageUrl: product.image, type: 'cookiePack',
+                cookieDetails: { packSize: selectedPackSize, cookies: selectedItems }
+            };
+        } else if (product.configType === 'flavorPack') {
+             cartItemPayload = {
+                productId: product.id, productName: product.name, quantity: 1,
+                packPrice: finalPackPrice, imageUrl: product.image, type: 'flavorPack',
+                selectedOptions: { pack: packOptions.find(p => p.size === selectedPackSize)?.name || '' },
+                selectedFlavors: selectedFlavors // Use the correct state here
+            };
+        } else {
+            console.error("Tipo de producto no soportado para añadir al carrito desde ItemPackConfigurator");
+            return;
+        }
+        dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } });
+        if (triggerSource === 'summary') rewardSummary();
+        else if (triggerSource === 'sticky') rewardSticky();
+    };
+
+    const generateWhatsAppMessage = () => { // Adjusted for flavorPack
+        if (!selectedPackSize || !isOrderComplete) return "Error: Selección incompleta";
+        let itemsList: string;
+        if (product.configType === 'flavorPack') {
+            itemsList = selectedFlavors.map(flavor => `- ${flavor}`).join('\\n');
+        } else {
+             itemsList = Object.entries(selectedItems).filter(([, count]) => count > 0).map(([name, count]) => `- ${name} (x${count})`).join('\\n');
+        }
+        const productLabel = product.category === 'galletas' ? 'Galletas' : (product.category === 'palmeritas' ? 'Palmeritas' : 'productos');
+        return `¡Hola Pati! 👋 Quiero mi Pack de ${selectedPackSize} ${productLabel} (${finalPackPrice?.toFixed(2)}€):\\n\\n${itemsList}\\n\\n¿Confirmamos el pedido? 😊`;
+    };
+
+    const finalWhatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(generateWhatsAppMessage())}`;
+
+    // --- HELPER COMPONENTS ---
+    const VideoPlayer = () => ( // Reusable video player component
+        product.video ? (
+            <div className="mt-6">
+                <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
+                    <CardContent className="p-0 h-full">
+                        <video
+                            src={product.video}
+                            autoPlay loop muted playsInline
+                className="w-full h-full object-cover"
+                            aria-label={`Vídeo de ${product.name}`}
                         >
-                            {packOptions.map((pack) => {
-                                const isSelected = selectedPackOption?.name === pack.name;
-                                return (
-                                    <Label key={pack.name} htmlFor={pack.name} className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${selectedPackOption && !isSelected ? 'opacity-70' : ''}`}>
-                                            <RadioGroupItem value={pack.name} id={pack.name} className="sr-only" />
-                                            {isSelected && <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />} 
-                                            <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">{pack.name}</span>
-                                            <span className="text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center">Elige {pack.name.includes('25') ? '2' : '4'} sabores</span>
-                                            <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price}</span>
-                                        </Label>
-                                    );
-                                })}
-                        </RadioGroup>
+                            Tu navegador no soporta la etiqueta de vídeo.
+                        </video>
                     </CardContent>
                 </Card>
+            </div>
+        ) : null
+    );
+          
+  // --- RETURN JSX ---
+  return (
+      <>
+        {/* Main content area for the configurator */}
+          <div className="space-y-6">
+            {/* Product Title and Description */}
+            <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
+            <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
+            <MobileVideoPlayer product={product} />
 
-                 {/* 2. Seleccionar Sabores (si hay pack seleccionado) */}
-                 {selectedPackOption && (
-                    <Card className="border-pati-pink/30 shadow-md">
-                         <CardHeader>
-                             {/* Ajustar título si maxFlavors es 0? */}
-                            <CardTitle className="text-xl text-pati-burgundy">2. Elige {maxFlavors > 0 ? `hasta ${maxFlavors}` : ''} Sabores</CardTitle> 
-                            {maxFlavors > 0 && (
-                                <CardDescription>
-                                    {/* Modificar texto */} 
-                                    Seleccionados: {checkedFlavors.length} (Máximo: {maxFlavors})
-                                    {checkedFlavors.length > 0 && (
-                                        <span className="text-green-600 font-semibold ml-2">¡Listo para añadir!</span>
-                                    )}
-                                </CardDescription>
+            {/* Step 1: Select Pack */}
+            <Card className="border-pati-pink/30 shadow-md">
+                 <CardHeader>
+                   <CardTitle className="text-xl text-pati-burgundy">1. Elige tu Pack</CardTitle>
+                   <CardDescription>Selecciona el tamaño de tu caja.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                   <RadioGroup
+                       onValueChange={handlePackSelect}
+                       value={selectedPackSize?.toString()}
+                       className="grid grid-cols-2 gap-3 md:gap-4"
+                   >
+                      {packOptions.map((pack) => {
+                          const isSelected = selectedPackSize === pack.size;
+                          // Determine description text based on product ID for flavorPack
+                          const descriptionText = product.id === 9 ?
+                              (pack.size === 25 ? 'Elige 2 sabores' : 'Elige 4 sabores') :
+                              pack.description;
+                          return (
+                               <Label
+                                   key={pack.size}
+                                   htmlFor={`pack-${pack.size}`}
+                                   className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${selectedPackSize && !isSelected ? 'opacity-70' : ''}`}
+                               >
+                                   <RadioGroupItem value={pack.size.toString()} id={`pack-${pack.size}`} className="sr-only" />
+                                   {isSelected && (
+                                       <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />
+                                   )}
+                                   <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">{pack.name}</span>
+                                   <span className={`text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center`}>
+                                       {descriptionText}
+                                   </span>
+                                   <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price.toFixed(2).replace('.', ',')}€</span>
+                               </Label>
+                          );
+                      })}
+                    </RadioGroup>
+                </CardContent>
+            </Card>
+
+            {/* Step 2: Select Items/Flavors */}
+            <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
+                <CardHeader className="pb-4">
+                    <CardTitle className="text-xl text-pati-burgundy">2. Elige tus {product.configType === 'flavorPack' ? 'Sabores' : 'Galletas'}</CardTitle>
+                    {selectedPackSize ? (
+                        <CardDescription>
+                            {product.configType === 'flavorPack' ? (
+                                `Selecciona hasta ${maxFlavors} sabor${maxFlavors !== 1 ? 'es' : ''}. (${selectedFlavors.length} / ${maxFlavors})`
+                            ) : (
+                                `Selecciona ${selectedPackSize} unidad${selectedPackSize !== 1 ? 'es' : ''}. (${currentCount} / ${selectedPackSize})`
                             )}
-                         </CardHeader>
-                         <CardContent className="grid grid-cols-2 gap-3">
-                            {availableFlavors.map((flavor) => {
-                                const isChecked = checkedFlavors.includes(flavor);
-                                const isDisabled = !isChecked && checkedFlavors.length >= maxFlavors;
+                        </CardDescription>
+                    ) : (
+                        <CardDescription>Selecciona primero un tamaño de pack para poder añadir.</CardDescription>
+                    )}
+                    {/* Completion check message could be added here */}
+                </CardHeader>
+                <CardContent>
+                    {/* --- UI for CookiePack --- */}
+                    {product.configType === 'cookiePack' && (
+                        <div className={`grid grid-cols-2 gap-4 ${!canAddMoreItems ? 'opacity-75' : ''}`}>
+                            {availableItems.map((item, index) => {
+                                const count = selectedItems[item.name] || 0;
+                                const isSelected = count > 0;
+                                // Cookie Card with image and +/- buttons
                                 return (
-                                    <div key={flavor} className={`flex items-center space-x-2 p-3 rounded-md border ${isChecked ? 'border-pati-burgundy bg-pati-pink/10' : 'border-gray-200'} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
-                                        <Checkbox 
-                                            id={flavor}
+                                    <div key={index} className="p-1 h-full">
+                                        <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${!canAddMoreItems && !isSelected ? 'opacity-50' : ''}`}>
+                                            <div className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreItems ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                onClick={() => canAddMoreItems && incrementItem(item.name)} >
+                                                <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full bg-gray-50">
+                                                    <img src={item.image} alt={item.name} className="w-full h-full object-contain pointer-events-none" loading="lazy"/>
+                                                </div>
+                                                <h4 className={`text-sm font-medium text-pati-burgundy px-1`}>{item.name}</h4>
+                                            </div>
+                                            <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
+                                                <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); decrementItem(item.name);}} disabled={count === 0}>
+                                                    <MinusCircle className="h-5 w-5" />
+                                                </Button>
+                                                <Badge variant={isSelected ? "default" : "outline"} className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}>{count}</Badge>
+                                                <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${!canAddMoreItems ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); incrementItem(item.name);}} disabled={!canAddMoreItems}>
+                                                    <PlusCircle className="h-5 w-5" />
+                                                </Button>
+                      </div>
+                                        </Card>
+                    </div>
+                                );
+                            })}
+                </div>
+                    )}
+                    {/* --- UI for FlavorPack (Palmeritas) --- */}
+                    {product.configType === 'flavorPack' && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {availableItems.map((item) => {
+                                const isChecked = selectedFlavors.includes(item.name);
+                                const isDisabled = !isChecked && selectedFlavors.length >= maxFlavors;
+                                return (
+                                    <div key={item.name} className={`flex items-center space-x-3 p-3 rounded-md border transition-colors ${isChecked ? 'border-pati-burgundy bg-pati-pink/10' : 'border-gray-200'} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                                        <Checkbox
+                                            id={`flavor-${item.name}`}
                                             checked={isChecked}
                                             disabled={isDisabled}
-                                            onCheckedChange={(checkedState) => handleFlavorCheck(flavor, checkedState === true)}
-                                            aria-label={flavor}
+                                            onCheckedChange={(checkedState) => handleFlavorCheck(item.name, checkedState === true)}
+                                            aria-label={item.name}
                                         />
-                                        <Label htmlFor={flavor} className={`text-sm font-medium ${isDisabled ? 'text-gray-400' : 'text-pati-burgundy'} ${isChecked ? 'font-semibold' : ''}`}>
-                                            {flavor}
+                                        <Label htmlFor={`flavor-${item.name}`} className={`text-sm font-medium leading-none ${isDisabled ? 'text-gray-400' : 'text-pati-burgundy'} ${isChecked ? 'font-semibold' : ''} ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                                            {item.name}
                                         </Label>
                                     </div>
                                 );
                             })}
-                         </CardContent>
-                    </Card>
-                 )}
-             </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
 
-             {/* Columna Derecha: Resumen */}
-             <div className="sticky top-24 space-y-6">
-                {selectedPackOption && (
-                    <Card className="border-pati-pink/30 shadow-lg">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-xl text-pati-burgundy">Resumen: {selectedPackOption.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4 pt-2">
-                            <div className="flex justify-between items-center font-medium border-b pb-3 border-pati-pink/20">
-                                <span>Sabores Seleccionados:</span>
-                                {/* Mostrar número seleccionado */} 
-                                <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>{checkedFlavors.length}</Badge>
-                            </div>
-                            <div className="flex justify-between items-center text-2xl font-bold text-pati-burgundy">
-                                <span>Precio Total Pack:</span>
-                                <span>{selectedPackOption.price}</span>
-                            </div>
-                            {/* Lista de sabores elegidos */}
-                            {checkedFlavors.length > 0 && (
-                                <div className="pt-2">
-                                     <p className="text-sm font-medium text-pati-brown mb-1">Sabores:</p>
-                                    <ul className="list-disc list-inside text-sm text-pati-dark-brown space-y-1">
-                                         {checkedFlavors.map(f => <li key={f}>{f}</li>)}
-                                     </ul>
-                                 </div>
-                            )}
-                            
-                            {/* Contenedor para el botón (ya no son dos) */} 
-                            <div className="flex flex-col sm:flex-row gap-3 mt-4">
-                                 {/* Botón Añadir: Habilitado si isOrderComplete (pack + >=1 sabor) */} 
-                                 <Button 
-                                     onClick={handleAddToCart}
-                                     size="lg" 
-                                     className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                     disabled={!isOrderComplete || isAnimating}
-                                 > 
-                                     <span id={rewardId} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
-                                     <ShoppingCart className="mr-2 h-5 w-5" /> 
-                                     {isOrderComplete ? `Añadir Caja al Carrito` : `Elige al menos 1 sabor`}
-                                 </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
-             </div>
-         </div>
-     );
+            {/* Summary Card - Only shown when a pack size is selected */}
+            {selectedPackSize && (
+              <div ref={summaryRef} id="summary-card" className={`space-y-6 transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <Card className="border-pati-pink/30 shadow-lg">
+                  <CardHeader className="pb-2">
+                     <CardTitle className="text-xl text-pati-burgundy">Resumen del Pack {selectedPackSize}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4 pt-2">
+                     {/* Display selected count */}
+                     <div className="flex justify-between items-center font-medium border-b pb-3 border-pati-pink/20">
+                       <span>{product.configType === 'flavorPack' ? 'Sabores Seleccionados:' : 'Unidades Seleccionadas:'}</span>
+                       <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>
+                           {product.configType === 'flavorPack' ? `${selectedFlavors.length} / ${maxFlavors}` : `${currentCount} / ${selectedPackSize}`}
+                       </Badge>
+                     </div>
+                     {/* Display total price */}
+                     <div className="flex justify-between items-center text-2xl font-bold text-pati-burgundy">
+                        <span>Precio Total Pack:</span>
+                        <span>{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
+                     </div>
+                     {/* List selected flavors for flavorPack */}
+                     {product.configType === 'flavorPack' && selectedFlavors.length > 0 && (
+                         <div className="pt-2">
+                              <p className="text-sm font-medium text-pati-brown mb-1">Sabores:</p>
+                             <ul className="list-disc list-inside text-sm text-pati-dark-brown space-y-1">
+                                  {selectedFlavors.map(f => <li key={f}>{f}</li>)}
+                              </ul>
+                      </div>
+                     )}
+                     {/* Add to Cart Button */}
+                     <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                       <Button
+                           id="add-pack-button"
+                           onClick={() => handleAddToCart('summary')}
+                           size="lg"
+                           className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                           disabled={!isOrderComplete || isAnimatingSummary}
+                           aria-disabled={!isOrderComplete}
+                       >
+                           <span id={rewardIdSummary} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
+                           <ShoppingCart className="mr-2 h-5 w-5" />
+                           {isOrderComplete ? `Añadir Pack ${selectedPackSize} al Carrito` :
+                               (product.configType === 'flavorPack' ? `Elige ${maxFlavors === selectedFlavors.length ? 'tus sabores' : `${maxFlavors - selectedFlavors.length} sabor(es) más`}` : `Completa tu Pack ${selectedPackSize}`)}
+                       </Button>
+                  </div>
+                  </CardContent>
+                </Card>
+                </div>
+            )}
+        </div> {/* End of main space-y-6 wrapper */}
+
+        {/* Sticky Footer Bar - Only shown when a pack size is selected */}
+        {selectedPackSize && (
+             <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/80 backdrop-blur-md p-3 border-t border-pati-pink/30 shadow-top-lg flex items-center justify-between gap-4">
+                 <div className='flex-grow'>
+                    <p className="text-sm font-medium text-pati-burgundy">Pack {selectedPackSize} - {product.name}</p>
+                    <p className="text-xs text-pati-brown">
+                        {/* Adjust status message */}
+                        {isOrderComplete ?
+                            (product.configType === 'flavorPack' ? `(${selectedFlavors.length}/${maxFlavors}) ¡Listo para añadir!` : `¡Listo para añadir! (${finalPackPrice.toFixed(2).replace('.',',')}€)`) :
+                            (product.configType === 'flavorPack' ? `Elige ${maxFlavors - selectedFlavors.length} sabor(es) más.` : `${currentCount}/${selectedPackSize} seleccionados. Completa tu pack.`)
+                        }
+                    </p>
+                </div>
+                 <div className="flex items-center gap-2 flex-shrink-0">
+                    <Button asChild variant="outline" size="sm" className="border-pati-accent text-pati-accent hover:bg-pati-accent/10">
+                       <Link to="/pedido">
+                            <ShoppingCart className="mr-1.5 h-4 w-4"/>
+                            Ver Pedido ({getTotalItems()})
+                       </Link>
+                    </Button>
+                    <Button
+                        onClick={() => handleAddToCart('sticky')}
+                        className={`relative whitespace-nowrap focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white focus-visible:ring-pati-burgundy' : 'bg-gray-400 text-gray-700 cursor-not-allowed focus-visible:ring-gray-500'}`}
+                        size="sm"
+                        disabled={!isOrderComplete || isAnimatingSticky}
+                    >
+                         <span id={rewardIdSticky} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
+                        {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />}
+                         {isOrderComplete ? "Añadir Pack" :
+                         (product.configType === 'flavorPack' ? `Elige sabores` : `Completa`)}
+                    </Button>
+                </div>
+              </div>
+            )}
+      </>
+    );
 };
+
+// --- FlavorCheckboxSelector --- (No changes below this line)
+// ... existing code ...
 
 // --- FlavorQuantitySelector with Animation --- 
 interface FlavorQuantitySelectorProps {
@@ -751,6 +575,7 @@ const FlavorQuantitySelector: React.FC<FlavorQuantitySelectorProps> = ({ product
         <div className="space-y-6">
             <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
             <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
+            <MobileVideoPlayer product={product} />
             <p className="text-lg text-pati-brown mb-4">Precio: <span className="text-2xl font-bold text-pati-accent">{unitPrice.toFixed(2).replace('.', ',')}€</span> / unidad</p>
 
             {/* Selección de Sabores y Cantidades */}
@@ -838,6 +663,7 @@ const SimpleProductDisplay: React.FC<SimpleProductDisplayProps> = ({ product }) 
         <div className="space-y-6">
              <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
              <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
+             <MobileVideoPlayer product={product} />
              {product.size && <p className="text-md text-pati-brown"><span className="font-semibold">Tamaño:</span> {product.size}</p>}
              <p className="text-3xl font-bold text-pati-accent mb-6">{product.price}</p>
              <Button onClick={handleAddToCart} size="lg" className={`relative w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3`} disabled={isAnimating}> 
@@ -908,18 +734,18 @@ const ProductDetail = () => {
            Volver al catálogo
          </Link>
 
-        {/* Main Grid: Conditionally 1 or 2 columns */}
-        <div className={`grid ${product.configType === 'cookiePack' || product.configType === 'fixedPack' || product.configType === 'flavorPack' ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-8 lg:gap-12 items-start`}>
-           {/* Column 1: Configurator */}
+        {/* Main Grid: Adjusted for Palmeritas (ID 9) & Galletas (ID 2) one-column layout */}
+        <div className={`grid ${product.configType === 'fixedPack' ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-8 lg:gap-12 items-start`}>
+           {/* Column 1: Configurator (always present) */}
            <div>
               {renderConfigurator()} 
            </div>
 
-           {/* Column 2: Image or Vertical Video (Sticky on Desktop) - Conditional Rendering */}
-           {product.configType !== 'cookiePack' && product.configType !== 'fixedPack' && product.configType !== 'flavorPack' && (
-             <div className="md:sticky md:top-24">
-                {product.category === 'minicookies' && product.video ? (
-                    // Minicookies Vertical Video
+           {/* Column 2: Media (Image or Video) - Conditional Rendering Adjusted */}
+           {/* Show this column if NOT fixedPack AND NOT Palmeritas (id 9) AND NOT Galletas (id 2) */}
+           {(product.configType !== 'fixedPack') && (
+             <div className="hidden md:block md:sticky md:top-24">
+                {product.video ? ( // Prioritize video if available
                     <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
                        <CardContent className="p-0 h-full">
                            <video 
@@ -932,8 +758,7 @@ const ProductDetail = () => {
                            </video>
                        </CardContent>
                     </Card>
-                ) : product.image ? (
-                    // Default Product Image
+                ) : product.image ? ( 
                     <Card className="overflow-hidden border-pati-pink/30 shadow-md">
                        <CardContent className="p-0">
                            <div className="aspect-square">
@@ -946,12 +771,7 @@ const ProductDetail = () => {
                            </div>
                        </CardContent>
                     </Card>
-                ) : (
-                    // Placeholder
-                     <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-square flex items-center justify-center bg-gray-50">
-                         <CardContent className="p-4 text-center text-gray-400">Imagen no disponible</CardContent>
-                     </Card>
-                )}
+                ) : null}
              </div>
            )}
         </div>

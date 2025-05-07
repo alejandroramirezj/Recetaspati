@@ -119,7 +119,8 @@ export const productsData: Product[] = [
     name: "Caja de Galletas Artesanales",
     description: "Configura tu propia caja con tus sabores favoritos.", // Updated description
     price: "16€/29€", // Indicate pack prices
-    image: "/Recetaspati/images/Caja galletas 6.png",
+    image: "/Recetaspati/images/Galleta-Kinderbueno.png", // MODIFICADO: Cambiada a la imagen de Galleta Kinder
+    video: "/Recetaspati/videos/Galletas.mp4", 
     category: "galletas",
     configType: 'cookiePack',
     options: [ // These are now more like display info, actual price comes from logic
@@ -144,6 +145,7 @@ export const productsData: Product[] = [
     description: "Configura tu caja con tus sabores favoritos de palmeritas.",
     price: "12€/22€",
     image: "/Recetaspati/images/palmeritas.JPG",
+    video: "/Recetaspati/videos/minipalmeritas.mp4", // Video añadido
     category: "palmeritas",
     configType: 'flavorPack',
     options: [
@@ -164,7 +166,8 @@ export const productsData: Product[] = [
     description: "Un capricho perfecto en tamaño individual. Elige tu sabor.",
     price: "5€", // Price per unit
     image: "/Recetaspati/images/minitartas.png", // Use a representative image
-    category: "mini-tartas",
+    video: "/Recetaspati/videos/minitartas.mp4", // Video añadido
+    category: "tartas", // MODIFICADO: Cambiado de 'mini-tartas' a 'tartas'
     configType: 'flavorQuantity', // Select flavor and quantity
     unitPrice: 5, // Set unit price for calculations
     availableFlavors: ["Lotus", "Fresas con Nata"] // Define available flavors
@@ -189,6 +192,7 @@ export const productsData: Product[] = [
       description: "Increíble tarta con el sabor único de las galletas Lotus Biscoff, una delicia caramelizada.", 
       price: "30€", 
       image: "/Recetaspati/images/Tarta Lotus.png", 
+      video: "/Recetaspati/videos/tarta-lotus.mp4", // Video añadido
       category: "tartas", 
       configType: 'flavorOnly',
       availableFlavors: ["Lotus"],
@@ -200,6 +204,7 @@ export const productsData: Product[] = [
       description: "Divertida y deliciosa tarta inspirada en los sabores de Happy Hippo, con avellana y cacao.", 
       price: "32€", 
       image: "/Recetaspati/images/Tarta Happy Hippo.png", 
+      video: "/Recetaspati/videos/tarta-happyhippo.mp4", // Video añadido
       category: "tartas", 
       configType: 'flavorOnly',
       availableFlavors: ["Happy Hippo"],
@@ -211,6 +216,7 @@ export const productsData: Product[] = [
       description: "Irresistible tarta para los amantes de Nutella, con una suave crema de avellanas y cacao.", 
       price: "30€", 
       image: "/Recetaspati/images/Tarta Nutela.png", 
+      video: "/Recetaspati/videos/tarta-nutela.mp4", // Video añadido
       category: "tartas", 
       configType: 'flavorOnly',
       availableFlavors: ["Nutella"],

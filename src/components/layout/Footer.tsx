@@ -46,8 +46,6 @@ const Footer = () => {
             <div className="flex flex-col space-y-2">
               <a href="#productos" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Productos</a>
               <a href="#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Testimonios</a>
-              <a href="#dia-madre" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Especial Día de la Madre</a>
-              <a href="#contacto" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Contacto</a>
             </div>
           </div>
           

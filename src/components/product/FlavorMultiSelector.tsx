@@ -9,6 +9,28 @@ import { CartItem } from '@/types/cart';
 import { ShoppingCart, CheckCircle2 } from 'lucide-react';
 import { useReward } from 'react-rewards';
 
+// --- Helper Component for Mobile Video (COPIADO AQUÍ) ---
+const MobileVideoPlayer = ({ product }: { product: ProductType | null }) => {
+  if (!product?.video) return null;
+  return (
+    <div className="md:hidden mt-6"> {/* Visible solo en móvil, con margen superior */}
+      <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
+        <CardContent className="p-0 h-full">
+          <video 
+            src={product.video} 
+            autoPlay loop muted playsInline
+            className="w-full h-full object-cover"
+            aria-label={`Vídeo de ${product.name}`}
+          >
+            Tu navegador no soporta la etiqueta de vídeo.
+          </video>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+// --- FIN Helper Component for Mobile Video ---
+
 interface FlavorMultiSelectorProps {
   product: ProductType;
 }
@@ -69,7 +91,8 @@ const FlavorMultiSelector: React.FC<FlavorMultiSelectorProps> = ({ product }) =>
       {/* Info */}
       <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
       <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
-      <p className="text-3xl font-bold text-pati-accent">{product.price}</p>
+      <MobileVideoPlayer product={product} />
+      <p className="text-3xl font-bold text-pati-accent mt-6">{product.price}</p>
 
       {/* Flavor Selection */}
       <Card className="border-pati-pink/30 shadow-md">
