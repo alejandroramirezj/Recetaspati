@@ -754,7 +754,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
 
         {/* Sticky Footer Bar - Only shown when a pack size is selected OR custom pack is active */}
         {(selectedPackSize || currentPackIsCustom) && (
-             <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/80 backdrop-blur-md p-2 border-t border-pati-pink/30 shadow-top-lg flex items-center justify-between gap-3">
+             <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/80 backdrop-blur-md p-2 border-t border-pati-pink/30 shadow-top-lg flex items-center justify-between gap-3 hidden md:flex">
                  <div className='flex-grow'>
                     <p className="text-sm font-medium text-pati-burgundy">
                         {currentPackIsCustom ? `Pack Personalizado (${currentCount} galleta${currentCount !== 1 ? 's' : ''})` : `Pack ${selectedPackSize || 0} - ${product.name}`}

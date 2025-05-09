@@ -19,6 +19,9 @@ const OrderSummary: React.FC = () => {
   const totalItems = getTotalItems();
   const whatsappUrl = getWhatsAppUrl(state.items);
 
+  // Log del estado del carrito para depuración
+  console.log("Estado actual del carrito en OrderSummary:", JSON.parse(JSON.stringify(state.items)));
+
   // Handlers (similares a MobileCartBar)
   const handleRemoveItem = (itemId: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { id: itemId } });
