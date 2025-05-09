@@ -422,15 +422,15 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
   return (
       <>
         {/* Main content area for the configurator */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Product Title and Description */}
-            <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-2">{product.name}</h1>
-            <p className="text-pati-dark-brown text-lg leading-relaxed mb-4">{product.description}</p>
+            <h1 className="text-3xl md:text-4xl font-bold font-playfair text-pati-burgundy mb-1">{product.name}</h1>
+            <p className="text-pati-dark-brown text-lg leading-relaxed mb-3">{product.description}</p>
             <MobileVideoPlayer product={product} />
 
             {/* Step 1: Select Pack */}
             <Card className="border-pati-pink/30 shadow-md">
-                 <CardHeader>
+                 <CardHeader className="pb-2">
                    <CardTitle className="text-xl text-pati-burgundy">1. Elige tu Pack</CardTitle>
                    <CardDescription>Selecciona el tamaño de tu caja.</CardDescription>
                 </CardHeader>
@@ -438,7 +438,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                    <RadioGroup
                        onValueChange={handlePackSelect}
                        value={currentPackIsCustom ? packOptions.find(p => p.isCustomPack)?.name : selectedPackSize?.toString()}
-                       className="grid grid-cols-3 gap-3 md:gap-4"
+                       className="grid grid-cols-3 gap-2 md:gap-3"
                    >
                       {packOptions.map((pack) => {
                           const radioValue = pack.isCustomPack ? pack.name : pack.size.toString();
@@ -465,7 +465,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                <Label
                                    key={radioValue}
                                    htmlFor={`pack-${radioValue}`}
-                                   className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${ (selectedPackSize || currentPackIsCustom) && !isSelected ? 'opacity-70' : ''}`}
+                                   className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-2 md:p-3 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${ (selectedPackSize || currentPackIsCustom) && !isSelected ? 'opacity-70' : ''}`}
                                >
                                    <RadioGroupItem value={radioValue} id={`pack-${radioValue}`} className="sr-only" />
                                    {isMostPopular && (
@@ -474,7 +474,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                         </div>
                                     )}
                                    {isSelected && (
-                                       <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />
+                                       <CheckCircle2 className="absolute top-2 right-2 h-4 w-4 text-pati-burgundy" />
                                    )}
                                    <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">{pack.name}</span>
                                    {/* Mostrar primero el límite de sabores para Pack 6 */} 
@@ -483,10 +483,10 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                             {uniqueFlavorLimitText}
                                         </span>
                                     )}
-                                   <span className={`text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center`}>
+                                   <span className={`text-xs md:text-sm text-pati-brown mb-1 text-center`}>
                                        {pack.isCustomPack ? pack.description : primaryDescription} 
                                    </span>
-                                   <span className="font-bold text-xl md:text-2xl text-pati-burgundy">
+                                   <span className="font-bold text-lg md:text-xl text-pati-burgundy">
                                        {pack.isCustomPack ? `${pack.customPackUnitPrice?.toFixed(2).replace('.', ',')}€ / ud.` : `${pack.price.toFixed(2).replace('.', ',')}€`}
                                    </span>
                                </Label>
@@ -498,7 +498,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
 
             {/* Step 2: Select Items/Flavors */}
             <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${(selectedPackSize || currentPackIsCustom) ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
-                <CardHeader className="pb-4">
+                <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-pati-burgundy">2. Elige tus {product.configType === 'flavorPack' ? 'Sabores' : 'Galletas'}</CardTitle>
                     {(selectedPackSize || currentPackIsCustom) ? (
                         <CardDescription>
@@ -525,12 +525,11 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                     ) : (
                         <CardDescription>Selecciona primero un tamaño de pack para poder añadir.</CardDescription>
                     )}
-                    {/* Completion check message could be added here */}
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-1">
                     {/* --- UI for CookiePack --- */}
                     {product.configType === 'cookiePack' && (
-                        <div className={`grid grid-cols-2 gap-4`}> {/* Quitamos la opacidad general basada en canAddMoreItems de aquí, se manejará por botón */}
+                        <div className={`grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-2`}>
                             {availableItems.map((item, index) => {
                                 const count = selectedItems[item.name] || 0;
                                 const isSelected = count > 0;
@@ -555,21 +554,21 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
 
                                 return (
                                     <div key={index} className="p-1 h-full">
-                                        <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${disableIncrement && !isSelected ? 'opacity-50' : ''}`}>
-                                            <div className={`flex flex-col items-center flex-grow mb-2 ${disableIncrement ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                        <Card className={`h-full flex flex-col text-center p-1 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${disableIncrement && !isSelected ? 'opacity-50' : ''}`}>
+                                            <div className={`flex flex-col items-center flex-grow mb-1 ${disableIncrement ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                                 onClick={() => !disableIncrement && incrementItem(item.name)} >
-                                                <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full bg-gray-50">
+                                                <div className="aspect-square rounded-lg overflow-hidden mb-1 w-full bg-gray-50">
                                                     <img src={item.image} alt={item.name} className="w-full h-full object-contain pointer-events-none" loading="lazy"/>
                                                 </div>
-                                                <h4 className={`text-sm font-medium text-pati-burgundy px-1`}>{item.name}</h4>
+                                                <h4 className={`text-xs font-medium text-pati-burgundy px-1 line-clamp-1`}>{item.name}</h4>
                                             </div>
-                                            <div className="flex items-center justify-center gap-2 mt-auto w-full flex-shrink-0">
-                                                <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); decrementItem(item.name);}} disabled={count === 0}>
-                                                    <MinusCircle className="h-5 w-5" />
+                                            <div className="flex items-center justify-center gap-1 mt-auto w-full flex-shrink-0">
+                                                <Button variant="ghost" size="icon" className={`h-6 w-6 rounded-full text-gray-600 hover:bg-gray-100 ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); decrementItem(item.name);}} disabled={count === 0}>
+                                                    <MinusCircle className="h-4 w-4" />
                                                 </Button>
-                                                <Badge variant={isSelected ? "default" : "outline"} className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}>{count}</Badge>
-                                                <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${disableIncrement ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); incrementItem(item.name);}} disabled={disableIncrement}>
-                                                    <PlusCircle className="h-5 w-5" />
+                                                <Badge variant={isSelected ? "default" : "outline"} className={`text-base font-bold px-2 py-0.5 tabular-nums min-w-[40px] flex justify-center border-2 rounded-md ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}>{count}</Badge>
+                                                <Button variant="ghost" size="icon" className={`h-6 w-6 rounded-full text-gray-600 hover:bg-gray-100 ${disableIncrement ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); incrementItem(item.name);}} disabled={disableIncrement}>
+                                                    <PlusCircle className="h-4 w-4" />
                                                 </Button>
                                             </div>
                                         </Card>
@@ -580,12 +579,12 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                     )}
                     {/* --- UI for FlavorPack (Palmeritas) --- */}
                     {product.configType === 'flavorPack' && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {availableItems.map((item) => {
                                 const isChecked = selectedFlavors.includes(item.name);
                                 const isDisabled = !isChecked && selectedFlavors.length >= maxFlavors;
                                 return (
-                                    <div key={item.name} className={`flex items-center space-x-3 p-3 rounded-md border transition-colors ${isChecked ? 'border-pati-burgundy bg-pati-pink/10' : 'border-gray-200'} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                                    <div key={item.name} className={`flex items-center space-x-3 p-2 rounded-md border transition-colors ${isChecked ? 'border-pati-burgundy bg-pati-pink/10' : 'border-gray-200'} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
                                         <Checkbox
                                             id={`flavor-${item.name}`}
                                             checked={isChecked}
@@ -606,15 +605,15 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
 
             {/* Summary Card - Only shown when a pack size is selected OR custom pack has items */}
             {(selectedPackSize || (currentPackIsCustom && currentCount > 0)) && (
-              <div ref={summaryRef} id="summary-card" className={`space-y-6 transition-opacity duration-300 ${(selectedPackSize || currentPackIsCustom) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                <Card className="border-pati-pink/30 shadow-lg md:mb-6">
+              <div ref={summaryRef} id="summary-card" className={`space-y-4 transition-opacity duration-300 ${(selectedPackSize || currentPackIsCustom) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <Card className="border-pati-pink/30 shadow-lg md:mb-4">
                   <CardHeader className="pb-2">
                      <CardTitle className="text-xl text-pati-burgundy">
                         {currentPackIsCustom ? `Resumen Pack Personalizado` : `Resumen del Pack ${selectedPackSize}`}
                      </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4 pt-2">
-                     <div className="flex justify-between items-center font-medium border-b pb-3 border-pati-pink/20">
+                  <CardContent className="space-y-3 pt-1">
+                     <div className="flex justify-between items-center font-medium border-b pb-2 border-pati-pink/20">
                        <span>{currentPackIsCustom ? 'Total Galletas:': (product.configType === 'flavorPack' ? 'Sabores Seleccionados:' : 'Unidades Seleccionadas:')}</span>
                        <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>
                            {currentPackIsCustom ? `${currentCount}` : (product.configType === 'flavorPack' ? `${selectedFlavors.length} / ${maxFlavors}` : `${currentCount} / ${selectedPackSize}`)}
@@ -625,19 +624,19 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                         <span>{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
                      </div>
                      {product.configType === 'flavorPack' && selectedFlavors.length > 0 && !currentPackIsCustom && (
-                         <div className="pt-2">
+                         <div className="pt-1">
                               <p className="text-sm font-medium text-pati-brown mb-1">Sabores:</p>
                              <ul className="list-disc list-inside text-sm text-pati-dark-brown space-y-1">
                                   {selectedFlavors.map(f => <li key={f}>{f}</li>)}
                               </ul>
                       </div>
                      )}
-                     <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                     <div className="flex flex-col sm:flex-row gap-2 mt-2">
                        <Button
                            id="add-pack-button"
                            onClick={() => handleAddToCart('summary')}
                            size="lg"
-                           className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-3 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                           className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
                            disabled={!isOrderComplete || isAnimatingSummary}
                            aria-disabled={!isOrderComplete}
                        >
@@ -653,7 +652,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 </Card>
                 </div>
             )}
-        </div> {/* End of main space-y-6 wrapper */}
+        </div> {/* End of main space-y-4 wrapper */}
 
         {/* Sticky Footer Bar - Only shown when a pack size is selected OR custom pack is active */}
         {(selectedPackSize || currentPackIsCustom) && (
