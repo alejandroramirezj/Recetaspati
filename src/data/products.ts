@@ -45,7 +45,7 @@ export const productsData: Product[] = [
       description: "Exquisito bizcocho de chocolate elaborado artesanalmente.", 
       price: "32€", // Price for the whole cake
       image: "/Recetaspati/images/Bundcake.png", // UPDATE: Corrected image path with original structure
-      video: "/videos/bundcake.mp4", // ADDED VIDEO
+      video: "/Recetaspati/videos/bundcake.mp4", // ADDED VIDEO
       category: "tartas", 
       configType: 'flavorOnly', // Treat as selecting one flavor/item
       availableFlavors: ["Chocolate Bundtcake"], // Only one option essentially
