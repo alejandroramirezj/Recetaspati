@@ -81,9 +81,15 @@ const OrderSummary: React.FC = () => {
                                              Sabores: {item.selectedFlavors.join(', ')}
                                          </div>
                                      )}
-                                     {item.type === 'cookiePack' && item.cookieDetails && (
-                                         <p className="text-sm text-gray-600">Pack {item.cookieDetails.packSize} Galletas</p>
-                                         /* TODO: Listar cookies seleccionadas? */
+                                     {item.type === 'cookiePack' && item.cookieDetails && item.cookieDetails.cookies && (
+                                         <div className="text-sm text-gray-600 space-y-0.5">
+                                            <p className="font-medium">Pack {item.cookieDetails.packSize} Galletas</p>
+                                            <ul className="list-disc list-inside pl-2 text-xs">
+                                                {Object.entries(item.cookieDetails.cookies).map(([name, quantity]) => (
+                                                    <li key={name}>{quantity}x {name}</li>
+                                                ))}
+                                            </ul>
+                                         </div>
                                      )}
                                      <p className="text-md font-bold text-pati-accent pt-1">
                                          {formatPrice(item.packPrice ?? item.unitPrice)} {item.unitPrice ? '/ ud.' : ''}
