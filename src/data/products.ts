@@ -9,6 +9,9 @@ export type Option = {
   name: string;
   price: string;
   description?: string;
+  maxUniqueFlavors?: number;
+  isCustomPack?: boolean;
+  customPackUnitPrice?: number;
 };
 
 export type IndividualCookie = {
@@ -123,9 +126,10 @@ export const productsData: Product[] = [
     video: "/Recetaspati/videos/Galletas.mp4", 
     category: "galletas",
     configType: 'cookiePack',
-    options: [ // These are now more like display info, actual price comes from logic
-      { name: 'Pack 6 unidades', price: '16€', description: '¡1 galleta GRATIS!' },
-      { name: 'Pack 12 unidades', price: '29€', description: '¡2 galletas GRATIS! 🎁' }
+    options: [ 
+      { name: 'Pack 6 uds.', price: '16€', description: '¡1 GRATIS!', maxUniqueFlavors: 2 },
+      { name: 'Pack 12 uds.', price: '29€', description: '¡2 GRATIS!' },
+      { name: 'Pack Personalizado', price: '3.00€ / ud.', description: 'Sin límite de sabores. ¡Elige las que quieras!', isCustomPack: true, customPackUnitPrice: 3 }
     ],
     individualCookies: [
         { name: "Galleta de Filipinos", image: "/Recetaspati/images/Galleta-Filipinos.png", description: "Decorada con chocolate blanco." },

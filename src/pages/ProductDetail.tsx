@@ -126,6 +126,9 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     // General state
     const [selectedPackSize, setSelectedPackSize] = useState<number | null>(null);
     const [maxFlavors, setMaxFlavors] = useState<number>(0); // Max flavors for flavorPack
+    const [maxUniqueSelectedFlavorsAllowed, setMaxUniqueSelectedFlavorsAllowed] = useState<number | null>(null);
+    const [currentPackIsCustom, setCurrentPackIsCustom] = useState<boolean>(false);
+    const [currentCustomPackUnitPrice, setCurrentCustomPackUnitPrice] = useState<number | null>(null);
     const { dispatch, getTotalItems } = useCart();
     const phoneNumber = "+34671266981";
     const [isSummaryVisible, setIsSummaryVisible] = useState(false);
@@ -150,7 +153,10 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
             size: parseInt(opt.name.match(/\d+/)?.[0] || '0'),
             price: parseFloat(opt.price.replace('€', '').replace(',', '.')),
             name: opt.name,
-            description: opt.description || `Elige hasta ${parseInt(opt.name.match(/\d+/)?.[0] || '0')} unidades`
+            description: opt.description || `Elige hasta ${parseInt(opt.name.match(/\d+/)?.[0] || '0')} unidades`,
+            maxUniqueFlavors: opt.maxUniqueFlavors,
+            isCustomPack: opt.isCustomPack || false,
+            customPackUnitPrice: opt.customPackUnitPrice
         })) || [];
     }, [product.options]);
 
@@ -173,6 +179,13 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         }
     }, [selectedItems, selectedFlavors, product.configType]);
 
+    const currentUniqueFlavorsSelected = useMemo(() => { // <-- NUEVO CALCULO
+        if (product.configType === 'cookiePack') {
+            return Object.keys(selectedItems).length;
+        }
+        return 0; // No aplica para otros tipos actualmente en este configurador
+    }, [selectedItems, product.configType]);
+
     const canAddMoreItems = useMemo(() => {
          if (!selectedPackSize) return false;
          if (product.configType === 'flavorPack') {
@@ -183,19 +196,24 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     }, [selectedPackSize, currentCount, selectedFlavors.length, maxFlavors, product.configType]);
 
     const finalPackPrice = useMemo(() => {
+        if (currentPackIsCustom) {
+            return currentCount * (currentCustomPackUnitPrice || 0);
+        }
         if (!selectedPackSize) return 0;
-        return packOptions.find(p => p.size === selectedPackSize)?.price || 0;
-    }, [selectedPackSize, packOptions]);
+        return packOptions.find(p => p.size === selectedPackSize && !p.isCustomPack)?.price || 0;
+    }, [selectedPackSize, packOptions, currentPackIsCustom, currentCount, currentCustomPackUnitPrice]);
 
     const isOrderComplete = useMemo(() => {
-        if (!selectedPackSize) return false;
-        if (product.configType === 'flavorPack') {
-            // Considered complete if at least one flavor is selected (up to the max)
-            return selectedFlavors.length > 0 && selectedFlavors.length <= maxFlavors;
-        } else { // Default for cookiePack
-            return currentCount === selectedPackSize; // Must reach exact quantity
+        if (currentPackIsCustom) {
+            return currentCount > 0; // Para pack personalizado, completo si hay al menos una galleta
         }
-    }, [selectedPackSize, currentCount, selectedFlavors.length, maxFlavors, product.configType]);
+        if (!selectedPackSize) return false; // Esta línea es para packs NO personalizados
+        if (product.configType === 'flavorPack') {
+            return selectedFlavors.length > 0 && selectedFlavors.length <= maxFlavors;
+        } else { // Default for cookiePack (no personalizado)
+            return currentCount === selectedPackSize; 
+        }
+    }, [selectedPackSize, currentCount, selectedFlavors.length, maxFlavors, product.configType, currentPackIsCustom]);
 
     // --- HANDLERS ---
     const decrementItem = (itemName: string) => { // Only for cookiePack
@@ -211,12 +229,39 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     };
 
     const incrementItem = (itemName: string) => { // Only for cookiePack
-        if (canAddMoreItems) {
-           setSelectedItems(prev => ({
-               ...prev,
-               [itemName]: (prev[itemName] || 0) + 1
-           }));
-       }
+        if (currentPackIsCustom) {
+            // Sin límite de cantidad total ni de sabores únicos para pack personalizado
+            setSelectedItems(prev => ({
+                ...prev,
+                [itemName]: (prev[itemName] || 0) + 1
+            }));
+            return;
+        }
+
+        // Lógica existente para packs con tamaño fijo
+        const tổngSốLượngHiệnTại = Object.values(selectedItems).reduce((sum, count) => sum + count, 0);
+        const sốLượngHươngVịĐộcĐáoHiệnTại = Object.keys(selectedItems).length;
+        const hươngVịĐãĐượcChọn = (selectedItems[itemName] || 0) > 0;
+
+        // Condición 1: No exceder el tamaño total del pack
+        if (tổngSốLượngHiệnTại >= (selectedPackSize || 0)) {
+            return; 
+        }
+
+        // Condición 2: Respetar el límite de sabores únicos, si está definido
+        if (maxUniqueSelectedFlavorsAllowed !== null) {
+            if (sốLượngHươngVịĐộcĐáoHiệnTại >= maxUniqueSelectedFlavorsAllowed && !hươngVịĐãĐượcChọn) {
+                // Ya se alcanzó el límite de sabores únicos Y este es un sabor nuevo
+                console.warn(`Límite de ${maxUniqueSelectedFlavorsAllowed} sabores únicos alcanzado.`);
+                return;
+            }
+        }
+
+        // Si pasa todas las condiciones, incrementar
+        setSelectedItems(prev => ({
+            ...prev,
+            [itemName]: (prev[itemName] || 0) + 1
+        }));
     };
 
     const handleFlavorCheck = (flavor: string, checked: boolean) => { // For flavorPack
@@ -235,43 +280,105 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     };
 
     const handlePackSelect = (value: string) => {
-        const size = parseInt(value);
-        const selectedOpt = packOptions.find(p => p.size === size);
-        setSelectedPackSize(size);
-        if(product.configType === 'flavorPack') {
-             const packName = selectedOpt?.name || '';
-             // Determine max flavors based on pack name (assuming 2 for 25, 4 for 50)
-             if (packName.includes('50')) setMaxFlavors(4);
-             else if (packName.includes('25')) setMaxFlavors(2);
-             else setMaxFlavors(0);
-            setSelectedFlavors([]); // Reset flavors
+        // value puede ser el tamaño del pack (e.g., "6", "12") o un identificador para el custom pack (e.g., "custom")
+        // Necesitamos encontrar la opción de pack correspondiente de una manera más robusta.
+        const selectedOpt = packOptions.find(opt => {
+            if (opt.isCustomPack) {
+                return value === opt.name; // Suponiendo que `value` será el nombre del pack personalizado.
+            }
+            return opt.size.toString() === value;
+        });
+
+        if (!selectedOpt) {
+            // Resetea todo si no se encuentra la opción (o si se deselecciona, aunque RadioGroup no lo hace por defecto)
+            setSelectedPackSize(null);
+            setCurrentPackIsCustom(false);
+            setCurrentCustomPackUnitPrice(null);
+            setMaxUniqueSelectedFlavorsAllowed(null);
+            setSelectedItems({});
+            if(product.configType === 'flavorPack') {
+                setSelectedFlavors([]);
+                setMaxFlavors(0);
+            }
+            return;
+        }
+
+        if (selectedOpt.isCustomPack) {
+            setCurrentPackIsCustom(true);
+            setSelectedPackSize(null); // O un valor especial, por ahora null.
+            setCurrentCustomPackUnitPrice(selectedOpt.customPackUnitPrice || null);
+            setMaxUniqueSelectedFlavorsAllowed(null); // Sin límite de sabores únicos
         } else {
-            setSelectedItems({}); // Reset cookie quantities
+            setCurrentPackIsCustom(false);
+            setSelectedPackSize(selectedOpt.size);
+            setCurrentCustomPackUnitPrice(null);
+            if (selectedOpt.maxUniqueFlavors !== undefined) {
+                setMaxUniqueSelectedFlavorsAllowed(selectedOpt.maxUniqueFlavors);
+            } else {
+                setMaxUniqueSelectedFlavorsAllowed(null);
+            }
+        }
+
+        // Resetear selecciones de items/sabores específicos del producto
+        if (product.configType === 'flavorPack') {
+            // Lógica existente para flavorPack (palmeritas)
+            const packName = selectedOpt.name || '';
+            if (packName.includes('50')) setMaxFlavors(4);
+            else if (packName.includes('25')) setMaxFlavors(2);
+            else setMaxFlavors(0);
+            setSelectedFlavors([]);
+        } else { // Para cookiePack (sea normal o personalizado)
+            setSelectedItems({});
         }
     };
 
     const handleAddToCart = (triggerSource: 'summary' | 'sticky') => {
-        if (!selectedPackSize || !isOrderComplete) return;
-        const cartItemId = `${product.id}-pack${selectedPackSize}`;
+        if (!isOrderComplete) return; // Usar isOrderComplete que ya contempla el pack personalizado
+        
+        let cartItemId: string;
         let cartItemPayload: Omit<CartItem, 'id'>;
 
-        if (product.configType === 'cookiePack') {
-             cartItemPayload = {
-                productId: product.id, productName: product.name, quantity: 1,
-                packPrice: finalPackPrice, imageUrl: product.image, type: 'cookiePack',
-                cookieDetails: { packSize: selectedPackSize, cookies: selectedItems }
+        if (currentPackIsCustom) {
+            if (!currentCustomPackUnitPrice || currentCount === 0) return; // Seguridad adicional
+            cartItemId = `${product.id}-customPack`; // Id para el pack personalizado en el carrito
+            cartItemPayload = {
+                productId: product.id, 
+                productName: `${product.name} - Personalizado`, 
+                quantity: 1, // Se añade un pack personalizado
+                packPrice: finalPackPrice, // Ya calculado como currentCount * unitPrice
+                imageUrl: product.image, 
+                type: 'cookiePack', // Sigue siendo un cookiePack en términos de estructura de datos
+                cookieDetails: { 
+                    packSize: currentCount, // El "tamaño" es la cantidad de galletas seleccionadas
+                    cookies: selectedItems 
+                },
+                // Podríamos añadir una bandera o detalle extra si es necesario para el carrito
+                selectedOptions: { pack: 'Personalizado' } 
             };
-        } else if (product.configType === 'flavorPack') {
-             cartItemPayload = {
-                productId: product.id, productName: product.name, quantity: 1,
-                packPrice: finalPackPrice, imageUrl: product.image, type: 'flavorPack',
-                selectedOptions: { pack: packOptions.find(p => p.size === selectedPackSize)?.name || '' },
-                selectedFlavors: selectedFlavors // Use the correct state here
-            };
+        } else if (selectedPackSize) { // Packs de tamaño fijo (6 o 12 galletas, o palmeritas)
+            cartItemId = `${product.id}-pack${selectedPackSize}`;
+            if (product.configType === 'cookiePack') {
+                 cartItemPayload = {
+                    productId: product.id, productName: product.name, quantity: 1,
+                    packPrice: finalPackPrice, imageUrl: product.image, type: 'cookiePack',
+                    cookieDetails: { packSize: selectedPackSize, cookies: selectedItems }
+                };
+            } else if (product.configType === 'flavorPack') {
+                 cartItemPayload = {
+                    productId: product.id, productName: product.name, quantity: 1,
+                    packPrice: finalPackPrice, imageUrl: product.image, type: 'flavorPack',
+                    selectedOptions: { pack: packOptions.find(p => p.size === selectedPackSize)?.name || '' },
+                    selectedFlavors: selectedFlavors
+                };
+            } else {
+                console.error("Tipo de producto no soportado para añadir al carrito desde ItemPackConfigurator para packs fijos");
+                return;
+            }
         } else {
-            console.error("Tipo de producto no soportado para añadir al carrito desde ItemPackConfigurator");
+            console.error("Estado inválido en handleAddToCart: ni personalizado ni packSize seleccionado.");
             return;
         }
+
         dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } });
         if (triggerSource === 'summary') rewardSummary();
         else if (triggerSource === 'sticky') rewardSticky();
@@ -330,30 +437,58 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 <CardContent>
                    <RadioGroup
                        onValueChange={handlePackSelect}
-                       value={selectedPackSize?.toString()}
-                       className="grid grid-cols-2 gap-3 md:gap-4"
+                       value={currentPackIsCustom ? packOptions.find(p => p.isCustomPack)?.name : selectedPackSize?.toString()}
+                       className="grid grid-cols-3 gap-3 md:gap-4"
                    >
                       {packOptions.map((pack) => {
-                          const isSelected = selectedPackSize === pack.size;
-                          // Determine description text based on product ID for flavorPack
-                          const descriptionText = product.id === 9 ?
-                              (pack.size === 25 ? 'Elige 2 sabores' : 'Elige 4 sabores') :
-                              pack.description;
+                          const radioValue = pack.isCustomPack ? pack.name : pack.size.toString();
+                          const isSelected = currentPackIsCustom ? pack.isCustomPack : (selectedPackSize === pack.size && !pack.isCustomPack);
+                          const isMostPopular = pack.name.includes('Pack 12 uds.');
+                          
+                          // Determine description text based on product ID for flavorPack (palmeritas)
+                          let primaryDescription = pack.description;
+                          if (product.id === 9) { // Palmeritas
+                              primaryDescription = (pack.size === 25 ? '2 sabores max.' : '4 sabores max.');
+                          }
+
+                          // Texto específico para el límite de sabores del pack de 6 galletas
+                          let uniqueFlavorLimitText = "";
+                          if (pack.name.includes('Pack 6 uds.') && pack.maxUniqueFlavors) {
+                              uniqueFlavorLimitText = `2 sabores max.`;
+                          }
+                          // Texto para indicar que el Pack 12 no tiene límite de sabores
+                          else if (pack.name.includes('Pack 12 uds.')) {
+                              uniqueFlavorLimitText = `Sin límite de sabores`;
+                          }
+
                           return (
                                <Label
-                                   key={pack.size}
-                                   htmlFor={`pack-${pack.size}`}
-                                   className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${selectedPackSize && !isSelected ? 'opacity-70' : ''}`}
+                                   key={radioValue}
+                                   htmlFor={`pack-${radioValue}`}
+                                   className={`relative flex flex-col items-center justify-between rounded-lg border-2 p-3 md:p-4 transition-all duration-200 hover:bg-pati-pink/20 hover:scale-[1.02] ${isSelected ? 'border-pati-burgundy bg-pati-pink/20' : 'border-transparent hover:border-pati-pink/30'} cursor-pointer ${ (selectedPackSize || currentPackIsCustom) && !isSelected ? 'opacity-70' : ''}`}
                                >
-                                   <RadioGroupItem value={pack.size.toString()} id={`pack-${pack.size}`} className="sr-only" />
+                                   <RadioGroupItem value={radioValue} id={`pack-${radioValue}`} className="sr-only" />
+                                   {isMostPopular && (
+                                        <div className="absolute -top-2 -right-2 bg-pati-burgundy text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md transform rotate-6">
+                                            Popular
+                                        </div>
+                                    )}
                                    {isSelected && (
                                        <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-pati-burgundy" />
                                    )}
                                    <span className="mb-1 font-semibold text-base md:text-lg text-pati-burgundy">{pack.name}</span>
+                                   {/* Mostrar primero el límite de sabores para Pack 6 */} 
+                                   {uniqueFlavorLimitText && (
+                                        <span className={`text-xs md:text-sm text-pati-brown mb-1 text-center`}>
+                                            {uniqueFlavorLimitText}
+                                        </span>
+                                    )}
                                    <span className={`text-xs md:text-sm text-pati-brown mb-1 md:mb-2 text-center`}>
-                                       {descriptionText}
+                                       {pack.isCustomPack ? pack.description : primaryDescription} 
                                    </span>
-                                   <span className="font-bold text-xl md:text-2xl text-pati-burgundy">{pack.price.toFixed(2).replace('.', ',')}€</span>
+                                   <span className="font-bold text-xl md:text-2xl text-pati-burgundy">
+                                       {pack.isCustomPack ? `${pack.customPackUnitPrice?.toFixed(2).replace('.', ',')}€ / ud.` : `${pack.price.toFixed(2).replace('.', ',')}€`}
+                                   </span>
                                </Label>
                           );
                       })}
@@ -362,15 +497,29 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
             </Card>
 
             {/* Step 2: Select Items/Flavors */}
-            <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
+            <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${(selectedPackSize || currentPackIsCustom) ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
                 <CardHeader className="pb-4">
                     <CardTitle className="text-xl text-pati-burgundy">2. Elige tus {product.configType === 'flavorPack' ? 'Sabores' : 'Galletas'}</CardTitle>
-                    {selectedPackSize ? (
+                    {(selectedPackSize || currentPackIsCustom) ? (
                         <CardDescription>
                             {product.configType === 'flavorPack' ? (
                                 `Selecciona hasta ${maxFlavors} sabor${maxFlavors !== 1 ? 'es' : ''}. (${selectedFlavors.length} / ${maxFlavors})`
+                            ) : currentPackIsCustom ? (
+                                <>
+                                    {`Añade las galletas que quieras. Llevas ${currentCount} galleta${currentCount !== 1 ? 's' : ''}.`}
+                                    <span className="block text-xs mt-1">
+                                        (Precio por galleta: {currentCustomPackUnitPrice?.toFixed(2).replace('.', ',')}€)
+                                    </span>
+                                </>
                             ) : (
-                                `Selecciona ${selectedPackSize} unidad${selectedPackSize !== 1 ? 'es' : ''}. (${currentCount} / ${selectedPackSize})`
+                                <> 
+                                    {`Selecciona ${selectedPackSize} unidad${selectedPackSize !== 1 ? 'es' : ''}. (${currentCount} / ${selectedPackSize})`}
+                                    {maxUniqueSelectedFlavorsAllowed !== null && (
+                                        <span className="block text-xs mt-1">
+                                            (Máx. {maxUniqueSelectedFlavorsAllowed} tipo{maxUniqueSelectedFlavorsAllowed !== 1 ? 's' : ''} distinto{maxUniqueSelectedFlavorsAllowed !== 1 ? 's' : ''}. Llevas {currentUniqueFlavorsSelected})                                            
+                                        </span>
+                                    )}
+                                </>                                
                             )}
                         </CardDescription>
                     ) : (
@@ -381,16 +530,34 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 <CardContent>
                     {/* --- UI for CookiePack --- */}
                     {product.configType === 'cookiePack' && (
-                        <div className={`grid grid-cols-2 gap-4 ${!canAddMoreItems ? 'opacity-75' : ''}`}>
+                        <div className={`grid grid-cols-2 gap-4`}> {/* Quitamos la opacidad general basada en canAddMoreItems de aquí, se manejará por botón */}
                             {availableItems.map((item, index) => {
                                 const count = selectedItems[item.name] || 0;
                                 const isSelected = count > 0;
-                                // Cookie Card with image and +/- buttons
+                                
+                                // Lógica para deshabilitar el botón + específico de este item
+                                const totalItemsInPack = Object.values(selectedItems).reduce((sum, val) => sum + val, 0);
+                                
+                                let disableIncrement = false;
+                                if (currentPackIsCustom) {
+                                    // En pack personalizado, no hay límite para incrementar (salvo un límite práctico de UI si se quisiera)
+                                    disableIncrement = false;
+                                } else {
+                                    const isPackFull = totalItemsInPack >= (selectedPackSize || 0);
+                                    disableIncrement = isPackFull;
+                                    if (!disableIncrement && maxUniqueSelectedFlavorsAllowed !== null) {
+                                        const uniqueFlavorsCount = Object.keys(selectedItems).length;
+                                        if (uniqueFlavorsCount >= maxUniqueSelectedFlavorsAllowed && !isSelected) {
+                                            disableIncrement = true; 
+                                        }
+                                    }
+                                }
+
                                 return (
                                     <div key={index} className="p-1 h-full">
-                                        <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${!canAddMoreItems && !isSelected ? 'opacity-50' : ''}`}>
-                                            <div className={`flex flex-col items-center flex-grow mb-2 ${!canAddMoreItems ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                                onClick={() => canAddMoreItems && incrementItem(item.name)} >
+                                        <Card className={`h-full flex flex-col text-center p-3 transition-all duration-200 ease-in-out border-2 ${isSelected ? 'border-pati-burgundy bg-pati-pink/10' : 'border-transparent bg-white/50'} ${disableIncrement && !isSelected ? 'opacity-50' : ''}`}>
+                                            <div className={`flex flex-col items-center flex-grow mb-2 ${disableIncrement ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                onClick={() => !disableIncrement && incrementItem(item.name)} >
                                                 <div className="aspect-square rounded-lg overflow-hidden mb-2 w-full bg-gray-50">
                                                     <img src={item.image} alt={item.name} className="w-full h-full object-contain pointer-events-none" loading="lazy"/>
                                                 </div>
@@ -401,15 +568,15 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                                     <MinusCircle className="h-5 w-5" />
                                                 </Button>
                                                 <Badge variant={isSelected ? "default" : "outline"} className={`text-lg font-bold px-3 py-1 tabular-nums min-w-[45px] flex justify-center border-2 rounded-md ${isSelected ? 'bg-pati-burgundy text-white border-pati-burgundy scale-110' : 'text-gray-400 border-gray-300 scale-100'}`}>{count}</Badge>
-                                                <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${!canAddMoreItems ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); incrementItem(item.name);}} disabled={!canAddMoreItems}>
+                                                <Button variant="ghost" size="icon" className={`h-7 w-7 rounded-full text-gray-600 hover:bg-gray-100 ${disableIncrement ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={(e) => {e.stopPropagation(); incrementItem(item.name);}} disabled={disableIncrement}>
                                                     <PlusCircle className="h-5 w-5" />
                                                 </Button>
-                      </div>
+                                            </div>
                                         </Card>
-                    </div>
+                                    </div>
                                 );
                             })}
-                </div>
+                        </div>
                     )}
                     {/* --- UI for FlavorPack (Palmeritas) --- */}
                     {product.configType === 'flavorPack' && (
@@ -437,28 +604,27 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 </CardContent>
             </Card>
 
-            {/* Summary Card - Only shown when a pack size is selected */}
-            {selectedPackSize && (
-              <div ref={summaryRef} id="summary-card" className={`space-y-6 transition-opacity duration-300 ${selectedPackSize ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                <Card className="border-pati-pink/30 shadow-lg">
+            {/* Summary Card - Only shown when a pack size is selected OR custom pack has items */}
+            {(selectedPackSize || (currentPackIsCustom && currentCount > 0)) && (
+              <div ref={summaryRef} id="summary-card" className={`space-y-6 transition-opacity duration-300 ${(selectedPackSize || currentPackIsCustom) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <Card className="border-pati-pink/30 shadow-lg md:mb-6">
                   <CardHeader className="pb-2">
-                     <CardTitle className="text-xl text-pati-burgundy">Resumen del Pack {selectedPackSize}</CardTitle>
+                     <CardTitle className="text-xl text-pati-burgundy">
+                        {currentPackIsCustom ? `Resumen Pack Personalizado` : `Resumen del Pack ${selectedPackSize}`}
+                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 pt-2">
-                     {/* Display selected count */}
                      <div className="flex justify-between items-center font-medium border-b pb-3 border-pati-pink/20">
-                       <span>{product.configType === 'flavorPack' ? 'Sabores Seleccionados:' : 'Unidades Seleccionadas:'}</span>
+                       <span>{currentPackIsCustom ? 'Total Galletas:': (product.configType === 'flavorPack' ? 'Sabores Seleccionados:' : 'Unidades Seleccionadas:')}</span>
                        <Badge variant={isOrderComplete ? "default" : "secondary"} className={`${isOrderComplete ? 'bg-green-600' : ''}`}>
-                           {product.configType === 'flavorPack' ? `${selectedFlavors.length} / ${maxFlavors}` : `${currentCount} / ${selectedPackSize}`}
+                           {currentPackIsCustom ? `${currentCount}` : (product.configType === 'flavorPack' ? `${selectedFlavors.length} / ${maxFlavors}` : `${currentCount} / ${selectedPackSize}`)}
                        </Badge>
                      </div>
-                     {/* Display total price */}
                      <div className="flex justify-between items-center text-2xl font-bold text-pati-burgundy">
                         <span>Precio Total Pack:</span>
                         <span>{finalPackPrice.toFixed(2).replace('.', ',')}€</span>
                      </div>
-                     {/* List selected flavors for flavorPack */}
-                     {product.configType === 'flavorPack' && selectedFlavors.length > 0 && (
+                     {product.configType === 'flavorPack' && selectedFlavors.length > 0 && !currentPackIsCustom && (
                          <div className="pt-2">
                               <p className="text-sm font-medium text-pati-brown mb-1">Sabores:</p>
                              <ul className="list-disc list-inside text-sm text-pati-dark-brown space-y-1">
@@ -466,7 +632,6 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                               </ul>
                       </div>
                      )}
-                     {/* Add to Cart Button */}
                      <div className="flex flex-col sm:flex-row gap-3 mt-4">
                        <Button
                            id="add-pack-button"
@@ -478,8 +643,10 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                        >
                            <span id={rewardIdSummary} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
                            <ShoppingCart className="mr-2 h-5 w-5" />
-                           {isOrderComplete ? `Añadir Pack ${selectedPackSize} al Carrito` :
-                               (product.configType === 'flavorPack' ? `Elige ${maxFlavors === selectedFlavors.length ? 'tus sabores' : `${maxFlavors - selectedFlavors.length} sabor(es) más`}` : `Completa tu Pack ${selectedPackSize}`)}
+                           {isOrderComplete ? 
+                                (currentPackIsCustom ? `Añadir ${currentCount} Galleta${currentCount !== 1 ? 's' : ''} al Carrito` : `Añadir Pack ${selectedPackSize} al Carrito`) :
+                                (currentPackIsCustom ? 'Añade al menos 1 galleta' : (product.configType === 'flavorPack' ? `Elige ${maxFlavors === selectedFlavors.length ? 'tus sabores' : `${maxFlavors - selectedFlavors.length} sabor(es) más`}` : `Completa tu Pack ${selectedPackSize}`))
+                           }
                        </Button>
                   </div>
                   </CardContent>
@@ -488,16 +655,17 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
             )}
         </div> {/* End of main space-y-6 wrapper */}
 
-        {/* Sticky Footer Bar - Only shown when a pack size is selected */}
-        {selectedPackSize && (
+        {/* Sticky Footer Bar - Only shown when a pack size is selected OR custom pack is active */}
+        {(selectedPackSize || currentPackIsCustom) && (
              <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/80 backdrop-blur-md p-3 border-t border-pati-pink/30 shadow-top-lg flex items-center justify-between gap-4">
                  <div className='flex-grow'>
-                    <p className="text-sm font-medium text-pati-burgundy">Pack {selectedPackSize} - {product.name}</p>
+                    <p className="text-sm font-medium text-pati-burgundy">
+                        {currentPackIsCustom ? `Pack Personalizado (${currentCount} galleta${currentCount !== 1 ? 's' : ''})` : `Pack ${selectedPackSize} - ${product.name}`}
+                    </p>
                     <p className="text-xs text-pati-brown">
-                        {/* Adjust status message */}
                         {isOrderComplete ?
-                            (product.configType === 'flavorPack' ? `(${selectedFlavors.length}/${maxFlavors}) ¡Listo para añadir!` : `¡Listo para añadir! (${finalPackPrice.toFixed(2).replace('.',',')}€)`) :
-                            (product.configType === 'flavorPack' ? `Elige ${maxFlavors - selectedFlavors.length} sabor(es) más.` : `${currentCount}/${selectedPackSize} seleccionados. Completa tu pack.`)
+                            (currentPackIsCustom ? `Total: ${finalPackPrice.toFixed(2).replace('.',',')}€ ¡Listo para añadir!` : (product.configType === 'flavorPack' ? `(${selectedFlavors.length}/${maxFlavors}) ¡Listo para añadir!` : `¡Listo para añadir! (${finalPackPrice.toFixed(2).replace('.',',')}€)`)) :
+                            (currentPackIsCustom ? (currentCount > 0 ? `Total: ${finalPackPrice.toFixed(2).replace('.',',')}€ (Pulsa para añadir)` : 'Elige tus galletas') : (product.configType === 'flavorPack' ? `Elige ${maxFlavors - selectedFlavors.length} sabor(es) más.` : `${currentCount}/${selectedPackSize} seleccionados. Completa tu pack.`))
                         }
                     </p>
                 </div>
@@ -516,8 +684,8 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                     >
                          <span id={rewardIdSticky} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
                         {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />}
-                         {isOrderComplete ? "Añadir Pack" :
-                         (product.configType === 'flavorPack' ? `Elige sabores` : `Completa`)}
+                         {isOrderComplete ? (currentPackIsCustom ? "Añadir Galletas" : "Añadir Pack") :
+                         (currentPackIsCustom ? (currentCount > 0 ? 'Añadir Galletas' : 'Elige Galletas') : (product.configType === 'flavorPack' ? `Elige sabores` : `Completa`))}
                     </Button>
                 </div>
               </div>
@@ -745,7 +913,8 @@ const ProductDetail = () => {
            {/* Show this column if NOT fixedPack AND NOT Palmeritas (id 9) AND NOT Galletas (id 2) */}
            {(product.configType !== 'fixedPack') && (
              <div className="hidden md:block md:sticky md:top-24">
-                {product.video ? ( // Prioritize video if available
+                {/* Video o imagen */}
+                {product.video ? (
                     <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
                        <CardContent className="p-0 h-full">
                            <video 
@@ -758,7 +927,7 @@ const ProductDetail = () => {
                            </video>
                        </CardContent>
                     </Card>
-                ) : product.image ? ( 
+                ) : product.image ? (
                     <Card className="overflow-hidden border-pati-pink/30 shadow-md">
                        <CardContent className="p-0">
                            <div className="aspect-square">

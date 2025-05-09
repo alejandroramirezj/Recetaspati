@@ -50,9 +50,9 @@ El objetivo es crear/mejorar una web sencilla para "Pati Sweet Creations" que mu
     - **Layout Elements:** `Navbar` y barras inferiores parecen tener alturas razonables, pero el `Footer` podría revisarse.
 - **Files to check:** `src/pages/Index.tsx`, `src/pages/ProductDetail.tsx`, `src/components/home/RecommendationWizard.tsx`, `src/pages/OrderSummary.tsx`, `src/pages/CategoryPage.tsx`, `src/components/layout/Footer.tsx`, Tailwind config (si hay valores base definidos).
 
-## High-level Task Breakdown (Planner Input - Initial Suggestions)
+## High-level Task Breakdown
 
-Basado en el análisis anterior, se proponen las siguientes tareas (prioridad sugerida de arriba abajo):
+### Mejoras Generales (Planner Input - Initial Suggestions)
 
 1.  **Mejorar Claridad Configurador `cookiePack`/`flavorPack`:** Mostrar el precio del pack seleccionado más prominentemente *antes* de empezar a elegir items. Considerar deshabilitar los botones +/- de items si no se ha seleccionado un pack.
 2.  **Optimizar Imágenes Productos:** Implementar _lazy loading_ para imágenes en `ProductDetail`, `CategoryPage`, `OrderSummary`. Revisar tamaños y considerar formato WebP si es viable.
@@ -62,23 +62,100 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 6.  **Mejorar Feedback `flavorCheckboxSelector`:** Si el límite de selección es > 3, mostrar contador `(seleccionados/límite)`. 
 7.  **Revisar `aria-label`s:** Asegurar que todos los botones sin texto claro (iconos) tengan `aria-label`.
 
-**Bloque de Mejoras Generales (Post-Funcionalidad):**
-- [x] Optimizar Imágenes Productos (Lazy Loading).
-- [x] Revisión Responsividad `ProductDetail`.
-- [x] Revisión Responsividad `OrderSummary`.
-- [x] Añadir `alt` text descriptivos.
-- [x] Mejorar Feedback `flavorCheckboxSelector`.
-- [x] Revisar `aria-label`s.
+### Bloque de Optimización de Espacio
 
-**Bloque de Optimización de Espacio (Nuevo):**
 - [ ] **Executor:** Reducir padding vertical secciones Homepage (`Index.tsx`).
 - [ ] **Executor:** Compactar espaciado en `ProductDetail` (grid gap, space-y, card padding).
 - [ ] **Executor:** Ajustar altura mínima y espaciado en `RecommendationWizard`.
 - [ ] **Executor:** Reducir gaps en grids de `OrderSummary` y `CategoryPage`.
 - [ ] **Executor:** Revisar y ajustar padding del `Footer`.
 
+### Nueva Funcionalidad: Limitar Sabores en Pack Específico
+
+#### Background and Motivation
+
+El usuario ha solicitado que para un producto específico, el "pack de 6 galletas", se limite la selección a un máximo de 2 sabores diferentes. Esto busca simplificar la elección para este pack en particular o gestionar el inventario/producción.
+
+#### Key Challenges and Analysis
+
+*   **Identificación del Pack:** Se debe poder identificar de forma única el "pack de 6 galletas" en la estructura de datos de productos.
+*   **Modificación del Configurador:** El componente configurador (probablemente `ItemPackConfigurator` o similar) deberá ser modificado para:
+    *   Recibir o inferir el límite máximo de sabores para el pack actual.
+    *   Deshabilitar la selección de más sabores una vez alcanzado el límite.
+    *   Proveer feedback claro al usuario sobre esta restricción.
+*   **Estructura de Datos:** Es posible que sea necesario añadir un nuevo campo a la definición del producto o del pack en `products.ts` para especificar este límite de sabores (e.g., `maxUniqueFlavors`).
+
+#### High-level Task Breakdown
+
+1.  **Executor:** Actualizar `scratchpad.md` para reflejar la nueva tarea. (DONE)
+2.  **Executor:** Identificar el producto "pack de 6 galletas" en `src/data/products.ts` y su `configType`.
+3.  **Executor:** Modificar la interfaz `ProductOption` o `Product` en `src/types/product.ts` para incluir un campo opcional como `maxUniqueFlavors?: number`.
+4.  **Executor:** Actualizar la entrada del "pack de 6 galletas" en `src/data/products.ts` para añadir `maxUniqueFlavors: 2`.
+5.  **Executor:** Localizar el componente configurador relevante (probablemente `ItemPackConfigurator` en `src/pages/ProductDetail.tsx` o un subcomponente).
+6.  **Executor:** Modificar la lógica del configurador para:
+    *   Leer la propiedad `maxUniqueFlavors` del pack seleccionado (si existe).
+    *   Contar el número de sabores únicos ya seleccionados.
+    *   Si `maxUniqueFlavors` está definido y se alcanza el límite de sabores únicos, deshabilitar la opción de añadir *nuevos* sabores (pero permitir aumentar la cantidad de los ya seleccionados, hasta el total de items del pack).
+    *   Mostrar un mensaje informativo si se intenta exceder el límite de sabores.
+7.  **Executor:** Probar la funcionalidad exhaustivamente.
+8.  **Executor:** Actualizar `scratchpad.md` e informar al usuario.
+
+### Nueva Funcionalidad: Pack Personalizado de Galletas
+
+#### Background and Motivation
+
+El usuario desea añadir una opción de "Pack Personalizado" para la "Caja de Galletas Artesanales". En este modo, cada galleta tiene un precio individual (3€) y no hay limitación en la cantidad de sabores únicos que se pueden elegir, ni un tamaño de pack predefinido (el cliente elige cuántas quiere).
+
+#### Key Challenges and Analysis
+
+*   **Distinción de Tipos de Pack:** El `ItemPackConfigurator` necesitará distinguir entre packs con tamaño fijo (y posible límite de sabores) y el nuevo pack personalizado con precio por unidad.
+*   **Cálculo de Precio Dinámico:** El precio total del pack personalizado cambiará con cada galleta añadida/quitada.
+*   **Adaptación de la UI:** Las descripciones, contadores y condiciones de "completado" deben cambiar significativamente para el pack personalizado.
+*   **Estructura de Datos (`Option`):** La interfaz `Option` necesitará nuevos campos para marcar un pack como personalizado y definir su precio unitario.
+
+#### High-level Task Breakdown
+
+1.  **Executor:** Actualizar `scratchpad.md` para reflejar la nueva tarea. (DONE)
+2.  **Executor:** Añadir `isCustomPack?: boolean` y `customPackUnitPrice?: number` a la interfaz `Option` en `src/data/products.ts`.
+3.  **Executor:** Añadir la nueva opción "Pack Personalizado" (con `isCustomPack: true` y `customPackUnitPrice: 3`) al producto "Caja de Galletas Artesanales" (`id: 2`) en `src/data/products.ts`.
+4.  **Executor:** En `ItemPackConfigurator` (`src/pages/ProductDetail.tsx`):
+    *   Leer las nuevas propiedades `isCustomPack` y `customPackUnitPrice` en `packOptions`.
+    *   Añadir estado para saber si el pack actual es personalizado (e.g., `currentPackIsCustom: boolean`).
+    *   Modificar `handlePackSelect` para establecer `currentPackIsCustom` y resetear/ignorar `selectedPackSize` y `maxUniqueSelectedFlavorsAllowed` si el pack es personalizado.
+    *   Ajustar `currentCount`: sigue siendo la suma de `selectedItems`.
+    *   Ajustar `finalPackPrice`: si `currentPackIsCustom`, será `currentCount * customPackUnitPrice` del pack seleccionado. Sino, la lógica actual.
+    *   Ajustar `incrementItem` y la lógica de deshabilitación de botones: Si `currentPackIsCustom`, no aplicar límites de `selectedPackSize` ni de `maxUniqueSelectedFlavorsAllowed` (se pueden añadir tantas galletas de tantos tipos como se quiera, el único límite es práctico o de UI si se define uno alto).
+    *   Ajustar `isOrderComplete`: si `currentPackIsCustom`, es `true` si `currentCount > 0`.
+    *   Actualizar la UI (descripciones de packs, contadores en "Elige tus Galletas", textos de botones, barra inferior) para reflejar la lógica del pack personalizado (precio por unidad, sin límites fijos de tamaño/sabores).
+    *   Modificar `handleAddToCart` para usar el `finalPackPrice` calculado y en `cookieDetails`, `packSize` podría ser `currentCount`.
+5.  **Executor:** Probar la nueva opción de pack personalizado y verificar que los packs existentes (6 y 12 unidades) sigan funcionando correctamente.
+6.  **Executor:** Actualizar `scratchpad.md` e informar al usuario.
+
+### Nueva Funcionalidad: Minijuego "Cookie Catcher"
+
+#### Background and Motivation
+
+El usuario ha solicitado la creación de un minijuego interactivo en el sitio web. El objetivo es aumentar la participación del usuario y ofrecer una recompensa divertida. El concepto es un juego donde el usuario debe "atrapar" galletas que caen por la pantalla. Al alcanzar una puntuación objetivo (10 galletas), el usuario gana una "bolsa de minicookies gratis" que debería añadirse a su pedido/carrito. Se busca que el juego sea visualmente atractivo y divertido ("muy guay").
+
+#### Key Challenges and Analysis (Initial)
+
+*   **Implementación del Juego:** Requiere lógica de juego (movimiento, colisiones/captura, puntuación, estados de juego), gráficos/animaciones y manejo de interacciones del usuario dentro de un entorno React. Se debe elegir una tecnología adecuada (CSS, SVG, Canvas, librería tipo Framer Motion o similar) que equilibre simplicidad y el efecto "muy guay" deseado.
+*   **Integración con Carrito:** La recompensa (minicookies gratis) debe añadirse al estado global del carrito (`CartContext`). Hay que definir cómo representar este item (¿producto con precio 0?) y cómo prevenir que se añada múltiples veces.
+*   **UI/UX:** ¿Dónde y cómo se accede al juego? ¿Es una sección permanente, un pop-up, un easter egg? ¿Cómo se informa al usuario de la recompensa?
+*   **Rendimiento:** Asegurar que el juego no impacte negativamente el rendimiento general del sitio.
+
+#### High-level Task Breakdown (Initial Sketch)
+
+1.  **Diseño Conceptual y UI:** Definir flujo, aspecto visual, mecánicas detalladas.
+2.  **Selección Tecnológica:** Elegir librería/método de implementación.
+3.  **Desarrollo del Núcleo del Juego:** Crear componente, lógica de caída, captura, puntuación.
+4.  **Implementación de Recompensa:** Modificar `CartContext` y lógica de adición del premio.
+5.  **Integración en la Web:** Añadir el juego al sitio.
+6.  **Pruebas y Refinamiento:** Asegurar funcionalidad y diversión.
+
 ## Project Status Board
 
+**Funcionalidades Base y Mejoras Iniciales:**
 - [x] Implementar estructura básica de productos y datos (`products.ts`, `types/product`).
 - [x] Crear contexto de carrito (`CartContext`, `types/cart`).
 - [x] Integrar `CartProvider` en `App.tsx`.
@@ -99,24 +176,34 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 - [x] **Executor:** Mejorar Claridad Configurador `cookiePack`/`flavorPack`.
 - [x] **Executor:** Modificar barra inferior `ItemPackConfigurator` para que sea siempre visible.
 - [x] **Executor:** Eliminar botones "Pedir Solo...".
-- [x] **Executor:** Optimizar Imágenes Productos (Lazy Loading).
-- [x] **Executor:** Revisión Responsividad `ProductDetail`.
-- [x] **Executor:** Revisión Responsividad `OrderSummary`.
-- [x] **Executor:** Añadir `alt` text descriptivos.
-- [x] **Executor:** Mejorar Feedback `flavorCheckboxSelector`.
-- [x] **Executor:** Revisar `aria-label`s.
-- [x] **Executor:** Aplicar mejoras generales (lazy-load, alt text, responsividad, a11y).
-- [x] **Executor:** Modificar animación chat `LastMinuteOffers`.
-- [x] **Executor:** Corregir error linter `Progress`.
-- [ ] **Executor:** Reducir padding vertical secciones Homepage.
-- [ ] **Executor:** Compactar espaciado en `ProductDetail`.
-- [ ] **Executor:** Ajustar altura/espaciado en `RecommendationWizard`.
-- [ ] **Executor:** Reducir gaps en grids `OrderSummary`/`CategoryPage`.
-- [ ] **Executor:** Ajustar padding `Footer`.
+
+**Bloque de Mejoras Generales (Post-Funcionalidad):**
+- [x] Optimizar Imágenes Productos (Lazy Loading).
+- [x] Revisión Responsividad `ProductDetail`.
+- [x] Revisión Responsividad `OrderSummary`.
+- [x] Añadir `alt` text descriptivos.
+- [x] Mejorar Feedback `flavorCheckboxSelector`.
+- [x] Revisar `aria-label`s.
+- [x] Aplicar mejoras generales (lazy-load, alt text, responsividad, a11y).
+- [x] Modificar animación chat `LastMinuteOffers`.
+- [x] Corregir error linter `Progress`.
+
+**Bloque de Optimización de Espacio:**
+- [ ] **Executor:** Reducir padding vertical secciones Homepage (`Index.tsx`).
+- [ ] **Executor:** Compactar espaciado en `ProductDetail` (grid gap, space-y, card padding).
+- [ ] **Executor:** Ajustar altura mínima y espaciado en `RecommendationWizard`.
+- [ ] **Executor:** Reducir gaps en grids de `OrderSummary` y `CategoryPage`.
+- [ ] **Executor:** Revisar y ajustar padding del `Footer`.
+
+**Nuevas Funcionalidades:**
+- [x] **Executor:** Limitar sabores para pack de 6 galletas - Implementar límite. (PENDIENTE PRUEBA MANUAL)
+- [ ] **Executor:** Añadir opción "Pack Personalizado Galletas" (3€/ud, sin límite sabores). (Tarea Actual)
+- [ ] **Minijuego Cookie Catcher - Planificación Inicial** 
 
 ## Executor's Feedback or Assistance Requests
 
-*Análisis de optimización de espacio completado. Esperando instrucciones sobre qué tarea de optimización abordar primero.*
+*Implementación del límite de 2 sabores para el pack de 6 galletas completada. Por favor, prueba la funcionalidad y confirma si todo opera según lo esperado. Las tareas de optimización de espacio quedan pendientes.*
+*Iniciando nueva tarea: Añadir opción de "Pack Personalizado Galletas".*
 
 ## Lessons Learned
 
@@ -132,37 +219,5 @@ Basado en el análisis anterior, se proponen las siguientes tareas (prioridad su
 - Añadir `aria-label` y otros atributos ARIA mejora la accesibilidad para usuarios de lectores de pantalla.
 - La optimización del espacio es un equilibrio entre densidad y legibilidad; cambios pequeños pueden tener impacto acumulativo.
 - Es útil revisar paddings, márgenes, gaps y alturas mínimas globalmente.
-
-## Nueva Funcionalidad: Minijuego "Cookie Catcher"
-
-### Background and Motivation
-
-El usuario ha solicitado la creación de un minijuego interactivo en el sitio web. El objetivo es aumentar la participación del usuario y ofrecer una recompensa divertida. El concepto es un juego donde el usuario debe "atrapar" galletas que caen por la pantalla. Al alcanzar una puntuación objetivo (10 galletas), el usuario gana una "bolsa de minicookies gratis" que debería añadirse a su pedido/carrito. Se busca que el juego sea visualmente atractivo y divertido ("muy guay").
-
-### Key Challenges and Analysis (Initial)
-
-*   **Implementación del Juego:** Requiere lógica de juego (movimiento, colisiones/captura, puntuación, estados de juego), gráficos/animaciones y manejo de interacciones del usuario dentro de un entorno React. Se debe elegir una tecnología adecuada (CSS, SVG, Canvas, librería tipo Framer Motion o similar) que equilibre simplicidad y el efecto "muy guay" deseado.
-*   **Integración con Carrito:** La recompensa (minicookies gratis) debe añadirse al estado global del carrito (`CartContext`). Hay que definir cómo representar este item (¿producto con precio 0?) y cómo prevenir que se añada múltiples veces.
-*   **UI/UX:** ¿Dónde y cómo se accede al juego? ¿Es una sección permanente, un pop-up, un easter egg? ¿Cómo se informa al usuario de la recompensa?
-*   **Rendimiento:** Asegurar que el juego no impacte negativamente el rendimiento general del sitio.
-
-### High-level Task Breakdown (Initial Sketch)
-
-1.  **Diseño Conceptual y UI:** Definir flujo, aspecto visual, mecánicas detalladas.
-2.  **Selección Tecnológica:** Elegir librería/método de implementación.
-3.  **Desarrollo del Núcleo del Juego:** Crear componente, lógica de caída, captura, puntuación.
-4.  **Implementación de Recompensa:** Modificar `CartContext` y lógica de adición del premio.
-5.  **Integración en la Web:** Añadir el juego al sitio.
-6.  **Pruebas y Refinamiento:** Asegurar funcionalidad y diversión.
-
-### Project Status Board
-
-*   [ ] **Planificación Inicial - Minijuego Cookie Catcher** (Tarea Actual)
-
-### Executor's Feedback or Assistance Requests
-
-*   Pendiente de aprobación del plan inicial.
-
-### Lessons
-
-*   (Añadir lecciones aprendidas durante el desarrollo) 
+- Al modificar configuradores complejos, es importante rastrear múltiples estados (ej. cantidad total, cantidad de tipos únicos, límites para cada uno) y asegurarse de que la UI refleje correctamente las restricciones.
+- (Añadir futuras lecciones aquí)
