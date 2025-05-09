@@ -30,9 +30,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center">
           {/* Replaced image with styled text */}
-          <span className="font-playfair text-2xl font-bold text-pati-burgundy">
-            Recetas Pati
-          </span>
+          <img src="/Recetaspati/images/recetaspati.png" alt="Recetas Pati Logo" className="h-10" />
         </Link>
         
         {/* Mobile menu button */}

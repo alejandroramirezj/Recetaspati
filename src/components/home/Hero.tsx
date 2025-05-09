@@ -71,9 +71,14 @@ const Hero = () => {
             />
           </div>
 
-          <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl font-bold text-pati-burgundy leading-tight">
-            Recetas Pati
-          </h1>
+          {/* REEMPLAZAR H1 CON IMAGEN DEL LOGO */}
+          <div className="mb-6"> {/* Añadido margen inferior si es necesario */} 
+            <img 
+              src="/Recetaspati/images/recetaspati.png" 
+              alt="Recetas Pati Logo" 
+              className="h-16 md:h-20 w-auto mx-auto" // Ajusta la altura según sea necesario, y centra con mx-auto
+            />
+          </div>
           
           <h2 className="text-lg sm:text-xl md:text-2xl text-pati-dark-brown max-w-xl mx-auto font-medium">
             Dulces para sorprender a tus amigos, invitados, madre o para darte un capricho a ti.
