@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Instagram, Phone, ShoppingCart } from 'lucide-react';
+import { FaTiktok } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
@@ -8,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const instagramUrl = "https://instagram.com/recetaspati"; // Define URL once
+  const tiktokUrl = "https://tiktok.com/@recetaspati_"; // AÑADIDO
   const { state, getTotalItems, resetItemAddedTimestamp } = useCart();
   const totalItems = getTotalItems();
   const [isAnimating, setIsAnimating] = useState(false); // Estado para controlar animación
@@ -99,10 +101,10 @@ const Navbar = () => {
               Testimonios
             </a>
             <div className="flex space-x-2 pt-2">
-              {/* Phone Button (Assuming it should be a link) */}
-              <a href="tel:+34600000000" className="flex-1">
-                <Button className="w-full bg-pati-pink hover:bg-pati-burgundy text-pati-burgundy hover:text-white border border-pati-burgundy">
-                  <Phone size={18} className="mr-2" /> Llamar
+              {/* TikTok Button (replaces Phone Button) */}
+              <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+                <Button className="w-full bg-black hover:bg-gray-800 text-white">
+                  <FaTiktok size={18} className="mr-2" /> TikTok
                 </Button>
               </a>
               {/* Instagram Button */}
