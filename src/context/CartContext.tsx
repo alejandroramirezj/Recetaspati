@@ -17,20 +17,6 @@ const generateCartItemId = (item: Omit<CartItem, 'id'>): string => {
   return id;
 };
 
-// Añadir nueva propiedad al tipo CartState
-export interface CartState {
-    items: CartItem[];
-    itemAddedTimestamp: number | null; // Timestamp de la última adición
-}
-
-// Añadir nueva acción al tipo CartAction
-export type CartAction =
-  | { type: 'ADD_ITEM'; payload: CartItem }
-  | { type: 'REMOVE_ITEM'; payload: { id: string } }
-  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
-  | { type: 'CLEAR_CART' }
-  | { type: 'RESET_TIMESTAMP' }; // Nueva acción
-
 // Reducer para manejar las acciones del carrito
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {

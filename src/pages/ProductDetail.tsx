@@ -138,7 +138,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     const [maxUniqueSelectedFlavorsAllowed, setMaxUniqueSelectedFlavorsAllowed] = useState<number | null>(null);
     const [currentPackIsCustom, setCurrentPackIsCustom] = useState<boolean>(false);
     const [currentCustomPackUnitPrice, setCurrentCustomPackUnitPrice] = useState<number | null>(null);
-    const { dispatch, getTotalItems } = useCart();
+    const { state, dispatch, getTotalItems } = useCart();
     const phoneNumber = "+34671266981";
     const [isSummaryVisible, setIsSummaryVisible] = useState(false);
     const { ref: summaryRef, inView } = useInView({ threshold: 0.5 });
@@ -389,53 +389,54 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     };
 
     const handleAddToCart = (triggerSource: 'summary' | 'sticky') => {
-        if (!isOrderComplete) return; // Usar isOrderComplete que ya contempla el pack personalizado
+        if (!isOrderComplete) return; 
         
         let cartItemId: string;
         let cartItemPayload: Omit<CartItem, 'id'>;
 
         if (currentPackIsCustom) {
-            if (!currentCustomPackUnitPrice || currentCount === 0) return; // Seguridad adicional
-            cartItemId = `${product.id}-customPack`; // Id para el pack personalizado en el carrito
+            if (!currentCustomPackUnitPrice || currentCount === 0) return; 
+            // Generar ID ÚNICA para cada pack personalizado
+            cartItemId = `customPack-${product.id}-${Date.now()}`;
             cartItemPayload = {
                 productId: product.id,
                 productName: `${product.name} - Personalizado`, 
-                quantity: 1, // Se añade un pack personalizado
-                packPrice: finalPackPrice, // Ya calculado como currentCount * unitPrice
+                quantity: 1, 
+                packPrice: finalPackPrice, 
                 imageUrl: product.image, 
-                type: 'cookiePack', // Sigue siendo un cookiePack en términos de estructura de datos
+                type: 'cookiePack', 
                 cookieDetails: { 
-                    packSize: currentCount, // El "tamaño" es la cantidad de galletas seleccionadas
+                    packSize: currentCount, 
                     cookies: selectedItems 
                 },
-                // Podríamos añadir una bandera o detalle extra si es necesario para el carrito
                 selectedOptions: { pack: 'Personalizado' } 
             };
-        } else if (selectedPackSize) { // Packs de tamaño fijo (6 o 12 galletas, o palmeritas)
+
+        } else if (selectedPackSize) { 
             cartItemId = `${product.id}-pack${selectedPackSize}`;
             if (product.configType === 'cookiePack') {
-            cartItemPayload = {
-                productId: product.id, productName: product.name, quantity: 1,
-                packPrice: finalPackPrice, imageUrl: product.image, type: 'cookiePack',
+                cartItemPayload = {
+                    productId: product.id, productName: product.name, quantity: 1,
+                    packPrice: finalPackPrice, imageUrl: product.image, type: 'cookiePack',
                     cookieDetails: { packSize: selectedPackSize, cookies: selectedItems }
-            };
-        } else if (product.configType === 'flavorPack') { 
-            cartItemPayload = {
-                productId: product.id, productName: product.name, quantity: 1,
-                packPrice: finalPackPrice, imageUrl: product.image, type: 'flavorPack',
+                };
+            } else if (product.configType === 'flavorPack') { 
+                cartItemPayload = {
+                    productId: product.id, productName: product.name, quantity: 1,
+                    packPrice: finalPackPrice, imageUrl: product.image, type: 'flavorPack',
                     selectedOptions: { pack: packOptions.find(p => p.size === selectedPackSize)?.name || '' },
-                selectedFlavors: selectedFlavors
-            };
-        } else {
+                    selectedFlavors: selectedFlavors
+                };
+            } else {
                 console.error("Tipo de producto no soportado para añadir al carrito desde ItemPackConfigurator para packs fijos");
-            return;
-        }
+                return;
+            }
         } else {
             console.error("Estado inválido en handleAddToCart: ni personalizado ni packSize seleccionado.");
             return;
         }
 
-        dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } });
+        dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } }); // Siempre ADD_ITEM
         if (triggerSource === 'summary') rewardSummary();
         else if (triggerSource === 'sticky') rewardSticky();
     };

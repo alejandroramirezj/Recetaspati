@@ -76,10 +76,15 @@ const OrderSummary: React.FC = () => {
                                      {item.selectedOptions?.pack && <p className="text-sm text-gray-600">Pack: {item.selectedOptions.pack}</p>}
                                      {item.type === 'flavorQuantity' && item.selectedOptions?.flavor && <p className="text-sm text-gray-600">Sabor: {item.selectedOptions.flavor}</p>}
                                      {item.type === 'flavorOnly' && item.selectedOptions?.flavor && <p className="text-sm text-gray-600">Opción: {item.selectedOptions.flavor}</p>}
-                                     {item.type === 'flavorPack' && item.selectedFlavors && (
+                                     {item.type === 'flavorPack' && item.selectedFlavors && item.selectedFlavors.length > 0 && (
                                          <div className="text-sm text-gray-600">
                                              Sabores: {item.selectedFlavors.join(', ')}
                                          </div>
+                                     )}
+                                     {item.type === 'flavorMultiSelect' && item.selectedFlavors && item.selectedFlavors.length > 0 && (
+                                        <div className="text-sm text-gray-600">
+                                            Sabores: {item.selectedFlavors.join(' y ')}
+                                        </div>
                                      )}
                                      {item.type === 'cookiePack' && item.cookieDetails && item.cookieDetails.cookies && (
                                          <div className="text-sm text-gray-600 space-y-0.5">
