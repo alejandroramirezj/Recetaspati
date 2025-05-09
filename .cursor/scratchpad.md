@@ -221,3 +221,38 @@ El usuario ha solicitado la creación de un minijuego interactivo en el sitio we
 - Es útil revisar paddings, márgenes, gaps y alturas mínimas globalmente.
 - Al modificar configuradores complejos, es importante rastrear múltiples estados (ej. cantidad total, cantidad de tipos únicos, límites para cada uno) y asegurarse de que la UI refleje correctamente las restricciones.
 - (Añadir futuras lecciones aquí)
+
+## Background and Motivation
+El usuario desea que el resumen del pedido (`OrderSummary.tsx`) muestre claramente los sabores seleccionados o las galletas individuales. Inicialmente, los `cookiePack` no mostraban detalles. Luego, al arreglar eso, los `flavorPack` (palmeritas) dejaron de mostrar sus sabores.
+
+## Key Challenges and Analysis
+- Los `cookiePack` (galletas) almacenan sus detalles en `item.cookieDetails.cookies`.
+- Los `flavorPack` (palmeritas) y `flavorMultiSelect` (minicookies) almacenan sus selecciones en `item.selectedFlavors`.
+- La lógica de renderizado en `OrderSummary.tsx` necesitaba distinguir estos casos para mostrar la información correcta para cada tipo de item.
+
+## High-level Task Breakdown
+1.  **Modificar `OrderSummary.tsx` para mostrar los sabores de packs de forma genérica.** (Realizado)
+2.  **Asegurar que `OrderSummary.tsx` muestre el contenido de `cookieDetails.cookies` para `cookiePack`.** (Realizado y Verificado)
+3.  **Restaurar la visualización de `selectedFlavors` para `flavorPack` (palmeritas) sin romper `cookiePack` ni `flavorMultiSelect`.** (Realizado)
+    -   Descripción: Ajustar las condiciones en `OrderSummary.tsx` para que:
+        -   `cookiePack` utilice `item.cookieDetails.cookies`.
+        -   `flavorPack` Y `flavorMultiSelect` utilicen `item.selectedFlavors`.
+    -   Success Criteria: Todos los tipos de items (minicookies, galletas fijas, galletas personalizadas, palmeritas) muestran sus respectivos sabores/contenidos correctamente en el resumen del pedido. (Pendiente - esperando prueba del usuario)
+4.  **(Opcional) Eliminar `console.log` de depuración de `OrderSummary.tsx` si todo funciona.**
+
+## Project Status Board
+- [x] Modificar `OrderSummary.tsx` para mostrar los sabores de packs de forma genérica.
+- [x] Asegurar que `OrderSummary.tsx` muestre el contenido de `cookieDetails.cookies` para `cookiePack`.
+- [ ] Restaurar la visualización de `selectedFlavors` para `flavorPack` (palmeritas).
+  - Success Criteria: Todos los items muestran sus detalles correctamente.
+
+## Executor's Feedback or Assistance Requests
+He modificado la lógica en `src/pages/OrderSummary.tsx` para que trate los `cookiePack` de una manera (usando `cookieDetails.cookies`) y los `flavorPack` y `flavorMultiSelect` de otra (usando `selectedFlavors`).
+
+**Por favor, prueba de nuevo añadiendo todos los tipos de productos al carrito.** Verifica si ahora las Minicookies, las Cajas de Galletas (tanto las de pack fijo como las personalizadas) y la Caja de Palmeritas Surtidas muestran todos sus sabores o contenidos correctamente en la página de resumen del pedido.
+
+Si todo funciona como esperas, el siguiente paso sería eliminar el `console.log` que usamos para depurar.
+
+## Lessons
+- Es crucial que los tipos de producto (`item.type`) y los campos de datos (`cookieDetails`, `selectedFlavors`) sean consistentes y que la lógica de renderizado los maneje adecuadamente para cada caso.
+- Refactorizar las condiciones de renderizado para que sean específicas para cada `item.type` y la estructura de datos que utiliza es más robusto que condiciones demasiado amplias.

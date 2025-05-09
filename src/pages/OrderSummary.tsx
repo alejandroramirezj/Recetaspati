@@ -14,13 +14,21 @@ const formatPrice = (price: number | undefined): string => {
 };
 
 const OrderSummary: React.FC = () => {
+  // Log MUY visible al inicio del componente
+  console.log("--- DEBUG: OrderSummary COMPONENT RENDERED ---"); 
+
   const { state, dispatch, getCartTotal, getTotalItems } = useCart();
+  
+  // Log del estado del carrito para depuración (si state existe)
+  if (state && state.items) {
+    console.log("--- DEBUG: OrderSummary cart items ---", JSON.parse(JSON.stringify(state.items)));
+  } else {
+    console.log("--- DEBUG: OrderSummary - Cart state or items not available yet ---");
+  }
+
   const cartTotal = getCartTotal();
   const totalItems = getTotalItems();
   const whatsappUrl = getWhatsAppUrl(state.items);
-
-  // Log del estado del carrito para depuración
-  console.log("Estado actual del carrito en OrderSummary:", JSON.parse(JSON.stringify(state.items)));
 
   // Handlers (similares a MobileCartBar)
   const handleRemoveItem = (itemId: string) => {
@@ -65,7 +73,11 @@ const OrderSummary: React.FC = () => {
                          <CardTitle className="text-xl text-pati-burgundy">Artículos ({totalItems})</CardTitle>
                      </CardHeader>
                     <CardContent className="divide-y divide-pati-pink/20">
-                        {state.items.map((item) => (
+                        {state.items.map((item) => {
+                            // DEBUG LOG FOR ALL ITEMS
+                            console.log(`--- DEBUG: OrderSummary item (ID: ${item.id}, Type: ${item.type}) ---`, JSON.parse(JSON.stringify(item)));
+                            // END DEBUG LOG
+                            return (
                              <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 py-4 px-2 sm:px-0">
                                 <img 
                                      src={item.imageUrl || '/Recetaspati/placeholder.svg'}
@@ -79,25 +91,22 @@ const OrderSummary: React.FC = () => {
                                      {item.selectedOptions?.pack && <p className="text-sm text-gray-600">Pack: {item.selectedOptions.pack}</p>}
                                      {item.type === 'flavorQuantity' && item.selectedOptions?.flavor && <p className="text-sm text-gray-600">Sabor: {item.selectedOptions.flavor}</p>}
                                      {item.type === 'flavorOnly' && item.selectedOptions?.flavor && <p className="text-sm text-gray-600">Opción: {item.selectedOptions.flavor}</p>}
-                                     {item.type === 'flavorPack' && item.selectedFlavors && item.selectedFlavors.length > 0 && (
-                                         <div className="text-sm text-gray-600">
-                                             Sabores: {item.selectedFlavors.join(', ')}
-                                         </div>
-                                     )}
-                                     {item.type === 'flavorMultiSelect' && item.selectedFlavors && item.selectedFlavors.length > 0 && (
-                                        <div className="text-sm text-gray-600">
-                                            Sabores: {item.selectedFlavors.join(' y ')}
-                                        </div>
-                                     )}
+                                     {/* Section for cookiePack to display individual cookies from cookieDetails.cookies */}
                                      {item.type === 'cookiePack' && item.cookieDetails && item.cookieDetails.cookies && (
                                          <div className="text-sm text-gray-600 space-y-0.5">
-                                            <p className="font-medium">Pack {item.cookieDetails.packSize} Galletas</p>
+                                            <p className="font-medium">Contenido del Pack ({item.cookieDetails.packSize} unidades):</p>
                                             <ul className="list-disc list-inside pl-2 text-xs">
                                                 {Object.entries(item.cookieDetails.cookies).map(([name, quantity]) => (
                                                     <li key={name}>{quantity}x {name}</li>
                                                 ))}
                                             </ul>
                                          </div>
+                                     )}
+                                     {/* Section for flavorPack (like Palmeritas) and flavorMultiSelect (like Minicookies) to display selectedFlavors */}
+                                     {(item.type === 'flavorPack' || item.type === 'flavorMultiSelect') && item.selectedFlavors && item.selectedFlavors.length > 0 && (
+                                        <div className="text-sm text-gray-600">
+                                            Sabores: {item.selectedFlavors.join(' y ')}
+                                        </div>
                                      )}
                                      <p className="text-md font-bold text-pati-accent pt-1">
                                          {formatPrice(item.packPrice ?? item.unitPrice)} {item.unitPrice ? '/ ud.' : ''}
@@ -119,8 +128,9 @@ const OrderSummary: React.FC = () => {
                                       </Button>
                                   </div>
                              </div>
-                         ))}
-                     </CardContent>
+                            );
+                        })}
+                    </CardContent>
                     <CardFooter className="bg-gray-50 py-4 px-6 mt-4">
                         <div className="w-full flex justify-end items-center gap-4">
                              <span className="text-lg font-semibold text-pati-dark-brown">Total Pedido:</span>
