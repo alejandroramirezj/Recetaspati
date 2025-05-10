@@ -74,8 +74,6 @@ const OrderSummary: React.FC = () => {
                      </CardHeader>
                     <CardContent className="divide-y divide-pati-pink/20">
                         {state.items.map((item) => {
-                            // DEBUG LOG FOR ALL ITEMS
-                            console.log(`--- DEBUG: OrderSummary item (ID: ${item.id}, Type: ${item.type}) ---`, JSON.parse(JSON.stringify(item)));
                             // END DEBUG LOG
                             return (
                              <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 py-4 px-2 sm:px-0">

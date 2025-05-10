@@ -14,7 +14,11 @@ interface FallingCookie {
 
 const Hero = () => {
   const [cookies, setCookies] = useState<FallingCookie[]>([]);
-  const cookieImages = ['/Recetaspati/images/minicookie1.png', '/Recetaspati/images/minicookie2.png', '/Recetaspati/images/minicookie3.png'];
+  const cookieImages = [
+    '/Recetaspati/images/minicookie1.webp', 
+    '/Recetaspati/images/minicookie2.webp', 
+    '/Recetaspati/images/minicookie3.webp'
+  ];
   const numCookies = 30; // Adjust number of cookies
 
   useEffect(() => {
@@ -65,7 +69,7 @@ const Hero = () => {
           {/* Isotipo moved above H1 and enlarged */} 
           <div className="mb-4"> {/* Removed flex for simple centering */}
             <img 
-              src="/Recetaspati/images/Isotipo.png"
+              src="/Recetaspati/images/Isotipo.webp"
               alt="Isotipo Pati Sweet Creations" 
               className="h-20 md:h-24 w-auto mx-auto" // Increased size and centered with mx-auto
             />
@@ -74,7 +78,7 @@ const Hero = () => {
           {/* REEMPLAZAR H1 CON IMAGEN DEL LOGO */}
           <div className="mb-6"> {/* Añadido margen inferior si es necesario */} 
             <img 
-              src="/Recetaspati/images/recetaspati.png" 
+              src="/Recetaspati/images/recetaspati.webp" 
               alt="Recetas Pati Logo" 
               className="h-16 md:h-20 w-auto mx-auto" // Ajusta la altura según sea necesario, y centra con mx-auto
             />

@@ -44,7 +44,7 @@ export const productsData: Product[] = [
       name: "Bundtcake de Chocolate", 
       description: "Exquisito bizcocho de chocolate elaborado artesanalmente.", 
       price: "32€", // Price for the whole cake
-      image: "/Recetaspati/images/Bundcake.png", // UPDATE: Corrected image path with original structure
+      image: "/Recetaspati/images/Bundcake.webp", // Restored path
       video: "/Recetaspati/videos/bundcake.mp4", // ADDED VIDEO
       category: "tartas", 
       configType: 'flavorOnly', // Treat as selecting one flavor/item
@@ -123,7 +123,7 @@ export const productsData: Product[] = [
     name: "Caja de Galletas Artesanales",
     description: "Configura tu propia caja con tus sabores favoritos.", // Updated description
     price: "16€/29€", // Indicate pack prices
-    image: "/Recetaspati/images/Galleta-Kinderbueno.png", // MODIFICADO: Cambiada a la imagen de Galleta Kinder
+    image: "/Recetaspati/images/Galleta Kinder Bueno.webp", // Restored path
     video: "/Recetaspati/videos/Galletas.mp4", 
     category: "galletas",
     configType: 'cookiePack',
@@ -133,14 +133,14 @@ export const productsData: Product[] = [
       { name: 'Pack Personalizado', price: '3,00€ / ud.', description: 'Sin límite de sabores. ¡Elige las que quieras!', isCustomPack: true, customPackUnitPrice: 3 }
     ],
     individualCookies: [
-        { name: "Galleta de Filipinos", image: "/Recetaspati/images/Galleta-Filipinos.png", description: "Decorada con chocolate blanco." },
-        { name: "Galleta de Kinder", image: "/Recetaspati/images/Galleta-Kinderbueno.png", description: "Con pepitas y Kinder." },
-        { name: "Galleta de Nutella", image: "/Recetaspati/images/Galleta-Nutella.png", description: "Con pepitas y centro de Nutella." },
-        { name: "Galleta de Oreo", image: "/Recetaspati/images/Galleta-oreo.png", description: "Con trozos de Oreo." },
-        { name: "Galleta de Pistacho", image: "/Recetaspati/images/Galleta-Pistacho.png", description: "Con crema de pistacho." },
-        { name: "Galleta de Lotus", image: "/Recetaspati/images/Galleta-lotus.png", description: "Con sabor Lotus Biscoff." },
-        { name: "Galleta Choco Negro Salado", image: "/Recetaspati/images/Galleta-chocolate-salado.png", description: "Intenso chocolate negro con un toque de sal." },
-        { name: "Galleta Happy Hippo", image: "/Recetaspati/images/Galleta Happy Hippo.png", description: "Crujiente galleta con relleno cremoso y el divertido sabor de Happy Hippo." }
+        { name: "Galleta de Filipinos", image: "/Recetaspati/images/Galleta Filipinos.webp", description: "Decorada con chocolate blanco." },
+        { name: "Galleta de Kinder", image: "/Recetaspati/images/Galleta Kinder Bueno.webp", description: "Con pepitas y Kinder." },
+        { name: "Galleta de Nutella", image: "/Recetaspati/images/Galleta Nutella.webp", description: "Con pepitas y centro de Nutella." },
+        { name: "Galleta de Oreo", image: "/Recetaspati/images/Galleta Oreo.webp", description: "Con trozos de Oreo." },
+        { name: "Galleta de Pistacho", image: "/Recetaspati/images/Galleta Pistacho.webp", description: "Con crema de pistacho." },
+        { name: "Galleta de Lotus", image: "/Recetaspati/images/Galleta Lotus.webp", description: "Con sabor Lotus Biscoff." },
+        { name: "Galleta Choco Negro Salado", image: "/Recetaspati/images/Galleta de Chocolate Salado.webp", description: "Intenso chocolate negro con un toque de sal." },
+        { name: "Galleta Happy Hippo", image: "/Recetaspati/images/Galleta Happy Hippo.webp", description: "Crujiente galleta con relleno cremoso y el divertido sabor de Happy Hippo." }
     ]
   },
   // Palmeritas - REVISED
@@ -170,7 +170,7 @@ export const productsData: Product[] = [
     name: "Mini Tarta Individual",
     description: "Un capricho perfecto en tamaño individual. Elige tu sabor.",
     price: "5€", // Price per unit
-    image: "/Recetaspati/images/minitartas.png", // Use a representative image
+    image: "/Recetaspati/images/Minicakes.webp", // Restored path
     video: "/Recetaspati/videos/minitartas.mp4", // Video añadido
     category: "tartas", // MODIFICADO: Cambiado de 'mini-tartas' a 'tartas'
     configType: 'flavorQuantity', // Select flavor and quantity
@@ -184,7 +184,7 @@ export const productsData: Product[] = [
     name: "Minicookies",
     description: "Deliciosas galletas en tamaño mini, perfectas para picar. ¡Como las Chips Ahoy! pero más ricas y caseras!",
     price: "5€", 
-    image: "/Recetaspati/images/minicookies.png", // CORRECTED PATH
+    image: "/Recetaspati/images/minicookies.webp", // Restored path
     video: "/Recetaspati/videos/minicookies.mp4", // CORRECTED VIDEO PATH
     category: "minicookies",
     configType: 'flavorMultiSelect', // Select one or both flavors for the bag
@@ -196,7 +196,7 @@ export const productsData: Product[] = [
       name: "Tarta de Lotus", 
       description: "Increíble tarta con el sabor único de las galletas Lotus Biscoff, una delicia caramelizada.", 
       price: "30€", 
-      image: "/Recetaspati/images/Tarta Lotus.png", 
+      image: "/Recetaspati/images/Tarta Lotus.webp", // Restored path
       video: "/Recetaspati/videos/tarta-lotus.mp4", // Video añadido
       category: "tartas", 
       configType: 'flavorOnly',
@@ -208,7 +208,7 @@ export const productsData: Product[] = [
       name: "Tarta de Happy Hippo", 
       description: "Divertida y deliciosa tarta inspirada en los sabores de Happy Hippo, con avellana y cacao.", 
       price: "32€", 
-      image: "/Recetaspati/images/Tarta Happy Hippo.png", 
+      image: "/Recetaspati/images/Tarta Happy Hippo.webp", // Restored path
       video: "/Recetaspati/videos/tarta-happyhippo.mp4", // Video añadido
       category: "tartas", 
       configType: 'flavorOnly',
@@ -220,7 +220,7 @@ export const productsData: Product[] = [
       name: "Tarta de Nutella", 
       description: "Irresistible tarta para los amantes de Nutella, con una suave crema de avellanas y cacao.", 
       price: "30€", 
-      image: "/Recetaspati/images/Tarta Nutela.png", 
+      image: "/Recetaspati/images/Tarta Nutela.webp", // Restored path
       video: "/Recetaspati/videos/tarta-nutela.mp4", // Video añadido
       category: "tartas", 
       configType: 'flavorOnly',

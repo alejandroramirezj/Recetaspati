@@ -4,17 +4,6 @@ import { Instagram } from 'lucide-react';
 // Ya no se necesita useEffect para el embed de Instagram
 // Ya no se necesita la declaración global de window.instgrm
 
-// Example images - replace with actual relevant image paths or placeholders
-// ESTA CONSTANTE SE VA A ELIMINAR
-// const feedImages = [
-//   "/Recetaspati/images/Caja galletas 6.png",
-//   "/Recetaspati/images/Galleta-Kinderbueno.png",
-//   "/Recetaspati/images/Bundcake.JPG",
-//   "/Recetaspati/images/Galleta-Nutella.png",
-//   "/Recetaspati/images/Galleta-Pistacho.png",
-//   "/Recetaspati/images/Galleta-Filipinos.png",
-// ];
-
 const InstagramFeed = () => {
   const instagramUrl = "https://instagram.com/recetaspati";
 
@@ -66,4 +55,4 @@ const InstagramFeed = () => {
   );
 };
 
-export default InstagramFeed; 
+export default InstagramFeed;

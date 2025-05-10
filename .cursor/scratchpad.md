@@ -4,6 +4,8 @@
 
 El objetivo es crear/mejorar una web sencilla para "Pati Sweet Creations" que muestre productos, permita configurarlos (cuando sea necesario) y facilite realizar pedidos a través de WhatsApp. Se ha implementado la estructura básica de productos, un carrito de compra global, y una página de resumen de pedido. Se busca mejorar la experiencia de usuario y la presentación general.
 
+El usuario desea que el resumen del pedido (`OrderSummary.tsx`) y el carrito móvil (`MobileCartBar.tsx`) muestren claramente los sabores seleccionados o las galletas individuales para todos los tipos de productos. También solicitó la conversión de imágenes `.png` a formato `.webp` en todo el proyecto.
+
 ## Key Challenges and Analysis (Planner Input - Initial Review)
 
 ### 1. Image Optimization
@@ -223,36 +225,36 @@ El usuario ha solicitado la creación de un minijuego interactivo en el sitio we
 - (Añadir futuras lecciones aquí)
 
 ## Background and Motivation
-El usuario desea que el resumen del pedido (`OrderSummary.tsx`) muestre claramente los sabores seleccionados o las galletas individuales. Inicialmente, los `cookiePack` no mostraban detalles. Luego, al arreglar eso, los `flavorPack` (palmeritas) dejaron de mostrar sus sabores.
+El usuario desea que el resumen del pedido (`OrderSummary.tsx`) y el carrito móvil (`MobileCartBar.tsx`) muestren claramente los sabores seleccionados o las galletas individuales para todos los tipos de productos. Se corrigió `OrderSummary.tsx`, pero `MobileCartBar.tsx` aún no mostraba todos los detalles correctamente.
 
 ## Key Challenges and Analysis
 - Los `cookiePack` (galletas) almacenan sus detalles en `item.cookieDetails.cookies`.
 - Los `flavorPack` (palmeritas) y `flavorMultiSelect` (minicookies) almacenan sus selecciones en `item.selectedFlavors`.
-- La lógica de renderizado en `OrderSummary.tsx` necesitaba distinguir estos casos para mostrar la información correcta para cada tipo de item.
+- La lógica de renderizado en `OrderSummary.tsx` fue corregida para manejar estos casos.
+- `MobileCartBar.tsx` necesitaba replicar esta lógica detallada.
 
 ## High-level Task Breakdown
-1.  **Modificar `OrderSummary.tsx` para mostrar los sabores de packs de forma genérica.** (Realizado)
-2.  **Asegurar que `OrderSummary.tsx` muestre el contenido de `cookieDetails.cookies` para `cookiePack`.** (Realizado y Verificado)
-3.  **Restaurar la visualización de `selectedFlavors` para `flavorPack` (palmeritas) sin romper `cookiePack` ni `flavorMultiSelect`.** (Realizado)
-    -   Descripción: Ajustar las condiciones en `OrderSummary.tsx` para que:
-        -   `cookiePack` utilice `item.cookieDetails.cookies`.
-        -   `flavorPack` Y `flavorMultiSelect` utilicen `item.selectedFlavors`.
-    -   Success Criteria: Todos los tipos de items (minicookies, galletas fijas, galletas personalizadas, palmeritas) muestran sus respectivos sabores/contenidos correctamente en el resumen del pedido. (Pendiente - esperando prueba del usuario)
-4.  **(Opcional) Eliminar `console.log` de depuración de `OrderSummary.tsx` si todo funciona.**
+1.  **Corrección visualización detalles en `OrderSummary.tsx` y `MobileCartBar.tsx`:** (Realizado y Verificado)
+    -   Asegurar que `cookiePack` utilice `item.cookieDetails.cookies`.
+    -   Asegurar que `flavorPack` Y `flavorMultiSelect` utilicen `item.selectedFlavors`.
+2.  **Convertir imágenes de `.png` a `.webp` en todo el proyecto:** (Realizado y Verificado)
+    -   Identificar todas las imágenes `.png` en el código (`src/data/products.ts`, `src/components/home/Hero.tsx`, `src/components/layout/Footer.tsx`, `src/components/layout/Navbar.tsx`, `src/components/home/RecommendationWizard.tsx`).
+    -   Verificar los nombres de archivo de las versiones `.webp` existentes en `public/Recetaspati/images/`.
+    -   Actualizar las rutas en el código para usar las imágenes `.webp` con la ruta correcta (`/Recetaspati/images/...`).
+3.  **Eliminar `console.log` de depuración de `OrderSummary.tsx`** (Pendiente)
 
 ## Project Status Board
-- [x] Modificar `OrderSummary.tsx` para mostrar los sabores de packs de forma genérica.
-- [x] Asegurar que `OrderSummary.tsx` muestre el contenido de `cookieDetails.cookies` para `cookiePack`.
-- [ ] Restaurar la visualización de `selectedFlavors` para `flavorPack` (palmeritas).
-  - Success Criteria: Todos los items muestran sus detalles correctamente.
+- [x] Corregir visualización de detalles de items en `OrderSummary.tsx` y `MobileCartBar.tsx`.
+- [x] Convertir imágenes de `.png` a `.webp` en el proyecto.
+- [ ] Eliminar `console.log` de depuración de `OrderSummary.tsx`.
 
 ## Executor's Feedback or Assistance Requests
-He modificado la lógica en `src/pages/OrderSummary.tsx` para que trate los `cookiePack` de una manera (usando `cookieDetails.cookies`) y los `flavorPack` y `flavorMultiSelect` de otra (usando `selectedFlavors`).
+¡Excelente! Todas las imágenes `.png` identificadas han sido cambiadas a `.webp` usando las rutas y nombres de archivo correctos. Además, la visualización de los detalles de los productos en el carrito móvil y en la página de resumen del pedido parece estar funcionando correctamente para todos los tipos de productos.
 
-**Por favor, prueba de nuevo añadiendo todos los tipos de productos al carrito.** Verifica si ahora las Minicookies, las Cajas de Galletas (tanto las de pack fijo como las personalizadas) y la Caja de Palmeritas Surtidas muestran todos sus sabores o contenidos correctamente en la página de resumen del pedido.
-
-Si todo funciona como esperas, el siguiente paso sería eliminar el `console.log` que usamos para depurar.
+El siguiente y último paso para esta serie de tareas es eliminar el `console.log` que habíamos añadido para depuración en `src/pages/OrderSummary.tsx`.
 
 ## Lessons
 - Es crucial que los tipos de producto (`item.type`) y los campos de datos (`cookieDetails`, `selectedFlavors`) sean consistentes y que la lógica de renderizado los maneje adecuadamente para cada caso.
-- Refactorizar las condiciones de renderizado para que sean específicas para cada `item.type` y la estructura de datos que utiliza es más robusto que condiciones demasiado amplias.
+- Refactorizar las condiciones de renderizado para que sean específicas para cada `item.type` y la estructura de datos que utiliza es más robusto.
+- Cuando se corrige la lógica de visualización en un componente, es importante verificar si otros componentes que muestran datos similares (ej. mini-carrito, carrito móvil) también necesitan la misma corrección.
+- Al cambiar formatos de archivo (como PNG a WebP), es vital verificar las rutas y los nombres exactos de los nuevos archivos para evitar enlaces rotos. La comunicación clara sobre la estructura de directorios es fundamental.
