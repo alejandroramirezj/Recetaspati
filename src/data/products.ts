@@ -149,7 +149,7 @@ export const productsData: Product[] = [
     name: "Caja de Palmeritas Surtidas",
     description: "Configura tu caja con tus sabores favoritos de palmeritas.",
     price: "12€/22€",
-    image: "/Recetaspati/images/palmeritas.JPG",
+    image: "/Recetaspati/images/palmeritas.webp",
     video: "/Recetaspati/videos/minipalmeritas.mp4", // Video añadido
     category: "palmeritas",
     configType: 'flavorPack',
