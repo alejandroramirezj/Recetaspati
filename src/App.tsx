@@ -16,7 +16,7 @@ import OrderSummary from "./pages/OrderSummary";
 const queryClient = new QueryClient();
 
 // Define the base path
-const baseName = "/Recetaspati";
+// const baseName = "/Recetaspati";
 
 // Componente interno para manejar la redirección de sessionStorage
 const SpaRedirectHandler = () => {
@@ -40,7 +40,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <CartProvider>
-        <BrowserRouter basename={baseName}>
+        <BrowserRouter>
           <ScrollToTop />
           <SpaRedirectHandler />
           <Routes>
