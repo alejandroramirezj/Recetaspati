@@ -12,7 +12,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
-            <img src="/Recetaspati/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-12" />
+            <img src="/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-12" />
             <p className="text-pati-dark-brown">
               Dulces artesanales elaborados con todo el amor y los mejores ingredientes. Estamos en Granada, España.
             </p>

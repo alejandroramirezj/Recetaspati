@@ -21,14 +21,8 @@ const MediaGallery: React.FC<MediaGalleryProps> = ({ product }) => {
   const totalItems = (hasVideo ? 1 : 0) + (hasImage ? 1 : 0);
 
   if (totalItems === 0) {
-    // Optional: Render a placeholder if no media
-    return (
-        <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-square flex items-center justify-center bg-gray-50">
-             <CardContent className="p-4 text-center text-gray-400">
-                Imagen no disponible
-             </CardContent>
-         </Card>
-    );
+    // No renderizar nada si no hay media
+    return null;
   }
 
   return (
