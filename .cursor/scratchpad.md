@@ -258,3 +258,60 @@ El siguiente y último paso para esta serie de tareas es eliminar el `console.lo
 - Refactorizar las condiciones de renderizado para que sean específicas para cada `item.type` y la estructura de datos que utiliza es más robusto.
 - Cuando se corrige la lógica de visualización en un componente, es importante verificar si otros componentes que muestran datos similares (ej. mini-carrito, carrito móvil) también necesitan la misma corrección.
 - Al cambiar formatos de archivo (como PNG a WebP), es vital verificar las rutas y los nombres exactos de los nuevos archivos para evitar enlaces rotos. La comunicación clara sobre la estructura de directorios es fundamental.
+
+# Plan de Despliegue para recetaspati.com
+
+## Antecedentes y Motivación
+El proyecto es una aplicación web React construida con Vite que necesita ser desplegada en el dominio recetaspati.com. El sitio debe reflejar exactamente la misma apariencia y funcionalidad que se ve en el entorno de desarrollo local.
+
+## Análisis de Desafíos Clave
+1. Configuración actual del proyecto:
+   - Usa Vite como bundler
+   - Tiene una configuración base específica en vite.config.ts
+   - Utiliza React Router para el enrutamiento
+   - Tiene múltiples dependencias de UI (Radix UI, Tailwind)
+
+2. Consideraciones de despliegue:
+   - Necesitamos asegurar que las rutas funcionen correctamente en producción
+   - La configuración base actual está establecida para "/Recetaspati/"
+   - Necesitamos optimizar el build para producción
+
+## Desglose de Tareas de Alto Nivel
+
+### 1. Preparación del Proyecto
+- [ ] Actualizar la configuración de Vite para producción
+- [ ] Verificar y actualizar las variables de entorno si son necesarias
+- [ ] Asegurar que todas las rutas sean relativas
+
+### 2. Construcción del Proyecto
+- [ ] Ejecutar build de producción
+- [ ] Verificar el build localmente
+- [ ] Optimizar assets y recursos
+
+### 3. Configuración del Dominio
+- [ ] Verificar la configuración DNS de recetaspati.com
+- [ ] Preparar certificado SSL
+- [ ] Configurar redirecciones si son necesarias
+
+### 4. Despliegue
+- [ ] Elegir y configurar el servicio de hosting
+- [ ] Subir los archivos de build
+- [ ] Configurar el servidor web
+
+### 5. Verificación Post-Despliegue
+- [ ] Verificar todas las rutas
+- [ ] Comprobar rendimiento
+- [ ] Validar SEO y metadatos
+
+## Tablero de Estado del Proyecto
+- [x] Preparación del proyecto
+- [ ] Construcción
+- [ ] Configuración del dominio
+- [ ] Despliegue
+- [ ] Verificación final
+
+## Feedback o Solicitudes de Asistencia del Ejecutor
+Iniciando la ejecución para desplegar el sitio en GitHub Pages usando Actions y dominio personalizado. Se actualizará la configuración de Vite, se creará el workflow y se añadirá el archivo CNAME.
+
+## Lessons Aprendidas
+(Pendiente de actualización durante la ejecución)

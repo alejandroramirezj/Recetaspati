@@ -29,10 +29,6 @@ jobs:
 
       - name: Build project
         run: npm run build # This uses the 'build' script in package.json which runs 'vite build'
-        env:
-           # Ensure the base path is set correctly during build
-           # Although we set it in vite.config.ts, setting it here ensures consistency
-           VITE_BASE_URL: /Recetaspati/ 
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
