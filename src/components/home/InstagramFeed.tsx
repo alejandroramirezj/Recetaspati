@@ -34,9 +34,9 @@ const InstagramFeed = () => {
               playsInline
               preload="metadata" 
               className="w-full h-full object-cover"
-              poster="/Recetaspati/placeholder.svg" // Opcional: Cambiar a un poster específico para este video
+              poster="/images/placeholder.svg" // Opcional: Cambiar a un poster específico para este video
             >
-              <source src="/Recetaspati/videos/recetaspati.mp4" type="video/mp4" />
+              <source src="/videos/recetaspati.mp4" type="video/mp4" />
               Tu navegador no soporta vídeos.
             </video>
           </div>

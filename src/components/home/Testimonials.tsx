@@ -28,9 +28,9 @@ const Testimonials = () => {
               playsInline
               preload="metadata" 
               className="w-full h-full object-cover"
-              poster="/Recetaspati/placeholder.svg" // Consider a specific poster
+              poster="/images/placeholder.svg" // Consider a specific poster
             >
-              <source src="/Recetaspati/videos/Reseñas.mp4#t=0.5" type="video/mp4" />
+              <source src="/videos/Reseñas.mp4#t=0.5" type="video/mp4" />
               Tu navegador no soporta vídeos.
             </video>
           </div>
@@ -52,9 +52,9 @@ const Testimonials = () => {
                 playsInline
                 preload="metadata" 
                 className="w-full h-full object-cover"
-                poster="/Recetaspati/placeholder.svg"
+                poster="/images/placeholder.svg"
               >
-                <source src="/Recetaspati/videos/Reacciones-1.mp4#t=0.5" type="video/mp4" />
+                <source src="/videos/Reacciones-1.mp4#t=0.5" type="video/mp4" />
                 Tu navegador no soporta vídeos.
               </video>
             </div>
@@ -67,9 +67,9 @@ const Testimonials = () => {
                 playsInline
                 preload="metadata" 
                 className="w-full h-full object-cover"
-                poster="/Recetaspati/placeholder.svg"
+                poster="/images/placeholder.svg"
               >
-                <source src="/Recetaspati/videos/Reacciones-2.mp4#t=0.5" type="video/mp4" />
+                <source src="/videos/Reacciones-2.mp4#t=0.5" type="video/mp4" />
                 Tu navegador no soporta vídeos.
               </video>
             </div>
@@ -82,9 +82,9 @@ const Testimonials = () => {
                 playsInline
                 preload="metadata" 
                 className="w-full h-full object-cover"
-                poster="/Recetaspati/placeholder.svg"
+                poster="/images/placeholder.svg"
               >
-                <source src="/Recetaspati/videos/Reacciones-3.mp4#t=0.5" type="video/mp4" />
+                <source src="/videos/Reacciones-3.mp4#t=0.5" type="video/mp4" />
                 Tu navegador no soporta vídeos.
               </video>
             </div>
