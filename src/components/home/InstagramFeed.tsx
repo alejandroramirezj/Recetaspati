@@ -36,7 +36,7 @@ const InstagramFeed = () => {
               className="w-full h-full object-cover"
               poster="/images/placeholder.svg" // Opcional: Cambiar a un poster específico para este video
             >
-              <source src="/videos/recetaspati.mp4" type="video/mp4" />
+              <source src="/videos/recetaspati.mp4#t=0.5" type="video/mp4" />
               Tu navegador no soporta vídeos.
             </video>
           </div>
