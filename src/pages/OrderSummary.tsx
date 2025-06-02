@@ -78,7 +78,7 @@ const OrderSummary: React.FC = () => {
                             return (
                              <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 py-4 px-2 sm:px-0">
                                 <img 
-                                     src={item.imageUrl || '/Recetaspati/placeholder.svg'}
+                                     src={item.imageUrl || '/placeholder.svg'}
                                      alt={`Imagen de ${item.productName}${item.selectedOptions?.flavor ? ' sabor ' + item.selectedOptions.flavor : ''}`}
                                      className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border flex-shrink-0 mx-auto sm:mx-0"
                                      loading="lazy"
