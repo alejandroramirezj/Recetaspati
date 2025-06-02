@@ -12,7 +12,7 @@ const ProductCatalog = () => {
 
   // 1. Filtrar productos que no tengan la imagen placeholder
   const allDisplayableProducts = productsData.filter(
-    p => p.image !== "/Recetaspati/placeholder.svg"
+    p => p.image && !p.image.includes("placeholder.svg")
   );
 
   // 2. Lógica de filtrado basada en la pestaña activa

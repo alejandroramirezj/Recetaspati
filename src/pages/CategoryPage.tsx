@@ -45,7 +45,7 @@ const CategoryPage = () => {
   // Map URL param to category type if needed (e.g., if URL uses different casing)
   const categoryKey = categoryName as Product['category']; // Assuming URL param matches type
 
-  const categoryProducts = productsData.filter(p => p.category === categoryKey);
+  const categoryProducts = productsData.filter(p => p.category === categoryKey && p.image && !p.image.includes("placeholder.svg"));
 
   // Capitalize category name for display
   const displayCategoryName = categoryName.charAt(0).toUpperCase() + categoryName.slice(1).replace('-', ' ');
