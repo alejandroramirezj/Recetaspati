@@ -544,9 +544,6 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                     
                                     {isPack6 && (
                                       <div className="mt-1 flex flex-col items-center">
-                                        <div className={`text-base font-medium ${cardTextColor}`}>
-                                          1 ¡Gratis!
-                                        </div>
                                         <div className={`text-sm mt-0.5 ${tertiaryTextColor}`}>
                                           Máx. 2 sabores
                                         </div>
@@ -555,9 +552,6 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                     
                                     {isPack12 && (
                                       <div className="mt-1 flex flex-col items-center">
-                                        <div className={`text-base font-medium ${cardTextColor}`}>
-                                          2 ¡Gratis!
-                                        </div>
                                         <div className={`text-sm mt-0.5 ${tertiaryTextColor}`}>
                                           Sin límite de sabores
                                         </div>
