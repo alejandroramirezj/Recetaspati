@@ -1,5 +1,34 @@
+# robots.txt para Recetas Pati
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://recetaspati.com/sitemap.xml
+
+# Directorios a excluir
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+
+# Permitir crawling de imágenes
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.png$
+Allow: /*.webp$
+
+# Optimización para Googlebot
 User-agent: Googlebot
 Allow: /
+
+# Optimización para Googlebot-Image
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.png$
+Allow: /*.webp$
 
 User-agent: Bingbot
 Allow: /
@@ -8,7 +37,4 @@ User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
-Allow: /
-
-User-agent: *
 Allow: /

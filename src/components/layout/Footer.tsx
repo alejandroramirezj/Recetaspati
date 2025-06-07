@@ -1,4 +1,4 @@
-import { Instagram, Mail, Phone } from 'lucide-react';
+import { Instagram, Mail, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Footer = () => {
@@ -32,11 +32,13 @@ const Footer = () => {
                 <Mail size={20} />
               </a>
               <a 
-                href="tel:+34600000000" 
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-pati-burgundy text-white flex items-center justify-center hover:bg-pati-pink hover:text-pati-burgundy transition-colors"
-                aria-label="Teléfono"
+                aria-label="WhatsApp"
               >
-                <Phone size={20} />
+                <MessageCircle size={20} />
               </a>
             </div>
           </div>
@@ -44,8 +46,8 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-playfair text-lg font-medium text-pati-burgundy">Navegación</h4>
             <div className="flex flex-col space-y-2">
-              <a href="#productos" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Productos</a>
-              <a href="#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Testimonios</a>
+              <a href="/#productos" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Productos</a>
+              <a href="/#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy transition-colors">Testimonios</a>
             </div>
           </div>
           

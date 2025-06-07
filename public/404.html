@@ -1,41 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <title>Recetas Pati - Redirigiendo...</title>
-  <script type="text/javascript">
-    // Obtener la ruta solicitada originalmente
-    var path = window.location.pathname;
-    
-    // Preservar el segmento de la ruta que está *después* de la base (si existe)
-    // Asume que la base es el primer segmento después del dominio, ej. /Recetaspati/
-    var basePathSegments = 1; // Ajusta si tu base tiene más segmentos: /usuario/repo/ -> 2
-    var segments = path.split('/').filter(Boolean); // Divide y quita vacíos
-    var spaPath = '/' + segments.slice(basePathSegments).join('/');
-    
-    // Preservar query string y hash
-    var queryString = window.location.search;
-    var hash = window.location.hash;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada - Recetas Pati</title>
+    <script>
+        // Obtener la ruta actual
+        const path = window.location.pathname;
+        const queryString = window.location.search;
+        const hash = window.location.hash;
 
-    // Construir la URL de redirección a la raíz (index.html) 
-    // pasando la ruta original en el hash para que el router la lea.
-    // Usamos un hash como #/ruta/original?query=valor#hash-interno
-    // O, alternativamente, usar sessionStorage (más limpio pero puede fallar en edge cases)
-    
-    // --- Método sessionStorage (Recomendado) ---
-    sessionStorage.redirect = spaPath + queryString + hash;
-    
-    // Redirigir a la raíz (ajusta '/Recetaspati/' si tu base es diferente)
-    window.location.replace('/Recetaspati/' + queryString + hash);
-
-    // --- Método Hash (Alternativa si sessionStorage falla) ---
-    // window.location.replace('/Recetaspati/?#' + spaPath + queryString + hash);
-    // Nota: Si usas este método, tu Router (BrowserRouter) podría necesitar ajustarse 
-    // o podrías necesitar lógica adicional para leer el hash inicial.
-
-  </script>
+        // Redirigir a la raíz
+        window.location.replace('/' + queryString + hash);
+    </script>
 </head>
 <body>
-  Si no eres redirigido automáticamente, <a href="/Recetaspati/">haz clic aquí</a>.
+    <h1>Página no encontrada</h1>
+    <p>Redirigiendo a la página principal...</p>
+    <p>Si no eres redirigido automáticamente, <a href="/">haz clic aquí</a>.</p>
 </body>
 </html> 

@@ -48,10 +48,10 @@ const Navbar = () => {
 
         {/* Desktop navigation */}
         <nav className="hidden lg:flex items-center space-x-6">
-          <a href="/Recetaspati/#productos" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
+          <a href="/#productos" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Productos
           </a>
-          <a href="/Recetaspati/#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
+          <a href="/#testimonios" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Testimonios
           </a>
           <Link 
@@ -87,14 +87,14 @@ const Navbar = () => {
           <nav className="flex flex-col space-y-4">
             {/* Use anchor tags for section links for smoother scrolling */}
             <a 
-              href="/Recetaspati/#productos" 
+              href="/#productos" 
               className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
               Productos
             </a>
             <a 
-              href="/Recetaspati/#testimonios" 
+              href="/#testimonios" 
               className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
