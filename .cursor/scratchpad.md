@@ -487,3 +487,92 @@ Se han completado todas las tareas de optimización técnica:
 
 ## Lecciones Aprendidas
 - Pendiente de documentación
+
+# Mejoras de UI/UX para Pati Sweet Creations
+
+## Background y Motivación
+Se requieren mejoras en la interfaz de usuario para optimizar la experiencia del usuario, mejorar la accesibilidad y el rendimiento de la página web.
+
+## Key Challenges y Analysis
+1. Hero y "above the fold"
+   - El video actual ocupa demasiado espacio en móviles
+   - Falta un subtítulo claro para guiar al usuario
+   - El CTA "Descubrir" no es visible sin scroll
+
+2. Navegación de categorías
+   - La barra de categorías no es sticky
+   - Falta indicador visual claro de la categoría activa
+   - Necesidad de mejorar la accesibilidad en móviles
+
+3. Tarjetas de producto
+   - Inconsistencia en el tamaño de las imágenes
+   - CTA poco visible
+   - Área clicable limitada al botón
+
+4. Barra de pedido
+   - Contraste insuficiente
+   - Comportamiento de scroll no optimizado
+
+5. Rendimiento
+   - Falta de lazy loading
+   - Imágenes no optimizadas
+
+6. Accesibilidad
+   - Falta de textos alternativos
+   - Problemas de contraste
+
+## High-level Task Breakdown
+
+### 1. Hero y "above the fold" ✅
+- [x] Ajustar altura del video en móviles (max-h-[60vh])
+- [x] Agregar subtítulo "Pide tu tarta artesana"
+- [x] Ajustar posicionamiento del CTA para que sea visible sin scroll
+
+### 2. Navegación de categorías ✅
+- [x] Implementar barra sticky
+- [x] Mejorar contraste del chip activo
+- [x] Optimizar para móviles con scroll horizontal
+
+### 3. Tarjetas de producto ✅
+- [x] Estandarizar ratio de imágenes (4:3)
+- [x] Implementar object-fit: cover
+- [x] Mejorar contraste del CTA
+- [x] Hacer toda la tarjeta clicable
+
+### 4. Barra de pedido ✅
+- [x] Reducir altura (de 70px a 60px)
+- [x] Mejorar contraste del texto (font-bold y text-shadow)
+- [x] Implementar auto-hide on scroll
+
+### 5. Rendimiento ✅
+- [x] Implementar lazy loading (loading="lazy")
+- [x] Convertir imágenes a WebP (vite-imagetools)
+- [x] Optimizar carga de recursos (width/height en imágenes)
+
+### 6. Accesibilidad ✅
+- [x] Agregar textos alt descriptivos
+- [x] Mejorar contraste de botones
+- [x] Implementar focus states
+- [x] Agregar roles ARIA y labels
+
+## Project Status Board
+- [x] Fase 1: Hero y navegación
+- [x] Fase 2: Tarjetas y barra de pedido
+- [x] Fase 3: Optimización y accesibilidad
+
+## Executor's Feedback o Assistance Requests
+Se han completado todas las mejoras solicitadas:
+1. Optimización de imágenes con vite-imagetools
+2. Implementación de lazy loading
+3. Mejora de la accesibilidad con roles ARIA y labels
+4. Adición de focus states para mejor navegación por teclado
+5. Optimización de carga con dimensiones explícitas
+
+## Lessons
+1. El uso de `aspect-ratio` en CSS es más efectivo que definir alturas fijas para mantener proporciones consistentes
+2. La implementación de sticky navigation requiere manejar el estado del scroll y aplicar transiciones suaves
+3. Es importante mantener la accesibilidad al hacer elementos clickeables, asegurando que sean claramente identificables
+4. El auto-hide en scroll debe tener un threshold para evitar parpadeos en scrolls pequeños
+5. Las sombras de texto pueden mejorar el contraste sin afectar el diseño general
+6. La especificación de width/height en imágenes ayuda a prevenir layout shifts
+7. Los roles ARIA y labels mejoran significativamente la experiencia para usuarios de lectores de pantalla

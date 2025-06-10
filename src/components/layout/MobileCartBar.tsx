@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext'; 
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,28 @@ const MobileCartBar: React.FC = () => {
   const totalItems = getTotalItems();
   const cartTotal = getCartTotal();
   const whatsappUrl = getWhatsAppUrl(state.items);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Manejar el auto-hide en scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down & past threshold
+        setIsVisible(false);
+      } else {
+        // Scrolling up
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   // Handler to remove an item
   const handleRemoveItem = (itemId: string) => {
@@ -53,24 +75,28 @@ const MobileCartBar: React.FC = () => {
     <Sheet>
       <SheetTrigger asChild>
         {/* This is the visible bar at the bottom */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white px-4 py-3 border-t border-gray-200 shadow-lg lg:hidden flex items-center justify-between gap-3 min-h-[70px] cursor-pointer hover:bg-gray-50 transition-colors">
+        <div 
+          className={`fixed bottom-0 left-0 right-0 z-50 bg-white px-4 py-2 border-t border-gray-200 shadow-lg lg:hidden flex items-center justify-between gap-3 min-h-[60px] cursor-pointer hover:bg-gray-50 transition-all duration-300 ${
+            isVisible ? 'translate-y-0' : 'translate-y-full'
+          }`}
+        >
           <div className="flex items-center gap-3 flex-shrink min-w-0">
-             <ShoppingCart className="h-6 w-6 text-pati-accent flex-shrink-0" />
+             <ShoppingCart className="h-5 w-5 text-pati-accent flex-shrink-0" />
              <div className="flex flex-col text-sm flex-shrink min-w-0">
-                 <span className="font-semibold text-pati-dark-brown whitespace-nowrap truncate">
+                 <span className="font-bold text-pati-dark-brown whitespace-nowrap truncate text-shadow-sm">
                      {totalItems} artículo{totalItems !== 1 ? 's' : ''}
                  </span>
-                 <span className="font-bold text-lg text-pati-burgundy">
+                 <span className="font-extrabold text-lg text-pati-burgundy text-shadow-sm">
                      {formatPrice(cartTotal)}
                  </span>
              </div>
           </div>
           <Button 
             variant="outline"
-            className="flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white border-none"
+            className="flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white border-none font-bold shadow-md"
             aria-controls="cart-sheet-content"
           >
-             Ver/Enviar Pedido ({formatPrice(cartTotal)})
+             Ver/Enviar Pedido
           </Button>
         </div>
       </SheetTrigger>
