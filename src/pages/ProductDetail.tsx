@@ -81,23 +81,20 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
                     <CardTitle className="text-xl text-pati-burgundy">Elige tu Caja</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {product.options?.map((option) => (
-                        <div key={option.name} className="flex items-center justify-between gap-4 border-b pb-3 last:border-b-0">
-                            <div className="flex items-center gap-3">
-                                <Box className="h-6 w-6 text-pati-brown flex-shrink-0" />
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        {product.options?.map((option) => (
+                            <div key={option.name} className="flex-1 min-w-[140px] border rounded-lg p-4 flex flex-col items-center justify-between text-center transition-colors hover:border-pati-burgundy/60 focus-within:border-pati-burgundy/80">
                                 <div>
-                                    <p className="font-medium text-pati-burgundy">{option.name}</p>
-                                    {option.description && <p className="text-sm text-pati-brown mt-1">{option.description}</p>}
+                                    <p className="font-semibold text-pati-burgundy mb-1">{option.name}</p>
+                                    {option.description && <p className="text-xs text-pati-brown mb-2">{option.description}</p>}
                                 </div>
-                            </div>
-                            <div className="text-right flex flex-col items-end gap-2">
-                                <p className="text-xl font-bold text-pati-burgundy whitespace-nowrap">{option.price}</p>
-                                <Button size="sm" onClick={() => handleAddPack(option)}>
+                                <p className="text-lg font-bold text-pati-burgundy mb-2">{option.price}</p>
+                                <Button size="sm" className="w-full" onClick={() => handleAddPack(option)}>
                                     Añadir al Pedido
                                 </Button>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
         </div>
@@ -335,15 +332,8 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         });
     };
 
-    const handlePackSelect = (value: string) => { 
-        // value puede ser el tamaño del pack (e.g., "6", "12") o un identificador para el custom pack (e.g., "custom")
-        // Necesitamos encontrar la opción de pack correspondiente de una manera más robusta.
-        const selectedOpt = packOptions.find(opt => {
-            if (opt.isCustomPack) {
-                return value === opt.name; // Suponiendo que `value` será el nombre del pack personalizado.
-            }
-            return opt.size.toString() === value;
-        });
+    const handlePackSelect = (value: string) => {
+        const selectedOpt = packOptions.find(opt => opt.name === value);
 
         if (!selectedOpt) {
             // Resetea todo si no se encuentra la opción (o si se deselecciona, aunque RadioGroup no lo hace por defecto)
@@ -352,8 +342,8 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
             setCurrentCustomPackUnitPrice(null);
             setMaxUniqueSelectedFlavorsAllowed(null);
             setSelectedItems({});
-        if(product.configType === 'flavorPack') {
-            setSelectedFlavors([]);
+            if(product.configType === 'flavorPack') {
+                setSelectedFlavors([]);
                 setMaxFlavors(0);
             }
             return;
@@ -481,107 +471,80 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         {/* Main content area for the configurator */}
           <div className="space-y-4">
             {/* Product Title and Description */}
-            <h1 className="text-2xl md:text-3xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
-            <p className="text-pati-dark-brown text-base leading-relaxed">{product.description}</p>
+            <div className="relative inline-block">
+              <h1 className="text-2xl md:text-3xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
+              {product.name.toLowerCase().includes('happy hippo') && (
+                <span className="absolute -top-4 -right-16 z-10">
+                  <svg width="60" height="60" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-pulse">
+                    <path
+                      d="M40 5 Q45 15 55 10 Q60 20 70 15 Q68 28 78 30 Q70 38 75 45 Q65 48 70 60 Q60 58 58 70 Q50 65 45 75 Q40 65 35 75 Q30 65 22 70 Q20 58 10 60 Q15 48 5 45 Q10 38 2 30 Q12 28 10 15 Q20 20 25 10 Q35 15 40 5 Z"
+                      fill="#a78bfa"
+                      stroke="#fff"
+                      strokeWidth="2"
+                    />
+                    <text x="40" y="48" textAnchor="middle" fontSize="20" fontWeight="bold" fill="#fff" fontFamily="'Comic Sans MS', 'Comic Sans', cursive">NEW</text>
+                  </svg>
+                </span>
+              )}
+            </div>
+            <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
             <MobileVideoPlayer product={product} />
 
             {/* Step 1: Select Pack */}
                 <Card className="border-pati-pink/30 shadow-md">
                  <CardHeader className="pb-3 pt-4">
-                    <CardTitle className="text-lg text-pati-burgundy">Elige tu Pack</CardTitle>
+                    <CardTitle className="text-xl text-pati-burgundy">Elige tu Pack</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3 pt-0">
-                    <RadioGroup
-                        onValueChange={handlePackSelect}
-                       value={currentPackIsCustom ? packOptions.find(p => p.isCustomPack)?.name : selectedPackSize?.toString()}
-                       className="grid grid-cols-2 md:grid-cols-3 gap-2"
-                    >
-                        {packOptions.map((pack) => {
-                          const radioValue = pack.isCustomPack ? pack.name : pack.size.toString();
-                          const isSelected = currentPackIsCustom ? pack.isCustomPack : (selectedPackSize === pack.size && !pack.isCustomPack);
-                          
-                          let primaryDescription = pack.description;
-                          if (product.id === 9) { 
-                              primaryDescription = (pack.size === 25 ? '2 sabores max.' : '4 sabores max.');
-                          }
-
-                          let uniqueFlavorLimitText = "";
-                          if (pack.maxUniqueFlavors && pack.size === 6 && product.id === 2) {
-                              uniqueFlavorLimitText = `(Máx. ${pack.maxUniqueFlavors} tipos distintos)`;
-                          }
-                          
-                          const isPack12 = pack.name.includes('Pack 12 uds.');
-                          const isPack6 = pack.name.includes('Pack 6 uds.');
-                          const isCustomPack = pack.isCustomPack;
-                          
-                          const cardBgColor = isSelected ? 'bg-pati-burgundy' : 'bg-white';
-                          const cardTextColor = isSelected ? 'text-white' : 'text-pati-burgundy';
-                          const cardBorderColor = isSelected ? 'border-pati-burgundy' : 'border-pati-pink';
-                          const secondaryTextColor = isSelected ? 'text-white/90' : 'text-pati-brown';
-                          const tertiaryTextColor = isSelected ? 'text-white/80' : 'text-pati-brown/80';
-
-                            return (
-                            <div key={radioValue} className="h-full">
-                              <div className="flex flex-col h-full">
-                                <div 
-                                  className={`h-36 flex flex-col px-2.5 py-3 border rounded-md shadow-sm transition-all ${cardBgColor} ${cardBorderColor} ${isSelected ? 'font-medium' : ''} cursor-pointer`}
-                                  onClick={() => handlePackSelect(radioValue)}
-                                >
-                                  <div className="flex flex-col gap-1 text-center flex-grow justify-center">
-                                    <div className="flex items-center justify-center mb-1">
-                                      <RadioGroupItem 
-                                        id={`pack-${radioValue}`} 
-                                        value={radioValue} 
-                                        className={`${isSelected ? 'text-white border-white' : ''} h-4 w-4 mr-2 flex-shrink-0`}
-                                      />
-                                <Label
-                                        htmlFor={`pack-${radioValue}`} 
-                                        className={`text-base font-semibold cursor-pointer leading-tight ${cardTextColor}`}
-                                      >
-                                        {pack.name}
-                                </Label>
+                    <CardContent className="space-y-4">
+                    {product.configType === 'cookiePack' && (
+                        <RadioGroup
+                            value={currentPackIsCustom ? product.options?.find(opt => opt.isCustomPack)?.name || '' : selectedPackSize ? product.options?.find(opt => !opt.isCustomPack && parseInt(opt.name.match(/\d+/)?.[0] || '0') === selectedPackSize)?.name : ''}
+                            onValueChange={handlePackSelect}
+                            className="flex flex-row w-full gap-2"
+                        >
+                            {product.options?.map((option) => {
+                                // Mostrar 'Pack 6', 'Pack 12' o 'Individual', pero el value y la lógica usan option.name
+                                let displayName = '';
+                                if (option.isCustomPack) displayName = 'Individual';
+                                else if (option.name.includes('6')) displayName = 'Pack 6';
+                                else if (option.name.includes('12')) displayName = 'Pack 12';
+                                else displayName = option.name;
+                                // Lógica de selección restaurada
+                                const isSelected = (option.isCustomPack && currentPackIsCustom) || (!option.isCustomPack && !currentPackIsCustom && selectedPackSize && parseInt(option.name.match(/\d+/)?.[0] || '0') === selectedPackSize);
+                                // Determinar texto de restricción de sabores
+                                let flavorInfo = '';
+                                if (option.maxUniqueFlavors === 2) flavorInfo = '2 sabores';
+                                else if (option.isCustomPack || option.name.includes('12')) flavorInfo = 'Sin límite';
+                                // Colores pati
+                                const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-pati-pink/60 text-pati-burgundy hover:border-pati-burgundy/60';
+                                const displayPrice = option.price.replace('/ud', '').replace('/ ud', '').replace(' /ud', '').replace(' / ud', '').trim();
+                                return (
+                                    <div key={option.name} className="relative flex-1 min-w-0 max-w-[33%] sm:max-w-[200px]" style={{flexBasis: '0', flexGrow: 1}}>
+                                        <label
+                                            htmlFor={option.name}
+                                            className={`w-full h-full border-2 rounded-xl px-2 py-2 sm:px-4 sm:py-2 flex flex-col items-center justify-center text-center cursor-pointer transition-colors overflow-hidden whitespace-normal ${patiSelected}`}
+                                        >
+                                            <RadioGroupItem
+                                                value={option.name}
+                                                id={option.name}
+                                                className="hidden"
+                                            />
+                                            <span className="font-bold mb-1 text-base sm:text-lg leading-tight w-full break-words text-center">{displayName}</span>
+                                            {flavorInfo && <span className="text-sm mb-1 text-pati-brown/90 w-full break-words text-center">{flavorInfo}</span>}
+                                            <span className="text-xl font-bold mt-1 text-center">{displayPrice.replace('.', '')}</span>
+                                        </label>
                                     </div>
-                                    
-                                    {isPack6 && (
-                                      <div className="mt-1 flex flex-col items-center">
-                                        <div className={`text-sm mt-0.5 ${tertiaryTextColor}`}>
-                                          Máx. 2 sabores
-                                        </div>
-                                      </div>
-                                    )}
-                                    
-                                    {isPack12 && (
-                                      <div className="mt-1 flex flex-col items-center">
-                                        <div className={`text-sm mt-0.5 ${tertiaryTextColor}`}>
-                                          Sin límite de sabores
-                                        </div>
-                                      </div>
-                                    )}
-                                    
-                                    {isCustomPack && (
-                                      <div className="mt-1 flex flex-col items-center">
-                                        <div className={`text-sm ${secondaryTextColor}`}>
-                                          Sin límite de sabores
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className={`text-center font-bold text-xl mt-2 ${cardTextColor}`}>
-                                    {pack.isCustomPack ? `3€/ud` : `${pack.price}€`}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            );
-                        })}
-                    </RadioGroup>
+                                );
+                            })}
+                        </RadioGroup>
+                    )}
                     </CardContent>
                 </Card>
 
             {/* Step 2: Select Items/Flavors */}
             <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${(selectedPackSize || currentPackIsCustom) ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
                 <CardHeader className="pb-3 pt-4">
-                    <CardTitle className="text-lg text-pati-burgundy">
+                    <CardTitle className="text-xl text-pati-burgundy">
                         {product.configType === 'flavorPack' ? 'Elige tus Sabores' : 'Elige tus Galletas'}
                     </CardTitle>
                             <CardDescription>
@@ -619,6 +582,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                                            currentUniqueFlavorsSelected >= maxUniqueSelectedFlavorsAllowed &&
                                                            !isSelected;
                                     const isDisabled = !canAddThis || (!currentPackIsCustom && maxUniqueReached);
+                                    const isHappyHippo = item.name.toLowerCase().includes('happy hippo');
                                     return (
                                         <div key={item.name} 
                                             className={`flex flex-col border rounded-md overflow-hidden transition-colors h-full
@@ -635,7 +599,20 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                                     className={`object-contain h-full w-full transition-transform ${isSelected ? 'scale-110' : 'scale-100'}`}
                                                     loading="lazy"
                                                 />
-                                                    </div>
+                                                {isHappyHippo && (
+                                                  <span className="absolute top-2 right-2 z-10">
+                                                    <svg width="54" height="54" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-pulse">
+                                                      <path
+                                                        d="M40 5 Q45 15 55 10 Q60 20 70 15 Q68 28 78 30 Q70 38 75 45 Q65 48 70 60 Q60 58 58 70 Q50 65 45 75 Q40 65 35 75 Q30 65 22 70 Q20 58 10 60 Q15 48 5 45 Q10 38 2 30 Q12 28 10 15 Q20 20 25 10 Q35 15 40 5 Z"
+                                                        fill="#a78bfa"
+                                                        stroke="#fff"
+                                                        strokeWidth="2"
+                                                      />
+                                                      <text x="40" y="48" textAnchor="middle" fontSize="20" fontWeight="bold" fill="#fff" fontFamily="'Comic Sans MS', 'Comic Sans', cursive">NEW</text>
+                                                    </svg>
+                                                  </span>
+                                                )}
+                                            </div>
                                             <div className="p-1.5 flex flex-col justify-between flex-grow bg-white">
                                                 <div>
                                                     <p className={`text-xs font-medium leading-tight truncate ${isSelected ? 'text-pati-burgundy' : 'text-pati-dark-brown'}`} title={item.name}>
@@ -701,7 +678,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
               <div ref={summaryRef} id="summary-card" className={`space-y-3 transition-opacity duration-300 md:hidden ${(selectedPackSize || currentPackIsCustom) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                 <Card className="border-pati-pink/30 shadow-lg md:mb-3">
                   <CardHeader className="pb-2 pt-3">
-                     <CardTitle className="text-lg text-pati-burgundy">
+                     <CardTitle className="text-xl text-pati-burgundy">
                         {currentPackIsCustom ? `Resumen Pack Personalizado` : `Resumen del Pack ${selectedPackSize || 0}`}
                      </CardTitle>
                   </CardHeader>
@@ -825,7 +802,7 @@ const DesktopPackSummary = ({
     <div className="mb-6" id="desktop-summary-container">
       <Card className="border-pati-pink/30 shadow-lg">
         <CardHeader className="pb-2 pt-3">
-          <CardTitle className="text-lg text-pati-burgundy">
+          <CardTitle className="text-xl text-pati-burgundy">
             {currentPackIsCustom 
               ? "Resumen Pack Personalizado" 
               : product.configType === 'flavorPack' 
@@ -974,7 +951,7 @@ const ProductDetail = () => {
             return (
               <div className="space-y-4">
                 <h1 className="text-2xl md:text-3xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
-                <p className="text-pati-dark-brown text-base leading-relaxed">{product.description}</p>
+                <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
                 <MobileVideoPlayer product={product} />
                 {product.size && <p className="text-md text-pati-brown"><span className="font-semibold">Tamaño:</span> {product.size}</p>}
                 <p className="text-xl font-bold text-pati-accent mb-4">{product.price}</p>
@@ -1011,7 +988,7 @@ const ProductDetail = () => {
               return (
                 <div className="space-y-4">
                   <h1 className="text-2xl md:text-3xl font-bold font-playfair text-pati-burgundy">{product.name}</h1>
-                  <p className="text-pati-dark-brown text-base leading-relaxed">{product.description}</p>
+                  <p className="text-pati-dark-brown text-lg leading-relaxed">{product.description}</p>
                   <MobileVideoPlayer product={product} />
                   <p className="text-xl font-bold text-pati-accent mb-4">{product.price}</p>
                   <Button size="lg" className="relative w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2"> 

@@ -178,6 +178,7 @@ El usuario ha solicitado la creación de un minijuego interactivo en el sitio we
 - [x] **Executor:** Mejorar Claridad Configurador `cookiePack`/`flavorPack`.
 - [x] **Executor:** Modificar barra inferior `ItemPackConfigurator` para que sea siempre visible.
 - [x] **Executor:** Eliminar botones "Pedir Solo...".
+- [x] **Executor:** Optimizar visualización de packs en FixedPackSelector a formato compacto tipo botón, manteniendo nombre, precio y descripción.
 
 **Bloque de Mejoras Generales (Post-Funcionalidad):**
 - [x] Optimizar Imágenes Productos (Lazy Loading).
@@ -206,6 +207,8 @@ El usuario ha solicitado la creación de un minijuego interactivo en el sitio we
 
 *Implementación del límite de 2 sabores para el pack de 6 galletas completada. Por favor, prueba la funcionalidad y confirma si todo opera según lo esperado. Las tareas de optimización de espacio quedan pendientes.*
 *Iniciando nueva tarea: Añadir opción de "Pack Personalizado Galletas".*
+
+*El selector de packs de galletas ahora es tipo botón, alineado horizontalmente en desktop y vertical en móvil, con selección visual clara y mostrando nombre, precio y descripción. Por favor, revisa visualmente el cambio y dime si cumple con el objetivo o si deseas algún ajuste adicional.*
 
 ## Lessons Learned
 
@@ -385,3 +388,102 @@ Se han completado todas las tareas de optimización técnica:
 - Usar code splitting para mejorar el rendimiento de carga
 - Optimizar imágenes automáticamente durante el build
 - Eliminar código de desarrollo en producción
+
+# Panel de Administración - Pati Sweet Creations
+
+## Antecedentes y Motivación
+- Necesidad de un panel de administración para gestionar productos
+- Requisito de acceso restringido solo para la administradora (patriciarj317@gmail.com)
+- Funcionalidad para gestionar productos (crear, editar, eliminar)
+- Capacidad para subir y gestionar imágenes de productos
+- Uso de autenticación social para simplificar el acceso
+- Persistencia de datos usando Next.js API Routes
+
+## Desafíos Clave y Análisis
+1. Seguridad
+   - Implementar autenticación social con Google OAuth
+   - Restringir acceso solo al email patriciarj317@gmail.com
+   - Proteger rutas administrativas
+   - Validar el email para mayor seguridad
+   - Proteger API Routes
+
+2. Gestión de Productos
+   - Estructura de datos para productos
+   - Validación de datos
+   - Manejo de imágenes
+   - Almacenamiento persistente con Prisma + SQLite
+   - Sistema de respaldo
+
+3. Interfaz de Usuario
+   - Diseño intuitivo y fácil de usar
+   - Formularios para gestión de productos
+   - Vista previa de imágenes
+   - Botón de login con Google
+   - UI con Tailwind CSS y Shadcn/ui
+
+## Desglose de Tareas de Alto Nivel
+
+### 1. Configuración Inicial
+- [ ] Migrar proyecto a Next.js
+- [ ] Configurar Google OAuth en Google Cloud Console
+- [ ] Configurar Prisma con SQLite
+- [ ] Configurar variables de entorno
+- [ ] Configurar Tailwind CSS y Shadcn/ui
+
+### 2. Autenticación
+- [ ] Implementar NextAuth.js para autenticación con Google
+- [ ] Configurar middleware de autenticación
+- [ ] Crear página de login
+- [ ] Implementar validación de email permitido
+- [ ] Configurar protección de rutas
+
+### 3. API Routes
+- [ ] Crear estructura de API Routes
+- [ ] Implementar endpoints para productos
+- [ ] Implementar sistema de almacenamiento de imágenes
+- [ ] Configurar middleware de autenticación para API
+- [ ] Implementar validación de datos
+
+### 4. Panel de Administración
+- [ ] Crear layout del panel con Shadcn/ui
+- [ ] Implementar navegación
+- [ ] Crear dashboard principal
+- [ ] Agregar botón de logout
+- [ ] Implementar gestión de sesión
+
+### 5. Gestión de Productos
+- [ ] Crear formulario de productos
+- [ ] Implementar subida de imágenes
+- [ ] Crear lista de productos
+- [ ] Implementar edición de productos
+- [ ] Implementar eliminación de productos
+- [ ] Implementar sistema de respaldo
+
+### 6. Pruebas y Optimización
+- [ ] Implementar pruebas unitarias
+- [ ] Realizar pruebas de integración
+- [ ] Optimizar rendimiento
+- [ ] Implementar manejo de errores
+- [ ] Configurar sistema de logs
+
+## Criterios de Éxito
+1. La administradora puede acceder solo con su cuenta de Google (patriciarj317@gmail.com)
+2. El sistema valida que el email sea el correcto
+3. Puede crear, editar y eliminar productos
+4. Puede subir y gestionar imágenes
+5. La interfaz es intuitiva y fácil de usar
+6. El sistema es seguro y estable
+7. Los datos persisten en la base de datos
+8. Sistema de respaldo implementado
+
+## Estado Actual / Seguimiento de Progreso
+- Proyecto en fase inicial de planificación
+- Pendiente de comenzar implementación
+- Plan actualizado para usar Next.js
+
+## Feedback o Solicitudes de Asistencia del Ejecutor
+- Pendiente de asignación de tareas
+- Email de administradora configurado: patriciarj317@gmail.com
+
+## Lecciones Aprendidas
+- Pendiente de documentación

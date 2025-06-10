@@ -17,9 +17,9 @@ const SimpleProductCard = ({ product }: { product: Product }) => (
       />
     </Link>
     <div className="p-4 md:p-6 flex flex-col flex-grow">
-      <h3 className="font-semibold text-lg md:text-xl text-pati-burgundy mb-2">{product.name}</h3>
-      <p className="text-pati-brown text-sm mb-3 flex-grow">{product.description.split('.')[0]}.</p>
-      <div className="font-bold text-xl text-pati-burgundy mb-4 mt-auto"> 
+      <h3 className="font-semibold text-xl md:text-2xl text-pati-burgundy mb-2">{product.name}</h3>
+      <p className="text-base text-pati-brown text-sm mb-3 flex-grow">{product.description.split('.')[0]}.</p>
+      <div className="font-bold text-2xl text-pati-burgundy mb-4 mt-auto"> 
         {product.price} 
       </div>
       <Button 

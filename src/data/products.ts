@@ -130,7 +130,7 @@ export const productsData: Product[] = [
     options: [ 
       { name: 'Pack 6 uds.', price: '16€', description: '¡1 GRATIS!', maxUniqueFlavors: 2 },
       { name: 'Pack 12 uds.', price: '29€', description: '¡2 GRATIS! Sin límite de sabores.' },
-      { name: 'Pack Personalizado', price: '3,00€ / ud.', description: 'Sin límite de sabores. ¡Elige las que quieras!', isCustomPack: true, customPackUnitPrice: 3 }
+      { name: 'Pack Personalizado', price: '3€ / ud.', description: 'Sin límite de sabores. ¡Elige las que quieras!', isCustomPack: true, customPackUnitPrice: 3 }
     ],
     individualCookies: [
         { name: "Galleta de Filipinos", image: "/images/Galleta Filipinos.webp", description: "Decorada con chocolate blanco." },

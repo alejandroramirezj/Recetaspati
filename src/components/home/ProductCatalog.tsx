@@ -82,8 +82,8 @@ const ProductCard = ({ product }: { product: Product }) => {
         />
       </Link>
       <div className={`p-4 flex flex-col flex-grow`}> 
-        <h3 className="font-semibold text-base text-pati-burgundy mb-1">{product.name}</h3> 
-        <div className="font-semibold text-base text-pati-dark-brown mt-auto pt-2"> 
+        <h3 className="font-semibold text-lg text-pati-burgundy mb-1">{product.name}</h3> 
+        <div className="font-semibold text-lg text-pati-dark-brown mt-auto pt-2"> 
           {product.price} {/* Usar product.price directamente */}
         </div>
         <Button 
