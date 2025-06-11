@@ -508,6 +508,14 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     );
           
   // --- RETURN JSX ---
+  const filteredPackOptions = useMemo(() => {
+    if (product.configType === 'flavorPack') {
+      // Solo permitir 25 y 50
+      return packOptions.filter(opt => opt.size === 25 || opt.size === 50);
+    }
+    return packOptions;
+  }, [packOptions, product.configType]);
+
   return (
       <>
         {/* Main content area for the configurator */}
@@ -559,7 +567,49 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                 else if (option.isCustomPack || option.name.includes('12')) flavorInfo = 'Sin límite';
                                 // Colores pati
                                 const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-pati-pink/60 text-pati-burgundy hover:border-pati-burgundy/60';
-                                const displayPrice = option.price.replace('/ud', '').replace('/ ud', '').replace(' /ud', '').replace(' / ud', '').trim();
+                                const displayPrice = String(option.price).replace('/ud', '').replace('/ ud', '').replace(' /ud', '').replace(' / ud', '').trim();
+                                return (
+                                    <div key={option.name} className="relative flex-1 min-w-0 max-w-[33%] sm:max-w-[200px]" style={{flexBasis: '0', flexGrow: 1}}>
+                                        <label
+                                            htmlFor={option.name}
+                                            className={`w-full h-full border-2 rounded-xl px-2 py-2 sm:px-4 sm:py-2 flex flex-col items-center justify-center text-center cursor-pointer transition-colors overflow-hidden whitespace-normal ${patiSelected}`}
+                                        >
+                                            <RadioGroupItem
+                                                value={option.name}
+                                                id={option.name}
+                                                className="hidden"
+                                            />
+                                            <span className="font-bold mb-1 text-base sm:text-lg leading-tight w-full break-words text-center">{displayName}</span>
+                                            {flavorInfo && <span className="text-sm mb-1 text-pati-brown/90 w-full break-words text-center">{flavorInfo}</span>}
+                                            <span className="text-xl font-bold mt-1 text-center">{displayPrice.replace('.', '')}</span>
+                                        </label>
+                                    </div>
+                                );
+                            })}
+                        </RadioGroup>
+                    )}
+                    {product.configType === 'flavorPack' && (
+                        <RadioGroup
+                            value={selectedPackSize ? filteredPackOptions.find(opt => opt.size === selectedPackSize)?.name || '' : ''}
+                            onValueChange={handlePackSelect}
+                            className="flex flex-row w-full gap-2"
+                        >
+                            {filteredPackOptions.map((option) => {
+                                // Mostrar 'Pack 6', 'Pack 12' o 'Individual', pero el value y la lógica usan option.name
+                                let displayName = '';
+                                if (option.isCustomPack) displayName = 'Individual';
+                                else if (option.name.includes('6')) displayName = 'Pack 6';
+                                else if (option.name.includes('12')) displayName = 'Pack 12';
+                                else displayName = option.name;
+                                // Lógica de selección restaurada
+                                const isSelected = (option.isCustomPack && currentPackIsCustom) || (!option.isCustomPack && !currentPackIsCustom && selectedPackSize && parseInt(option.name.match(/\d+/)?.[0] || '0') === selectedPackSize);
+                                // Determinar texto de restricción de sabores
+                                let flavorInfo = '';
+                                if (option.maxUniqueFlavors === 2) flavorInfo = '2 sabores';
+                                else if (option.isCustomPack || option.name.includes('12')) flavorInfo = 'Sin límite';
+                                // Colores pati
+                                const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-pati-pink/60 text-pati-burgundy hover:border-pati-burgundy/60';
+                                const displayPrice = String(option.price).replace('/ud', '').replace('/ ud', '').replace(' /ud', '').replace(' / ud', '').trim();
                                 return (
                                     <div key={option.name} className="relative flex-1 min-w-0 max-w-[33%] sm:max-w-[200px]" style={{flexBasis: '0', flexGrow: 1}}>
                                         <label
