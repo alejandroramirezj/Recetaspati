@@ -41,14 +41,14 @@ const Navbar = () => {
           </Link>
           {/* Redes sociales siempre a la derecha del logo */}
           <div className="flex items-center gap-3 ml-2">
-            <a href="https://tiktok.com/@recetaspati_" target="_blank" rel="noopener noreferrer" aria-label="TikTok Recetas Pati" className="flex items-center gap-1 rounded-full bg-pati-burgundy px-3 py-1 shadow-lg shadow-pati-pink/10 hover:scale-105 hover:ring-2 hover:ring-pati-pink/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pati-pink/40">
-              <FaTiktok size={18} className="text-white" />
-              <span className="text-xs text-white font-extrabold flex items-center gap-1">{TIKTOK_LIKES} <Heart size={12} className="inline text-pati-pink stroke-2" /></span>
+            <a href="https://tiktok.com/@recetaspati_" target="_blank" rel="noopener noreferrer" aria-label="TikTok Recetas Pati" className="flex items-center gap-1 rounded-full bg-pati-burgundy px-3 py-1.5 shadow-lg shadow-pati-pink/10 hover:scale-105 hover:ring-2 hover:ring-pati-pink/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pati-pink/40">
+              <FaTiktok size={20} className="text-white" />
+              <span className="text-xs text-white font-extrabold flex items-center gap-1">{TIKTOK_LIKES} <Heart size={14} className="inline text-pati-pink stroke-2" /></span>
             </a>
             <span className="w-2 h-2 bg-pati-pink rounded-full mx-1 hidden sm:inline-block"></span>
-            <a href="https://instagram.com/recetaspati" target="_blank" rel="noopener noreferrer" aria-label="Instagram Recetas Pati" className="flex items-center gap-1 rounded-full bg-gradient-to-tr from-pati-pink via-pati-light-pink to-pati-cream px-3 py-1 shadow-lg shadow-pati-pink/10 hover:scale-105 hover:ring-2 hover:ring-pati-burgundy/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pati-burgundy/40">
-              <Instagram size={18} className="text-pati-burgundy stroke-2" />
-              <span className="text-xs text-pati-burgundy font-extrabold flex items-center gap-1">{INSTAGRAM_FOLLOWERS} <User size={12} className="inline text-pati-burgundy stroke-2" /></span>
+            <a href="https://instagram.com/recetaspati" target="_blank" rel="noopener noreferrer" aria-label="Instagram Recetas Pati" className="flex items-center gap-1 rounded-full bg-gradient-to-tr from-pati-pink via-pati-light-pink to-pati-cream px-3 py-1.5 shadow-lg shadow-pati-pink/10 hover:scale-105 hover:ring-2 hover:ring-pati-burgundy/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pati-burgundy/40">
+              <Instagram size={20} className="text-pati-burgundy stroke-2" />
+              <span className="text-xs text-pati-burgundy font-extrabold flex items-center gap-1">{INSTAGRAM_FOLLOWERS} <User size={14} className="inline text-pati-burgundy stroke-2" /></span>
             </a>
           </div>
         </div>
