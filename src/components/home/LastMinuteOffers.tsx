@@ -9,14 +9,13 @@ interface WhatsAppSimulationProps {
   startTyping: boolean;
 }
 
-// WhatsApp Simulation Component (Integrated)
+// WhatsApp Simulation Component (Compact)
 const WhatsAppSimulation: React.FC<WhatsAppSimulationProps> = ({ startTyping }) => {
   const patiMessageTime = "18:30";
   const clientMessageTime = "18:31";
-
-  // Textos de los mensajes
-  const patiMessageText = "🚨 ¡Alerta Oferta Flash! 🚨 ¡Me han sobrado 4 galletazas Kinder Bueno! 🍪🍪🍪🍪 Hoy a MITAD DE PRECIO 💸 ¡Solo para los más rápidos! Que vuelan... 💨";
-  const clientMessageText = "¡UNA! 🙋‍♀️ ¡Quiero UNA! Pero por favor Pati... ¡¡deja de tentarme así!! 😭 Que hoy me va a tocar sesión doble en el CrossFit por tu culpa! 🏋️‍♀️😅 ¡Guárdamela! 🙏";
+  // Mensajes más cortos
+  const patiMessageText = "¡Alerta Flash! Me han sobrado 4 galletazas Kinder Bueno. ¡Mitad de precio!";
+  const clientMessageText = "¡UNA! Guárdamela 🙏";
 
   // Estados para controlar visibilidad
   const [showPatiMessage, setShowPatiMessage] = useState(false);
@@ -56,37 +55,34 @@ const WhatsAppSimulation: React.FC<WhatsAppSimulationProps> = ({ startTyping }) 
   }, [patiMessageInView, showPatiMessage, clientMessageTriggered]);
 
   return (
-    <div className="bg-pati-cream/50 p-4 rounded-lg shadow-md h-full">
-      <div className="bg-teal-600 text-white p-2 text-center rounded-t-lg font-semibold mb-2 text-sm">
-        Pati al Rescate ⚡️ Ofertas Flash
+    <div className="bg-pati-cream/60 p-2 rounded-lg shadow h-full max-w-sm mx-auto">
+      <div className="bg-teal-600 text-white px-2 py-1 text-center rounded-t-lg font-semibold mb-1 text-xs">
+        Pati al Rescate ⚡️
       </div>
-      <div className="space-y-2 flex flex-col min-h-[150px]">
-        {/* Mensaje 1 (Pati) - Añadir ref={patiMessageRef} */} 
+      <div className="space-y-1 flex flex-col min-h-[80px]">
         {showPatiMessage && (
-           <div ref={patiMessageRef} className="mr-auto max-w-[80%] animate-fade-in">
-              <div className="bg-white rounded-lg p-2 shadow relative">
-                 <p className="text-sm block" style={{ whiteSpace: 'pre-line' }}>
+           <div ref={patiMessageRef} className="mr-auto max-w-[90%] animate-fade-in">
+              <div className="bg-white rounded-lg px-2 py-1 shadow relative">
+                 <p className="text-xs block" style={{ whiteSpace: 'pre-line' }}>
                     {patiMessageText}
                  </p>
-                 <div className="text-xs text-gray-500 text-right mt-1 flex justify-end items-center">
+                 <div className="text-[10px] text-gray-400 text-right mt-0.5 flex justify-end items-center">
                    {patiMessageTime}
                  </div>
-                 <div className="absolute left-[-5px] bottom-[5px] w-0 h-0 border-t-[8px] border-t-transparent border-r-[8px] border-r-white border-b-[8px] border-b-transparent"></div>
+                 <div className="absolute left-[-5px] bottom-[5px] w-0 h-0 border-t-[6px] border-t-transparent border-r-[6px] border-r-white border-b-[6px] border-b-transparent"></div>
                </div>
             </div>
         )}
-       
-        {/* Mensaje 2 (Cliente) - Renderizar si showClientMessage es true */} 
         {showClientMessage && (
-           <div className="ml-auto max-w-[80%] animate-fade-in">
-             <div className="bg-[#DCF8C6] rounded-lg p-2 shadow relative">
-                 <p className="text-sm block" style={{ whiteSpace: 'pre-line' }}>
+           <div className="ml-auto max-w-[90%] animate-fade-in">
+             <div className="bg-[#DCF8C6] rounded-lg px-2 py-1 shadow relative">
+                 <p className="text-xs block" style={{ whiteSpace: 'pre-line' }}>
                     {clientMessageText}
                  </p>
-                 <div className="text-xs text-gray-500 text-right mt-1 flex justify-end items-center">
+                 <div className="text-[10px] text-gray-400 text-right mt-0.5 flex justify-end items-center">
                    {clientMessageTime}
                  </div>
-                 <div className="absolute right-[-5px] bottom-[5px] w-0 h-0 border-t-[8px] border-t-transparent border-l-[8px] border-l-[#DCF8C6] border-b-[8px] border-b-transparent"></div>
+                 <div className="absolute right-[-5px] bottom-[5px] w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-[#DCF8C6] border-b-[6px] border-b-transparent"></div>
               </div>
            </div>
         )}
@@ -114,43 +110,33 @@ const LastMinuteOffers = () => {
     }
   }, [inView]);
 
-  const mainText = "Sé el primero en enterarte de nuestras ofertas flash y novedades exclusivas por WhatsApp. 🤫";
+  const mainText = "Ofertas flash y novedades exclusivas por WhatsApp";
 
   return (
-    <section id="ofertas-ultimo-minuto" className="py-16 md:py-20 bg-gradient-to-b from-white to-pati-cream">
+    <section id="ofertas-ultimo-minuto" className="py-10 md:py-14 bg-gradient-to-b from-white to-pati-cream">
       <div className="container mx-auto px-4">
-        
-        <div ref={ref} className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
-          <Zap className="mx-auto h-10 w-10 text-pati-burgundy mb-4" />
-          <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-4">
-            El Club Secreto de los Golosos 🤫
+        <div ref={ref} className="text-center mb-6 max-w-xl mx-auto">
+          <Zap className="mx-auto h-7 w-7 text-pati-burgundy mb-2" />
+          <h2 className="text-2xl md:text-3xl font-bold text-pati-burgundy mb-2">
+            Club Secreto de los Golosos <span className="align-middle">🤫</span>
           </h2>
-          {/* Texto principal ESTÁTICO ahora */}
-          <p className="text-lg text-pati-brown">
+          <p className="text-base text-pati-brown mb-2">
             {mainText}
           </p>
         </div>
-
-        {/* Contenedor centrado para simulación y botón */}
-        <div className="flex flex-col items-center gap-10">
-            {/* Simulación WhatsApp - Pasar prop startTyping */}
-            <div className="w-full max-w-md">
-              <WhatsAppSimulation startTyping={startTyping} />
-            </div>
-
-            {/* Botón Unirse (Centrado) */}
-            <div className="text-center space-y-3">
-              <Button asChild size="lg" className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1DAA54] text-white px-6 py-3 text-base md:text-lg">
+        <div className="flex flex-col items-center gap-5">
+            <WhatsAppSimulation startTyping={startTyping} />
+            <div className="text-center space-y-2 w-full max-w-xs">
+              <Button asChild size="sm" className="w-full bg-[#25D366] hover:bg-[#1DAA54] text-white px-4 py-2 text-base">
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="mr-2 h-5 w-5" /> ¡Quiero unirme por WhatsApp! 🎉
+                  <MessageCircle className="mr-2 h-4 w-4" /> Unirme por WhatsApp
                 </a>
               </Button>
-               <p className="text-xs text-pati-brown italic">
-                Promesa de no spam: Solo mensajes dulces 😉
+               <p className="text-[11px] text-pati-brown opacity-70 mt-1">
+                Promesa de no spam: Solo mensajes dulces 🍪
               </p>
             </div>
         </div>
-        
       </div>
     </section>
   );
