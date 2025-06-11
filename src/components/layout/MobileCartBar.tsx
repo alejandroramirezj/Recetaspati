@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '@/context/CartContext'; 
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, MinusCircle, PlusCircle, Trash2, Send } from 'lucide-react'; 
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sheet" // Import Sheet components
 import { getWhatsAppUrl } from '@/utils/whatsappUtils'; // Import the helper
 import { ScrollArea } from "@/components/ui/scroll-area"; // For scrollable item list
+import confetti from 'canvas-confetti';
 
 // Helper to format price (redundant if also in whatsappUtils, maybe move to a shared util?)
 const formatPrice = (price: number | undefined): string => {
@@ -28,6 +29,29 @@ const MobileCartBar: React.FC = () => {
   const whatsappUrl = getWhatsAppUrl(state.items);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const location = useLocation();
+  const [showAddButton, setShowAddButton] = useState(true);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  // --- NUEVO: Estado para selección de pack/galletas en ProductDetail ---
+  const [packSelection, setPackSelection] = useState<null | {
+    isActive: boolean;
+    isOrderComplete: boolean;
+    currentCount: number;
+    selectedPackSize: number | null;
+    currentPackIsCustom: boolean;
+    maxToSelect: number | null;
+    productName: string;
+  }>(null);
+
+  // Escuchar evento global de selección de pack/galletas
+  useEffect(() => {
+    const handler = (e: CustomEvent) => {
+      setPackSelection(e.detail);
+    };
+    window.addEventListener('pack-selection-update', handler as EventListener);
+    return () => window.removeEventListener('pack-selection-update', handler as EventListener);
+  }, []);
 
   // Manejar el auto-hide en scroll
   useEffect(() => {
@@ -56,48 +80,125 @@ const MobileCartBar: React.FC = () => {
   
   // Handler to update quantity (simplified: +1 / -1)
   const handleUpdateQuantity = (itemId: string, currentQuantity: number, change: number) => {
-      console.log('[MobileCartBar] handleUpdateQuantity called:', { itemId, currentQuantity, change });
       const newQuantity = currentQuantity + change;
       if (newQuantity <= 0) {
-          console.log('[MobileCartBar] Removing item due to quantity <= 0');
           handleRemoveItem(itemId);
       } else {
-          console.log('[MobileCartBar] Dispatching UPDATE_QUANTITY:', { id: itemId, quantity: newQuantity });
           dispatch({ type: 'UPDATE_QUANTITY', payload: { id: itemId, quantity: newQuantity } });
       }
   };
 
-  if (totalItems === 0) {
-    return null; // Don't render if cart is empty
+  // Solo mostrar botón de añadir/progreso en páginas de producto
+  const isProductPage = location.pathname.includes('/product/');
+
+  // Mostrar botón de añadir solo si está configurando pack y no se ha añadido
+  const showAdd = isProductPage && packSelection?.isActive && showAddButton;
+  // Mostrar botón de progreso si está configurando pack pero no está completo
+  const showProgress = isProductPage && packSelection?.isActive && !packSelection.isOrderComplete;
+  // Mostrar botón de pedido si no hay selección activa o tras añadir
+  const showPedido = !showAdd && !showProgress && (!isProductPage || !packSelection?.isActive || !showAddButton);
+
+  // Reset showAddButton cuando cambia de producto o pack
+  useEffect(() => {
+    setShowAddButton(true);
+  }, [location.pathname, packSelection?.selectedPackSize, packSelection?.currentPackIsCustom]);
+
+  if (totalItems === 0 && !packSelection?.isActive) {
+    return null; // No mostrar si no hay carrito ni selección activa
   }
 
+  // Función para mostrar confeti
+  const showConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  };
+
+  // Handler para añadir al carrito
+  const handleAddToCart = () => {
+    if (packSelection) {
+      console.log('Intentando añadir al carrito:', packSelection);
+      // Disparamos el evento con toda la información necesaria
+      document.dispatchEvent(new CustomEvent('add-to-cart', { 
+        detail: { 
+          source: 'summary',
+          packSelection: {
+            ...packSelection,
+            quantity: packSelection.currentCount
+          }
+        } 
+      }));
+      console.log('Evento add-to-cart disparado');
+      showConfetti();
+      setShowAddButton(false);
+      // Cerramos el sheet si está abierto
+      setIsSheetOpen(false);
+    } else {
+      console.warn('No hay packSelection disponible para añadir al carrito');
+    }
+  };
+
   return (
-    <Sheet>
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild>
-        {/* This is the visible bar at the bottom */}
+        {/* Barra inferior visible */}
         <div 
-          className={`fixed bottom-0 left-0 right-0 z-50 bg-white px-4 py-2 border-t border-gray-200 shadow-lg lg:hidden flex items-center justify-between gap-3 min-h-[60px] cursor-pointer hover:bg-gray-50 transition-all duration-300 ${
-            isVisible ? 'translate-y-0' : 'translate-y-full'
-          }`}
+          className={`fixed left-0 right-0 mx-auto bottom-4 z-50 bg-white border border-pati-burgundy shadow-lg rounded-full w-[92vw] max-w-lg pl-3 pr-12 py-2 flex items-center justify-start min-h-[60px] h-16 cursor-pointer lg:hidden`}
         >
-          <div className="flex items-center gap-3 flex-shrink min-w-0">
-             <ShoppingCart className="h-5 w-5 text-pati-accent flex-shrink-0" />
-             <div className="flex flex-col text-sm flex-shrink min-w-0">
-                 <span className="font-bold text-pati-dark-brown whitespace-nowrap truncate text-shadow-sm">
-                     {totalItems} artículo{totalItems !== 1 ? 's' : ''}
+          {/* Icono de carrito pequeño y badge alineado a la esquina izquierda */}
+          <div className="flex items-center justify-start h-10 mr-2 ml-0" style={{minWidth: '40px'}}>
+            <div className="relative flex items-center justify-center h-10 w-10">
+              <span className="absolute -top-1 -right-1 bg-pati-burgundy text-white text-xs font-bold rounded-full px-1.5 py-0.5 shadow z-10 min-w-[20px] text-center border border-pati-burgundy">
+                {totalItems}
                  </span>
-                 <span className="font-extrabold text-lg text-pati-burgundy text-shadow-sm">
-                     {formatPrice(cartTotal)}
-                 </span>
+              <span className="text-2xl" role="img" aria-label="Carrito lleno de dulces">🛒</span>
              </div>
           </div>
-          <Button 
-            variant="outline"
-            className="flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white border-none font-bold shadow-md"
-            aria-controls="cart-sheet-content"
-          >
-             Ver/Enviar Pedido
-          </Button>
+          {/* Botón de añadir, progreso o ver/enviar pedido */}
+          <div className="flex gap-2 items-center w-full justify-center">
+            {/* Confeti desde el centro de la píldora */}
+            <span className="flex gap-2 items-center w-full justify-center">
+              {showAdd && packSelection?.isOrderComplete && (
+                <Button
+                  className="w-full font-bold shadow-none rounded-full px-3 py-2 text-sm truncate h-9 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer"
+                  onClick={handleAddToCart}
+                  aria-label="Añadir al carrito"
+                >
+                  <span className="truncate block w-full text-center">
+                    {packSelection.currentPackIsCustom
+                      ? `Añadir ${packSelection.currentCount} uds.`
+                      : `Añadir Pack${packSelection.selectedPackSize ? ' ' + packSelection.selectedPackSize : ''}`}
+                  </span>
+                </Button>
+              )}
+              {showProgress && (
+                <Button
+                  className="w-full font-bold shadow-none rounded-full px-3 py-2 text-sm truncate h-9 border-none bg-gray-200 text-gray-500 cursor-not-allowed"
+                  disabled
+                  aria-label="Progreso de selección"
+                >
+                  <span className="truncate block w-full text-center">
+                    {packSelection.currentPackIsCustom
+                      ? `Elige galletas (${packSelection.currentCount} seleccionadas)`
+                      : packSelection.selectedPackSize
+                        ? `${packSelection.currentCount}/${packSelection.selectedPackSize} seleccionadas`
+                        : 'Completa tu pack'}
+                  </span>
+                </Button>
+              )}
+              {showPedido && (
+                <Button 
+                  className="w-full font-bold shadow-none rounded-full px-3 py-2 text-sm truncate h-9 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer"
+                  onClick={() => setIsSheetOpen(true)}
+                  aria-label="Ver o enviar pedido"
+                >
+                  <span className="truncate block w-full text-center">Ver/Enviar Pedido</span>
+                </Button>
+              )}
+            </span>
+          </div>
         </div>
       </SheetTrigger>
       

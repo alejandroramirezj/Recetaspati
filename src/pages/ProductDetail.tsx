@@ -142,11 +142,6 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     useEffect(() => { setIsSummaryVisible(inView); }, [inView]);
 
     // --- REWARD HOOKS ---
-    const rewardIdSummary = `reward-itempack-summary-${product.id}`;
-    const { reward: rewardSummary, isAnimating: isAnimatingSummary } = useReward(rewardIdSummary, 'emoji', {
-         emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
-         elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
-    });
     const rewardIdSticky = `reward-itempack-sticky-${product.id}`;
     const { reward: rewardSticky, isAnimating: isAnimatingSticky } = useReward(rewardIdSticky, 'emoji', {
         emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
@@ -221,7 +216,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         }
     }, [selectedPackSize, currentCount, selectedFlavors.length, maxFlavors, product.configType, currentPackIsCustom]);
 
-    // Efecto para sincronizar los estados con el componente padre
+    // Efecto para sincronizar los estados con el componente padre Y MobileCartBar
     useEffect(() => {
         // Si existe la función onConfigUpdate, pasar los estados actuales
         if (onConfigUpdate) {
@@ -231,17 +226,29 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 currentCount,
                 isOrderComplete,
                 finalPackPrice,
-                isAnimatingSummary,
+                false,
                 isAnimatingSticky
             );
         }
+        // --- NUEVO: Emitir evento global para MobileCartBar ---
+        const isActive = !!(selectedPackSize || (currentPackIsCustom && currentCount > 0));
+        window.dispatchEvent(new CustomEvent('pack-selection-update', {
+          detail: {
+            isActive,
+            isOrderComplete,
+            currentCount,
+            selectedPackSize,
+            currentPackIsCustom,
+            maxToSelect: currentPackIsCustom ? null : selectedPackSize,
+            productName: product.name
+          }
+        }));
     }, [
         selectedPackSize,
         currentPackIsCustom,
         currentCount,
         isOrderComplete,
         finalPackPrice,
-        isAnimatingSummary,
         isAnimatingSticky,
         onConfigUpdate,
         selectedItems,  // Añadido para actualizar cuando cambian las galletas seleccionadas
@@ -252,12 +259,48 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     useEffect(() => {
         const handleCustomEvent = (e: CustomEvent) => {
             if (e.detail && e.detail.source) {
-                if (e.detail.source === 'summary') {
-                    handleAddToCart('summary');
-                } else if (e.detail.source === 'sticky') {
+                if (e.detail.source === 'sticky') {
                     handleAddToCart('sticky');
                 } else if (e.detail.source === 'desktop') {
                     handleAddToCart('summary'); // Usamos summary para el efecto en desktop
+                } else if (e.detail.source === 'summary' && e.detail.packSelection) {
+                    // Si viene de la píldora, reconstruimos el estado y añadimos el producto
+                    // Usamos los datos de packSelection para crear el item
+                    const sel = e.detail.packSelection;
+                    let cartItemId: string;
+                    let cartItemPayload: Omit<CartItem, 'id'>;
+                    if (sel.currentPackIsCustom) {
+                        cartItemId = `customPack-${product.id}-${Date.now()}`;
+                        cartItemPayload = {
+                            productId: product.id,
+                            productName: `${product.name} - Personalizado`,
+                            quantity: 1,
+                            packPrice: sel.currentCount * (currentCustomPackUnitPrice || 0),
+                            imageUrl: product.image,
+                            type: 'cookiePack',
+                            cookieDetails: {
+                                packSize: sel.currentCount,
+                                cookies: selectedItems
+                            },
+                            selectedOptions: { pack: 'Personalizado' }
+                        };
+                    } else {
+                        cartItemId = `${product.id}-pack${sel.selectedPackSize}`;
+                        cartItemPayload = {
+                            productId: product.id,
+                            productName: product.name,
+                            quantity: 1,
+                            packPrice: finalPackPrice,
+                            imageUrl: product.image,
+                            type: 'cookiePack',
+                            cookieDetails: {
+                                packSize: sel.selectedPackSize,
+                                cookies: selectedItems
+                            }
+                        };
+                    }
+                    dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } });
+                    rewardSticky();
                 }
             }
         };
@@ -266,7 +309,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         return () => {
             document.removeEventListener('add-to-cart', handleCustomEvent as EventListener);
         };
-    }, [isOrderComplete, selectedItems, selectedFlavors, finalPackPrice, currentPackIsCustom, selectedPackSize, currentCount]);
+    }, [isOrderComplete, selectedItems, selectedFlavors, finalPackPrice, currentCustomPackUnitPrice, currentPackIsCustom, selectedPackSize, currentCount, product, dispatch, rewardSticky]);
 
     // --- HANDLERS ---
     const decrementItem = (itemName: string) => { // Only for cookiePack
@@ -427,8 +470,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         }
 
         dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } }); // Siempre ADD_ITEM
-        if (triggerSource === 'summary') rewardSummary();
-        else if (triggerSource === 'sticky') rewardSticky();
+        if (triggerSource === 'sticky') rewardSticky();
     };
 
     const generateWhatsAppMessage = () => { // Adjusted for flavorPack
@@ -707,10 +749,8 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                            onClick={() => handleAddToCart('summary')}
                            size="lg"
                            className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                           disabled={!isOrderComplete || isAnimatingSummary}
-                           aria-disabled={!isOrderComplete}
+                           disabled={!isOrderComplete}
                        >
-                           <span id={rewardIdSummary} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
                            <ShoppingCart className="mr-2 h-5 w-5" />
                            {isOrderComplete ? 
                                 (currentPackIsCustom ? `Añadir ${currentCount} Galleta${currentCount !== 1 ? 's' : ''}` : `Añadir Pack ${selectedPackSize || 0}`) :
@@ -748,9 +788,8 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                         onClick={() => handleAddToCart('sticky')}
                         className={`relative whitespace-nowrap focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white focus-visible:ring-pati-burgundy' : 'bg-gray-400 text-gray-700 cursor-not-allowed focus-visible:ring-gray-500'}`}
                         size="sm"
-                        disabled={!isOrderComplete || isAnimatingSticky}
+                        disabled={!isOrderComplete}
                     >
-                         <span id={rewardIdSticky} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
                         {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />}
                          {isOrderComplete ? (currentPackIsCustom ? "Añadir Galletas" : "Añadir Pack") :
                          (currentPackIsCustom ? (currentCount > 0 ? 'Añadir Galletas' : 'Elige Galletas') : (product.configType === 'flavorPack' ? `Elige ${maxFlavors || 0 - selectedFlavors.length} sabor(es) más.` : `${currentCount}/${selectedPackSize || 0} seleccionados. Completa tu pack.`))

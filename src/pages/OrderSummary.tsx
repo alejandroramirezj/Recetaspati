@@ -14,17 +14,7 @@ const formatPrice = (price: number | undefined): string => {
 };
 
 const OrderSummary: React.FC = () => {
-  // Log MUY visible al inicio del componente
-  console.log("--- DEBUG: OrderSummary COMPONENT RENDERED ---"); 
-
   const { state, dispatch, getCartTotal, getTotalItems } = useCart();
-  
-  // Log del estado del carrito para depuración (si state existe)
-  if (state && state.items) {
-    console.log("--- DEBUG: OrderSummary cart items ---", JSON.parse(JSON.stringify(state.items)));
-  } else {
-    console.log("--- DEBUG: OrderSummary - Cart state or items not available yet ---");
-  }
 
   const cartTotal = getCartTotal();
   const totalItems = getTotalItems();
@@ -74,7 +64,6 @@ const OrderSummary: React.FC = () => {
                      </CardHeader>
                     <CardContent className="divide-y divide-pati-pink/20">
                         {state.items.map((item) => {
-                            // END DEBUG LOG
                             return (
                              <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 py-4 px-2 sm:px-0">
                                 <img 

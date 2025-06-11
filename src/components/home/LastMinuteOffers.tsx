@@ -32,9 +32,6 @@ const WhatsAppSimulation: React.FC<WhatsAppSimulationProps> = ({ startTyping }) 
   useEffect(() => {
     if (startTyping && !showPatiMessage) {
       setShowPatiMessage(true);
-      // Simular sonido 1
-      console.log("Reproduciendo sonido notificación 1 (simulado)");
-      // TODO: Añadir aquí la lógica real para reproducir el sonido 1
     }
   }, [startTyping, showPatiMessage]);
 
@@ -45,9 +42,6 @@ const WhatsAppSimulation: React.FC<WhatsAppSimulationProps> = ({ startTyping }) 
         const timeoutId = setTimeout(() => {
             setShowClientMessage(true);
             setClientMessageTriggered(true); // Marcar como activado
-            // Simular sonido 2
-            console.log("Reproduciendo sonido notificación 2 (simulado)");
-            // TODO: Añadir aquí la lógica real para reproducir el sonido 2
         }, 300); // Pequeño delay de 300ms tras scroll
         
         return () => clearTimeout(timeoutId); // Limpieza
