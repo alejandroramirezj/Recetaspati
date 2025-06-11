@@ -72,13 +72,6 @@ const Hero = () => {
               className="h-24 md:h-32 w-auto mx-auto"
             />
           </div>
-          {/* Sticker viral TikTok */}
-          <div className="flex justify-center mb-1 w-full gap-2">
-            <span className="inline-flex items-center gap-1 bg-black text-white text-xs font-bold rounded-full px-3 py-1 animate-pulse shadow-md">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 2v14.5a2.5 2.5 0 1 1-2.5-2.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 2c0 2.21 1.79 4 4 4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              ¡Viral en TikTok!
-            </span>
-          </div>
           {/* Título SEO y viral */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl text-pati-burgundy max-w-2xl mx-auto font-extrabold drop-shadow-lg leading-tight">
             Galletas artesanas en Granada

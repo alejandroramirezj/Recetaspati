@@ -576,3 +576,20 @@ Se han completado todas las mejoras solicitadas:
 5. Las sombras de texto pueden mejorar el contraste sin afectar el diseño general
 6. La especificación de width/height en imágenes ayuda a prevenir layout shifts
 7. Los roles ARIA y labels mejoran significativamente la experiencia para usuarios de lectores de pantalla
+
+## Project Status Board
+- [x] Transformar el bloque del recomendador en un botón flotante minimizable (modal) para optimizar espacio y visibilidad.
+- [x] Ocultar el recomendador flotante si hay productos en el carrito.
+- [x] Ocultar la hamburguesa y centrar el logo de Recetas Pati en mobile.
+- [x] Añadir iconos de TikTok e Instagram con enlaces y diseño atractivo en la navbar.
+- [ ] Esperar feedback del usuario tras testeo manual.
+
+## Executor's Feedback or Assistance Requests
+- Los iconos de TikTok e Instagram ahora aparecen en la navbar, con diseño moderno y enlaces, tanto en desktop (a la derecha) como en mobile (debajo del logo).
+- Por favor, revisa visualmente y prueba el flujo para confirmar que cumple tus expectativas o si deseas algún ajuste adicional.
+
+## Current Status / Progress Tracking
+- Implementación completada y lista para revisión.
+
+## Lessons
+- El uso de iconos sociales con estilos modernos y bien ubicados mejora la percepción de marca y la experiencia de usuario.

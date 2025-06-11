@@ -21,6 +21,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Users, CakeSlice, Heart, ThumbsUp, MessageCircle, Smile, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useCart } from "@/context/CartContext";
 
 // Updated FormState for multi-select flavor
 interface FormState {
@@ -50,6 +52,11 @@ const RecommendationWizard = () => {
     preference: '',
     flavor: [], // Initialize as empty array
   });
+
+  const [open, setOpen] = useState(false);
+
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
 
   // Handler for single value fields (occasion, numberOfPeople)
   const handleSingleValueChange = (field: 'occasion' | 'numberOfPeople', value: string) => {
@@ -203,55 +210,51 @@ const RecommendationWizard = () => {
     }
   };
 
+  // Ocultar el botón flotante si hay productos en el carrito
+  if (totalItems > 0) return null;
+
   return (
-    <section id="recomendador" className="py-12 md:py-16 bg-gradient-to-b from-pati-cream to-white">
-      <div className="container mx-auto px-4 max-w-3xl">
-          <div className="text-center mb-8 flex flex-col md:flex-row items-center justify-center gap-6">
-            <img src="/images/Bundcake.webp" alt="Tarta deliciosa" className="w-32 h-32 object-cover rounded-full shadow-lg border-4 border-white"/>
-            <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-pati-burgundy mb-3">
-                ¿No sabes qué elegir?
-                </h2>
-                <p className="text-lg text-pati-brown max-w-md mx-auto">
-                ¡Déjanos ayudarte a encontrar el capricho perfecto con unas pocas preguntas!
-                </p>
-            </div>
-          </div>
-
-          <Card className="w-full shadow-xl transition-all duration-300 ease-out border-2 border-pati-pink/50 overflow-hidden">
-             <CardHeader className="pb-4 pt-5 px-5 md:px-6">
-               <CardTitle>Tu Capricho Ideal - Paso {currentStep} de {totalSteps}</CardTitle>
-               <Progress 
-                 value={(currentStep / totalSteps) * 100} 
-                 className="w-full h-2 mt-2 bg-gray-100 [&>div]:bg-pati-brown"
-                />
-             </CardHeader>
-             <CardContent className="space-y-4 min-h-[180px] pt-4 pb-5 px-5 md:px-6">
-                {renderStepContent()} 
-             </CardContent>
-             <CardFooter className="justify-between pt-3 pb-4 px-5 md:px-6 border-t">
-                 <Button 
-                    onClick={prevStep} 
-                    variant="outline"
-                    disabled={currentStep === 1}
-                    className={`${currentStep === 1 ? 'invisible' : 'visible'}`}
-                 >
-                    <ChevronLeft className="mr-1 h-4 w-4"/> Anterior
-                 </Button>
-
-                 {currentStep < totalSteps ? (
-                    <Button onClick={nextStep}>
-                       Siguiente <ChevronRight className="ml-1 h-4 w-4"/>
-                    </Button>
-                 ) : (
-                    <Button onClick={openWhatsApp} size="lg" className="bg-green-600 hover:bg-green-700 text-white text-base">
-                       <MessageCircle className="mr-2 h-5 w-5" /> ¡Pedir recomendación!
-                    </Button>
-                 )}
-             </CardFooter>
-           </Card>
+    <>
+      {/* Botón flotante minimizable */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <button
+              className="flex items-center gap-2 bg-pati-burgundy text-white px-4 py-2 rounded-full shadow-lg hover:bg-pati-brown transition-all text-base font-semibold"
+              aria-label="Abrir recomendador"
+            >
+              <img src="/images/Bundcake.webp" alt="Tarta" className="w-8 h-8 rounded-full object-cover border-2 border-white" />
+              ¿No sabes qué elegir?
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md w-full p-0 bg-transparent border-none shadow-none">
+            <section className="bg-gradient-to-b from-pati-cream to-white rounded-2xl shadow-2xl border-2 border-pati-pink/50 overflow-hidden">
+              <div className="px-4 pt-4 pb-2 text-center">
+                <h2 className="text-xl font-bold text-pati-burgundy mb-1">¿No sabes qué elegir?</h2>
+                <p className="text-sm text-pati-brown mb-2">¡Déjanos ayudarte a encontrar el capricho perfecto!</p>
+              </div>
+              <Card className="w-full shadow-none border-none bg-transparent">
+                <CardHeader className="pb-2 pt-2 px-4">
+                  <CardTitle className="text-base">Tu Capricho Ideal - Paso {currentStep} de {totalSteps}</CardTitle>
+                  <Progress value={(currentStep / totalSteps) * 100} className="w-full h-1 mt-1 bg-gray-100 [&>div]:bg-pati-brown" />
+                </CardHeader>
+                <CardContent className="space-y-2 min-h-[120px] pt-2 pb-2 px-4">
+                  {renderStepContent()}
+                </CardContent>
+                <CardFooter className="justify-between pt-2 pb-2 px-4 border-t-0">
+                  <Button onClick={prevStep} variant="outline" disabled={currentStep === 1} className={`${currentStep === 1 ? 'invisible' : 'visible'} text-xs px-2 py-1`}><ChevronLeft className="mr-1 h-4 w-4"/> Anterior</Button>
+                  {currentStep < totalSteps ? (
+                    <Button onClick={nextStep} className="text-xs px-2 py-1">Siguiente <ChevronRight className="ml-1 h-4 w-4"/></Button>
+                  ) : (
+                    <Button onClick={openWhatsApp} size="sm" className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1"><MessageCircle className="mr-2 h-4 w-4" /> ¡Pedir recomendación!</Button>
+                  )}
+                </CardFooter>
+              </Card>
+            </section>
+          </DialogContent>
+        </Dialog>
       </div>
-    </section>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Instagram, Phone, ShoppingCart } from 'lucide-react';
+import { Menu, X, Instagram, Phone, ShoppingCart, Heart, User } from 'lucide-react';
 import { FaTiktok } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -13,6 +13,10 @@ const Navbar = () => {
   const { state, getTotalItems, resetItemAddedTimestamp } = useCart();
   const totalItems = getTotalItems();
   const [isAnimating, setIsAnimating] = useState(false); // Estado para controlar animación
+
+  // Variables fácilmente editables para seguidores y likes
+  const TIKTOK_LIKES = "84K"; // Cambia este valor según los likes reales
+  const INSTAGRAM_FOLLOWERS = "1.8K"; // Cambia este valor según los seguidores reales
 
   // Efecto para manejar la animación
   useEffect(() => {
@@ -29,25 +33,26 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="flex items-center">
-          {/* Replaced image with styled text */}
-          <img src="/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-10" />
-        </Link>
-        
-        {/* Mobile menu button */}
-        <button 
-          onClick={() => setIsOpen(!isOpen)}
-          className="lg:hidden p-2 rounded-md text-pati-brown hover:bg-pati-cream"
-          aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={isOpen}
-          aria-controls="mobile-menu"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between lg:justify-between relative">
+        {/* Logo y redes sociales alineados en la misma fila */}
+        <div className="flex flex-1 items-center justify-between w-full">
+          <Link to="/" className="flex items-center">
+            <img src="/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-10" />
+          </Link>
+          {/* Redes sociales siempre a la derecha del logo */}
+          <div className="flex items-center gap-3 ml-2">
+            <a href="https://tiktok.com/@recetaspati_" target="_blank" rel="noopener noreferrer" aria-label="TikTok Recetas Pati" className="flex items-center gap-1 rounded-full bg-black px-3 py-1 hover:bg-gray-800 transition-colors shadow-md">
+              <FaTiktok size={18} className="text-white" />
+              <span className="text-xs text-white font-semibold flex items-center gap-1">{TIKTOK_LIKES} <Heart size={12} className="inline text-pink-400" /></span>
+            </a>
+            <a href="https://instagram.com/recetaspati" target="_blank" rel="noopener noreferrer" aria-label="Instagram Recetas Pati" className="flex items-center gap-1 rounded-full bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-400 px-3 py-1 hover:opacity-80 transition-opacity shadow-md">
+              <Instagram size={18} className="text-white" />
+              <span className="text-xs text-white font-semibold flex items-center gap-1">{INSTAGRAM_FOLLOWERS} <User size={12} className="inline text-white" /></span>
+            </a>
+          </div>
+        </div>
         {/* Desktop navigation */}
-        <nav className="hidden lg:flex items-center space-x-6">
+        <nav className="hidden lg:flex items-center space-x-6 ml-8">
           <a href="/#productos" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
             Productos
           </a>
@@ -69,23 +74,17 @@ const Navbar = () => {
                  </Badge>
              )}
           </Link>
-          {/* Wrap Button in an anchor tag for external link */}
-          <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
-            <Button className="bg-pati-burgundy hover:bg-pati-brown text-white ml-2 flex items-center gap-2">
-              <Instagram size={18} /> Seguir
-            </Button>
-          </a>
         </nav>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - oculto completamente */}
+      {/*
       {isOpen && (
         <div 
           id="mobile-menu"
           className="lg:hidden bg-white border-t border-pati-pink py-4 px-6 shadow-lg animate-fade-in"
         >
           <nav className="flex flex-col space-y-4">
-            {/* Use anchor tags for section links for smoother scrolling */}
             <a 
               href="/#productos" 
               className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors py-2"
@@ -101,13 +100,11 @@ const Navbar = () => {
               Testimonios
             </a>
             <div className="flex space-x-2 pt-2">
-              {/* TikTok Button (replaces Phone Button) */}
               <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
                 <Button className="w-full bg-black hover:bg-gray-800 text-white">
                   <FaTiktok size={18} className="mr-2" /> TikTok
                 </Button>
               </a>
-              {/* Instagram Button */}
                <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
                 <Button className="w-full bg-pati-burgundy hover:bg-pati-brown text-white">
                   <Instagram size={18} className="mr-2" /> Instagram
@@ -117,6 +114,7 @@ const Navbar = () => {
           </nav>
         </div>
       )}
+      */}
     </header>
   );
 };
