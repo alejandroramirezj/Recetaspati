@@ -105,8 +105,8 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
 const MobileVideoPlayer = ({ product }: { product: ProductType | null }) => {
   if (!product?.video) return null;
   return (
-    <div className="md:hidden mt-6"> {/* Visible solo en móvil, con margen superior */}
-      <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
+    <div className="md:hidden mt-6">
+      <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[16/9] max-w-full mx-auto bg-black max-h-80 sm:max-h-[400px]">
         <CardContent className="p-0 h-full">
           <video 
             src={product.video} 
