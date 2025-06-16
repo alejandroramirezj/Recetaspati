@@ -74,7 +74,7 @@ const Hero = () => {
           </div>
           {/* Título SEO y viral */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl text-pati-burgundy max-w-2xl mx-auto font-extrabold drop-shadow-lg leading-tight">
-            Galletas artesanas en Granada
+            Tarta de galleta en Granada
           </h1>
           {/* Eliminar subtítulo visual con iconos y 24h */}
           {/* Video happy hippo */}
@@ -121,9 +121,9 @@ const Hero = () => {
                 size="lg"
                 className="bg-pati-burgundy hover:bg-pati-brown text-white px-8 py-3 text-base md:text-lg shadow-lg animate-bounce focus:ring-2 focus:ring-offset-2 focus:ring-pati-burgundy"
                 onClick={() => document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' })}
-                aria-label="Ir a la tienda de galletas artesanas"
+                aria-label="Ir a la tienda de tartas de galleta"
               >
-                Pide tu caja viral
+                Pide tu tarta de galleta
               </Button>
             </div>
           </div>

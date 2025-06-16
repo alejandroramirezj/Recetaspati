@@ -51,7 +51,33 @@ export const productsData: Product[] = [
       availableFlavors: ["Tarta-Galleta"],
       size: "8-10 personas" 
   },
-  // Tartas
+  // Galletas - MOVED TO BE THE SECOND PRODUCT
+  {
+    id: 2,
+    name: "Caja de Galletas Artesanales",
+    description: "Configura tu propia caja con tus sabores favoritos.", // Updated description
+    price: "16€/29€", // Indicate pack prices
+    image: "/images/Galleta Kinder Bueno.webp", // Restored path
+    video: "/videos/Galletas.mp4", 
+    category: "galletas",
+    configType: 'cookiePack',
+    options: [ 
+      { name: 'Pack 6 uds.', price: '16€', description: '¡1 GRATIS!', maxUniqueFlavors: 2 },
+      { name: 'Pack 12 uds.', price: '29€', description: '¡2 GRATIS! Sin límite de sabores.' },
+      { name: 'Pack Personalizado', price: '3€ / ud.', description: 'Sin límite de sabores. ¡Elige las que quieras!', isCustomPack: true, customPackUnitPrice: 3 }
+    ],
+    individualCookies: [
+        { name: "Galleta de Filipinos", image: "/images/Galleta Filipinos.webp", description: "Decorada con chocolate blanco." },
+        { name: "Galleta de Kinder", image: "/images/Galleta Kinder Bueno.webp", description: "Con pepitas y Kinder." },
+        { name: "Galleta de Nutella", image: "/images/Galleta Nutella.webp", description: "Con pepitas y centro de Nutella." },
+        { name: "Galleta de Oreo", image: "/images/Galleta Oreo.webp", description: "Con trozos de Oreo." },
+        { name: "Galleta de Pistacho", image: "/images/Galleta Pistacho.webp", description: "Con crema de pistacho." },
+        { name: "Galleta de Lotus", image: "/images/Galleta Lotus.webp", description: "Con sabor Lotus Biscoff." },
+        { name: "Galleta Choco Negro Salado", image: "/images/Galleta de Chocolate Salado.webp", description: "Intenso chocolate negro con un toque de sal." },
+        { name: "Galleta Happy Hippo", image: "/images/Galleta Happy Hippo.webp", description: "Crujiente galleta con relleno cremoso y el divertido sabor de Happy Hippo." }
+    ]
+  },
+  // Tartas - REST OF THE TARTS, BUNDTCAKE SHIFTED DOWN
   { 
       id: 1, 
       name: "Bundtcake de Chocolate", 
@@ -129,32 +155,6 @@ export const productsData: Product[] = [
       configType: 'flavorOnly',
       availableFlavors: ["Pavlova Frutos Rojos"],
       size: "8-10 personas" 
-  },
-  // Galletas
-  {
-    id: 2,
-    name: "Caja de Galletas Artesanales",
-    description: "Configura tu propia caja con tus sabores favoritos.", // Updated description
-    price: "16€/29€", // Indicate pack prices
-    image: "/images/Galleta Kinder Bueno.webp", // Restored path
-    video: "/videos/Galletas.mp4", 
-    category: "galletas",
-    configType: 'cookiePack',
-    options: [ 
-      { name: 'Pack 6 uds.', price: '16€', description: '¡1 GRATIS!', maxUniqueFlavors: 2 },
-      { name: 'Pack 12 uds.', price: '29€', description: '¡2 GRATIS! Sin límite de sabores.' },
-      { name: 'Pack Personalizado', price: '3€ / ud.', description: 'Sin límite de sabores. ¡Elige las que quieras!', isCustomPack: true, customPackUnitPrice: 3 }
-    ],
-    individualCookies: [
-        { name: "Galleta de Filipinos", image: "/images/Galleta Filipinos.webp", description: "Decorada con chocolate blanco." },
-        { name: "Galleta de Kinder", image: "/images/Galleta Kinder Bueno.webp", description: "Con pepitas y Kinder." },
-        { name: "Galleta de Nutella", image: "/images/Galleta Nutella.webp", description: "Con pepitas y centro de Nutella." },
-        { name: "Galleta de Oreo", image: "/images/Galleta Oreo.webp", description: "Con trozos de Oreo." },
-        { name: "Galleta de Pistacho", image: "/images/Galleta Pistacho.webp", description: "Con crema de pistacho." },
-        { name: "Galleta de Lotus", image: "/images/Galleta Lotus.webp", description: "Con sabor Lotus Biscoff." },
-        { name: "Galleta Choco Negro Salado", image: "/images/Galleta de Chocolate Salado.webp", description: "Intenso chocolate negro con un toque de sal." },
-        { name: "Galleta Happy Hippo", image: "/images/Galleta Happy Hippo.webp", description: "Crujiente galleta con relleno cremoso y el divertido sabor de Happy Hippo." }
-    ]
   },
   // Palmeritas - REVISED
   {
