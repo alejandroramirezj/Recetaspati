@@ -8,7 +8,7 @@ const SimpleProductCard = ({ product }: { product: Product }) => (
   <div 
     className="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl flex flex-col h-full border border-pati-pink/50"
   >
-    <Link to={`/product/${product.category}/${product.id}`} className="block h-56 overflow-hidden group">
+    <Link to={`/product/${product.category}/${product.slug}`} className="block h-56 overflow-hidden group">
       <img 
         src={product.image} 
         alt={product.name} 
@@ -26,7 +26,7 @@ const SimpleProductCard = ({ product }: { product: Product }) => (
          asChild // Use Button styling on the Link
          className="w-full bg-pati-pink hover:bg-pati-burgundy text-pati-burgundy hover:text-white border border-pati-burgundy mt-2"
       >
-         <Link to={`/product/${product.category}/${product.id}`}>
+         <Link to={`/product/${product.category}/${product.slug}`}>
              Ver Detalles
          </Link>
       </Button>

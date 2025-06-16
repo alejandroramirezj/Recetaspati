@@ -26,9 +26,9 @@ const ProductCatalog = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 1. Filtrar productos que no tengan la imagen placeholder
+  // 1. Filtrar productos que no tengan la imagen placeholder y excluir mini-tartas
   const allDisplayableProducts = productsData.filter(
-    p => p.image && !p.image.includes("placeholder.svg")
+    p => p.image && !p.image.includes("placeholder.svg") && p.category !== 'mini-tartas'
   );
 
   // 2. Lógica de filtrado basada en la pestaña activa
@@ -129,7 +129,7 @@ const ProductCatalog = () => {
 
 // ProductCard modificado para aceptar un Product y enlazar directamente
 const ProductCard = ({ product }: { product: Product }) => {
-  const linkDestination = `/product/${product.category}/${product.id}`;
+  const linkDestination = `/product/${product.category}/${product.slug}`;
 
   return (
     <Link 

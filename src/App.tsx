@@ -47,7 +47,7 @@ const App = () => (
           <SpaRedirectHandler />
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="product/:category/:id" element={<ProductDetail />} />
+            <Route path="product/:category/:slug" element={<ProductDetail />} />
             <Route path="category/:categoryName" element={<CategoryPage />} />
             <Route path="/pedido" element={<OrderSummary />} />
             {/* <Route path="/sobre-nosotros" element={<AboutUs />} /> */}

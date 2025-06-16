@@ -35,6 +35,7 @@ export type Product = {
   id: number;
   name: string;
   description: string;
+  slug?: string; // Modificado: Ahora es opcional
   price?: string; // Price reference (can be base price, pack price, unit price)
   image: string;
   video?: string; // ADDED optional video field
@@ -47,6 +48,15 @@ export type Product = {
   unitPrice?: number; // ADDED: For items sold individually (like mini-tartas)
   flavorOptions?: FlavorOption[]; // NUEVO: Opciones de sabor para tartas
   toppingOptions?: Topping[];     // NUEVO: Opciones de toppings para tartas
+};
+
+// Función para generar un slug amigable para URL
+const generateProductSlug = (name: string): string => {
+  const slugName = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // Reemplaza caracteres no alfanuméricos por guiones
+    .replace(/^-+|-+$/g, ''); // Elimina guiones al principio o al final
+  return slugName;
 };
 
 // Centralized product data
@@ -198,74 +208,102 @@ export const productsData: Product[] = [
     ],
     availableFlavors: [
         "Filipinos chocolate blanco", 
-        "Oreo y chocolate blanco", 
+        "Kinder Bueno", 
+        "Nutella", 
         "Chocolate negro", 
-        "Chocolate con leche y kitkat"
+        "Lotus", 
+        "Pistacho",
+        "Chocolate blanco",
+        "Chocolate con leche"
     ]
   },
-  // Mini Tartas - REVISED as individual items
-  /*
+  // Mini Cakes - REVISED
   {
-    id: 10, // Reusing ID, ensure uniqueness if needed
-    name: "Mini Tarta Individual",
-    description: "Un capricho perfecto en tamaño individual. Elige tu sabor.",
-    price: "5€", // Price per unit
-    image: "/images/Minicakes.webp", // Restored path
-    video: "/videos/minitartas.mp4", // Video añadido
-    category: "tartas", // MODIFICADO: Cambiado de 'mini-tartas' a 'tartas'
-    configType: 'flavorQuantity', // Select flavor and quantity
-    unitPrice: 5, // Set unit price for calculations
-    availableFlavors: ["Lotus", "Fresas con Nata"] // Define available flavors
-    // Removed options array which was for a fixed pack
+    id: 10,
+    name: "Caja de Mini Cakes",
+    description: "Cajas de 6 o 12 unidades de mini cakes, elige tus sabores favoritos.",
+    price: "18€/34€",
+    image: "/images/Minicakes.webp",
+    video: "/videos/minitartas.mp4",
+    category: "mini-tartas",
+    configType: 'flavorPack',
+    options: [
+      { name: "Caja 6 unidades", price: "18€" },
+      { name: "Caja 12 unidades", price: "34€" }
+    ],
+    availableFlavors: [
+        "Chocolate", 
+        "Zanahoria", 
+        "Red Velvet", 
+        "Vainilla", 
+        "Limón", 
+        "Ferrero",
+        "Oreo",
+        "Lotus"
+    ]
   },
-  */
-  // ADDED: Minicookies
+    // Mini Cookies - REVISED
   {
-    id: 11, 
-    name: "Minicookies",
-    description: "Deliciosas galletas en tamaño mini, perfectas para picar. ¡Como las Chips Ahoy! pero más ricas y caseras!",
-    price: "5€", 
-    image: "/images/minicookies.webp", // Restored path
-    video: "/videos/minicookies.mp4", // CORRECTED VIDEO PATH
+    id: 11,
+    name: "Caja de Mini Cookies",
+    description: "Cajas de 6 o 12 unidades de mini cookies, elige tus sabores favoritos.",
+    price: "10€/18€",
+    image: "/images/minicookies.webp",
+    video: "/videos/minicookies.mp4",
     category: "minicookies",
-    configType: 'flavorMultiSelect', // Select one or both flavors for the bag
-    availableFlavors: ["Chocolate", "Chocolate Blanco"] 
+    configType: 'flavorPack',
+    options: [
+      { name: "Caja 6 unidades", price: "10€" },
+      { name: "Caja 12 unidades", price: "18€" }
+    ],
+    availableFlavors: [
+        "Chocolate", 
+        "Red Velvet", 
+        "Pistacho",
+        "Lemon",
+        "Lotus"
+    ]
   },
-  // NUEVAS TARTAS
-  { 
-      id: 12, 
-      name: "Tarta de Queso y Lotus", 
-      description: "Increíble tarta con el sabor único de las galletas Lotus Biscoff, una delicia caramelizada.", 
-      price: "30€", 
-      image: "/images/Tarta Lotus.webp", // Restored path
-      video: "/videos/tarta-lotus.mp4", // Video añadido
-      category: "tartas", 
-      configType: 'flavorOnly',
-      availableFlavors: ["Lotus"],
-      size: "10-12 personas" 
+  // NEW PRODUCTS
+  {
+    id: 12,
+    name: "Tarta de Happy Hippo",
+    description: "Tarta inspirada en el famoso dulce Happy Hippo, con una crema suave y topping crujiente.",
+    price: "38€",
+    image: "/images/Tarta Happy Hippo.webp",
+    video: "/videos/tarta-happyhippo.mp4",
+    category: "tartas",
+    configType: 'flavorOnly',
+    availableFlavors: ["Happy Hippo"],
+    size: "8-10 personas"
   },
-  { 
-      id: 13, 
-      name: "Tarta de Queso y Happy Hippo", 
-      description: "Divertida y deliciosa tarta inspirada en los sabores de Happy Hippo, con avellana y cacao.", 
-      price: "32€", 
-      image: "/images/Tarta Happy Hippo.webp", // Restored path
-      video: "/videos/tarta-happyhippo.mp4", // Video añadido
-      category: "tartas", 
-      configType: 'flavorOnly',
-      availableFlavors: ["Happy Hippo"],
-      size: "10-12 personas" 
+  {
+    id: 13,
+    name: "Tarta Lotus Biscoff",
+    description: "Deliciosa tarta con el inconfundible sabor a galleta Lotus Biscoff, cremosa y con trozos de galleta.",
+    price: "38€",
+    image: "/images/Tarta Lotus.webp",
+    video: "/videos/tarta-lotus.mp4",
+    category: "tartas",
+    configType: 'flavorOnly',
+    availableFlavors: ["Lotus Biscoff"],
+    size: "8-10 personas"
   },
-  { 
-      id: 14, 
-      name: "Tarta de Queso y Nutella", 
-      description: "Irresistible tarta para los amantes de Nutella, con una suave crema de avellanas y cacao.", 
-      price: "30€", 
-      image: "/images/Tarta Nutela.webp", // Restored path
-      video: "/videos/tarta-nutela.mp4", // Video añadido
-      category: "tartas", 
-      configType: 'flavorOnly',
-      availableFlavors: ["Nutella"],
-      size: "10-12 personas" 
+  {
+    id: 14,
+    name: "Tarta de Nutella",
+    description: "Irresistible tarta con abundante crema de Nutella, ideal para los amantes del chocolate.",
+    price: "38€",
+    image: "/images/Tarta Nutela.webp",
+    video: "/videos/tarta-nutela.mp4",
+    category: "tartas",
+    configType: 'flavorOnly',
+    availableFlavors: ["Nutella"],
+    size: "8-10 personas"
   }
-]; 
+];
+
+// Pre-generar los slugs al cargar los datos
+productsData.forEach(product => {
+  (product as Product).slug = generateProductSlug(product.name);
+}); 

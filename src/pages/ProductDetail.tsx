@@ -967,18 +967,17 @@ const DesktopPackSummary = ({
 
 // Main Component
 const ProductDetail = () => {
-  const { category, id } = useParams();
+  const { category, slug } = useParams();
   const { dispatch } = useCart();
   
   const product = useMemo(() => {
-    const productId = parseInt(id || '0');
-    const foundProduct = productsData.find(p => p.id === productId && p.category === category);
+    const foundProduct = productsData.find(p => p.slug === slug && p.category === category);
     if (foundProduct && category === 'galletas' && !foundProduct.individualCookies) {
         console.error("Product data for galletas is missing individualCookies array.");
         return null; 
     }
     return foundProduct || null;
-  }, [category, id]);
+  }, [category, slug]);
 
   // Reward hook para el botón de flavorOnly
   const flavorOnlyRewardId = product ? `reward-flavorOnly-${product.id}` : 'reward-flavorOnly-default';

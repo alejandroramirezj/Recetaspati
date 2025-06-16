@@ -645,3 +645,51 @@ Tarea 19: Diagnóstico y optimización del espacio de la sección FAQ completada
 ## Executor's Feedback or Assistance Requests
 
 Por favor, verifica si la sección de Preguntas Frecuentes ocupa menos espacio en la interfaz de usuario. Si aún no es lo que esperabas, házmelo saber para seguir optimizando.
+
+### Background and Motivation
+El usuario solicita cambiar las URLs de las páginas de detalle de producto de un formato basado en ID (ej. `/product/tartas/15`) a un formato más amigable y descriptivo usando el nombre del producto (ej. `/product/tartas/nombre-del-producto`). Esto mejora la legibilidad de las URLs y es beneficioso para el SEO.
+
+### Key Challenges and Analysis
+*   **Generación de Slugs:** Necesitamos una función robusta para convertir los nombres de productos en "slugs" (cadenas amigables para URL, sin espacios ni caracteres especiales, y en minúsculas). Esta función debe manejar casos como nombres con caracteres especiales, espacios y posibles duplicados.
+*   **Actualización de Rutas:** La definición de rutas en `react-router-dom` (`src/App.tsx`) debe actualizarse para esperar un parámetro de "slug" en lugar de un "id".
+*   **Recuperación de Datos en `ProductDetail.tsx`:** La lógica para encontrar el producto en `src/pages/ProductDetail.tsx` deberá cambiar para buscar por slug en lugar de por ID.
+*   **Actualización de Enlaces:** Todos los enlaces que apuntan a las páginas de detalle de producto (ej. en `ProductCatalog.tsx`, `CategoryPage.tsx`) deberán construirse con el nuevo slug.
+*   **No romper la web:** Es crucial asegurar que todos los componentes que interactúan con las rutas de producto se actualicen correctamente y que no haya errores al navegar o cargar los detalles de los productos existentes.
+
+### High-level Task Breakdown
+
+1.  **Modificar `src/data/products.ts`:**
+    *   Añadir una propiedad `slug` a cada objeto `Product` en `productsData`.
+    *   Crear una función utilitaria `generateProductSlug(name: string, id: number): string` para generar el slug de forma consistente y única. Esta función se aplicará al cargar los datos para pre-generar los slugs.
+
+2.  **Actualizar `src/App.tsx`:**
+    *   Cambiar la ruta `path="/product/:category/:id"` a `path="/product/:category/:slug"`.
+
+3.  **Actualizar `src/components/home/ProductCatalog.tsx`:**
+    *   Modificar el componente `ProductCard` para construir la `linkDestination` utilizando el `product.slug` en lugar del `product.id`.
+
+4.  **Actualizar `src/pages/CategoryPage.tsx`:**
+    *   Modificar el componente `SimpleProductCard` para construir el enlace utilizando el `product.slug` en lugar del `product.id`.
+
+5.  **Actualizar `src/pages/ProductDetail.tsx`:**
+    *   Modificar la lógica de `useMemo` para obtener el producto, buscando por `slug` en lugar de por `id`.
+    *   Asegurarse de que el botón de compartir use la URL actual (que ya debería ser la del slug).
+
+6.  **Pruebas:**
+    *   Verificar la navegación a través de todas las categorías y productos.
+    *   Asegurarse de que las páginas de detalle de producto se carguen correctamente.
+    *   Comprobar que el botón de compartir funciona como se espera con las nuevas URLs.
+
+### Project Status Board
+- [ ] Tarea 1: Modificar `src/data/products.ts` para añadir slugs.
+- [ ] Tarea 2: Actualizar `src/App.tsx` para usar slugs en la ruta.
+- [ ] Tarea 3: Actualizar `src/components/home/ProductCatalog.tsx` para usar slugs en los enlaces.
+- [ ] Tarea 4: Actualizar `src/pages/CategoryPage.tsx` para usar slugs en los enlaces.
+- [ ] Tarea 5: Actualizar `src/pages/ProductDetail.tsx` para obtener productos por slug.
+- [ ] Tarea 6: Pruebas de navegación y funcionalidad.
+
+### Current Status / Progress Tracking
+Planificación completada. Listo para la ejecución.
+
+### Executor's Feedback or Assistance Requests
+Ninguna por el momento.
