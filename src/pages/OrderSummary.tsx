@@ -123,7 +123,7 @@ const OrderSummary: React.FC = () => {
                             );
                         })}
                     </CardContent>
-                    <CardFooter className="bg-gray-50 py-4 px-6 mt-4 hidden">
+                    <CardFooter className="bg-gray-50 py-4 px-6 mt-4">
                         <div className="w-full flex justify-end items-center gap-4">
                              <span className="text-lg font-semibold text-pati-dark-brown">Total Pedido:</span>
                              <span className="text-2xl font-bold text-pati-burgundy">{formatPrice(cartTotal)}</span>
