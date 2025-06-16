@@ -143,6 +143,15 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
     reward();
   };
 
+  // Helper function to format prices without trailing .00
+  const formatPrice = (price: number): string => {
+    if (price % 1 === 0) {
+      return price.toFixed(0).replace('.', ',');
+    } else {
+      return price.toFixed(2).replace('.', ',');
+    }
+  };
+
   const isAddToCartEnabled = selectedSize !== null && selectedFlavor !== null;
 
   return (
@@ -190,7 +199,7 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
                         {option.description && (
                           <span className="text-sm mb-1 text-pati-brown/90 w-full break-words text-center">{option.description}</span>
                         )}
-                        <span className="text-xl font-bold mt-1 text-center">{option.price}</span>
+                        <span className="text-xl font-bold mt-1 text-center">{option.price.includes('€') ? formatPrice(parseFloat(option.price.replace('€', '').replace(',', '.'))) + '€' : formatPrice(parseFloat(option.price.replace(',', '.')))}</span>
                       </label>
                     </div>
                   );
@@ -236,7 +245,7 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
                         </div>
                         {flavor.priceAdjustment > 0 && (
                           <Badge variant="secondary" className="bg-pati-burgundy text-white hover:bg-pati-burgundy/90">
-                            +{flavor.priceAdjustment.toFixed(2).replace('.', ',')}€
+                            +{formatPrice(flavor.priceAdjustment)}€
                           </Badge>
                         )}
                       </label>
@@ -273,7 +282,7 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
                       >
                         <span className="font-medium text-center w-full whitespace-normal break-words">{topping.name}</span>
                         <span className="text-lg font-bold mt-1 text-center w-full">
-                          +{topping.price.toFixed(2).replace('.', ',')}€
+                          +{formatPrice(topping.price)}€
                         </span>
                       </div>
                     );
@@ -298,7 +307,7 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
                   {selectedToppings.length > 0 && (
                     <p className="flex items-center gap-1"><Gift className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Toppings:</span> <span className="text-xs">{selectedToppings.join(', ')}</span></p>
                   )}
-                  <p className="text-2xl font-bold font-playfair text-pati-burgundy mt-2">Total: {calculateTotalPrice.toFixed(2).replace('.', ',')}€</p>
+                  <p className="text-2xl font-bold font-playfair text-pati-burgundy mt-2">Total: {formatPrice(calculateTotalPrice)}€</p>
                 </div>
 
                 <div className="relative w-full h-64 max-w-lg mx-auto rounded-lg overflow-hidden flex items-center justify-center">
