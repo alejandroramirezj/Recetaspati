@@ -204,6 +204,7 @@ export const productsData: Product[] = [
     ]
   },
   // Mini Tartas - REVISED as individual items
+  /*
   {
     id: 10, // Reusing ID, ensure uniqueness if needed
     name: "Mini Tarta Individual",
@@ -217,6 +218,7 @@ export const productsData: Product[] = [
     availableFlavors: ["Lotus", "Fresas con Nata"] // Define available flavors
     // Removed options array which was for a fixed pack
   },
+  */
   // ADDED: Minicookies
   {
     id: 11, 

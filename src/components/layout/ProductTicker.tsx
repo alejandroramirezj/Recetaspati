@@ -4,7 +4,6 @@ const products = [
   "Tartas Artesanales 🎂", 
   "Galletas Caseras 🍪", 
   "Palmeritas de Hojaldre ✨", 
-  "Mini Tartas 🧁", 
   "Bundt Cakes 🍩", 
   "Cheesecakes 🍰", 
   "Regalos Dulces 🎁", 
