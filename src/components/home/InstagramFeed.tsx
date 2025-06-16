@@ -1,11 +1,14 @@
 import { Button } from '@/components/ui/button';
-import { Instagram } from 'lucide-react';
+import { Instagram, BookText, User } from 'lucide-react';
 
 // Ya no se necesita useEffect para el embed de Instagram
 // Ya no se necesita la declaración global de window.instgrm
 
 const InstagramFeed = () => {
   const instagramUrl = "https://instagram.com/recetaspati";
+  const profileName = "@recetaspati";
+  const recipeCount = "140";
+  const followerCount = "1.860";
 
   return (
     <section id="instagram" className="py-12 bg-white">
@@ -18,10 +21,19 @@ const InstagramFeed = () => {
             href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-lg text-pati-brown hover:text-pati-burgundy transition-colors"
+            className="text-lg text-pati-brown hover:text-pati-burgundy transition-colors flex items-center justify-center gap-2 mb-4"
           >
-            @recetaspati
+            {profileName}
           </a>
+
+          <div className="flex flex-wrap justify-center gap-4 text-pati-burgundy font-semibold text-lg">
+            <div className="flex items-center gap-1.5">
+              <BookText className="h-5 w-5" /> {recipeCount} recetas
+            </div>
+            <div className="flex items-center gap-1.5">
+              <User className="h-5 w-5" /> {followerCount} seguidores
+            </div>
+          </div>
         </div>
 
         {/* Video Local en lugar del anterior embed/grid */}

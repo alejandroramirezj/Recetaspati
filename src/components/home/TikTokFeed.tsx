@@ -1,18 +1,23 @@
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { FaTiktok } from 'react-icons/fa';
+import { User, Heart, Video, Eye } from 'lucide-react';
 
-// Array of video IDs from the provided URLs
-const videoIds = [
-  "7489944259559361815",
-  "7495115294579363094",
-  "7485036959904058646",
-  "7479000634952256790",
-  "7479541534132636950",
+// Array of local video paths
+const localVideoPaths = [
+  "/videos/video-titok-1.mp4",
+  "/videos/video-titok-2.mp4",
+  "/videos/video-titok-3.mp4",
 ];
 
 const TikTokFeed = () => {
   const tiktokUrl = "https://tiktok.com/@recetaspati_";
-  const profileName = "recetaspati_"; // Extracted profile name
+  const profileName = "recetaspati_";
+  const TIKTOK_FOLLOWERS = "X.XK";
+  const followerCount = "2.984";
+  const heartCount = "88.705";
+  const videoCount = "93";
+  const viewCount = "2,8 millones";
 
   return (
     <section id="tiktok" className="py-12 bg-white overflow-hidden">
@@ -25,31 +30,44 @@ const TikTokFeed = () => {
             href={tiktokUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-lg text-pati-brown hover:text-pati-burgundy transition-colors"
+            className="text-lg text-pati-brown hover:text-pati-burgundy transition-colors flex items-center justify-center gap-2 mb-4"
           >
             @{profileName}
           </a>
+
+          {/* Statistics Display */}
+          <div className="flex flex-wrap justify-center gap-4 text-pati-burgundy font-semibold text-lg">
+            <div className="flex items-center gap-1.5">
+              <User className="h-5 w-5" /> {followerCount} seguidores
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Heart className="h-5 w-5" /> {heartCount} me gusta
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Video className="h-5 w-5" /> {videoCount} videos
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Eye className="h-5 w-5" /> {viewCount} vistas
+            </div>
+          </div>
         </div>
 
         {/* Flex container for videos - Scrollable on mobile, single row on web */}
-        {/* Added pb-4 for scrollbar space if visible */}
         <div className="flex flex-row overflow-x-auto space-x-4 md:space-x-6 pb-4 mb-10 justify-start md:justify-center scrollbar-thin scrollbar-thumb-pati-pink scrollbar-track-pati-light-pink">
-          {videoIds.map((videoId) => (
-            // Added flex-shrink-0 to prevent items from shrinking 
-            <div key={videoId} className="flex-shrink-0 w-[300px] md:w-auto"> {/* Fixed width on mobile, auto on larger */} 
-              <blockquote 
-                className="tiktok-embed" 
-                cite={`https://www.tiktok.com/@${profileName}/video/${videoId}`}
-                data-video-id={videoId}
-                // Use Tailwind/CSS for sizing, ensure min-width for embed 
-                style={{ minWidth: '300px', maxWidth: '325px' }} 
-              > 
-                <section> 
-                   <a target="_blank" rel="noopener noreferrer" title={`@${profileName}`} href={`https://www.tiktok.com/@${profileName}?refer=embed`}>@{profileName}</a> 
-                   <p>...</p> 
-                   <a target="_blank" rel="noopener noreferrer" title="Original video" href={`https://www.tiktok.com/@${profileName}/video/${videoId}?refer=embed`}>Ver video en TikTok</a> 
-                </section> 
-              </blockquote>
+          {localVideoPaths.map((videoPath, index) => (
+            <div key={index} className="flex-shrink-0 w-[280px] md:w-[320px]">
+              <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] bg-black">
+                <CardContent className="p-0 h-full">
+                  <video
+                    src={videoPath}
+                    autoPlay loop muted playsInline
+                    className="w-full h-full object-cover"
+                    aria-label={`Video de reacción ${index + 1}`}
+                  >
+                    Tu navegador no soporta la etiqueta de vídeo.
+                  </video>
+                </CardContent>
+              </Card>
             </div>
           ))}
         </div>
