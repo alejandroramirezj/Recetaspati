@@ -11,6 +11,8 @@ import TikTokFeed from "@/components/home/TikTokFeed";
 import RecommendationWizard from "@/components/home/RecommendationWizard";
 import ProductTicker from "@/components/layout/ProductTicker";
 import LastMinuteOffers from "@/components/home/LastMinuteOffers";
+import AboutUs from "./AboutUs";
+import FAQ from "./FAQ";
 
 const Index = () => {
   return (
@@ -18,17 +20,26 @@ const Index = () => {
       <Navbar />
       <main className="flex-grow">
         <Hero />
+        
         {/* Reduced vertical padding for the ticker */}
-        <ProductTicker /> {/* Keep default padding from component? Or add py-6 here? Let's adjust component itself */}
+        <ProductTicker /> 
         {/* Ensured consistent large padding for main sections */}
-        <ProductCatalog /> {/* Component has py-16 */}
-        <RecommendationWizard /> {/* Component has py-16 */}
+        <ProductCatalog /> 
+        
+        {/* Sección Sobre Mí (historia y video) */}
+        <AboutUs /> 
+
+        <RecommendationWizard /> 
         {/* <MothersDay /> */} {/* Component has py-16 - ELIMINADO */}
-        <Testimonials /> {/* Component has py-16 */}
-        <LastMinuteOffers /> {/* Use the renamed component */}
+        <Testimonials /> 
+        <LastMinuteOffers /> 
+        
+        {/* Sección de Preguntas Frecuentes */}
+        <FAQ /> 
+
         {/* Slightly reduced padding for social feeds? */}
-        <InstagramFeed /> {/* Let's adjust this component */}
-        <TikTokFeed /> {/* Let's adjust this component */}
+        <InstagramFeed /> 
+        <TikTokFeed /> 
         {/* <ExpansionForm /> */} {/* Commented out usage */}
         {/* <ContactSection /> */} {/* Component has py-16 - ELIMINADO */}
       </main>

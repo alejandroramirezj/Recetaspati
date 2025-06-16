@@ -588,3 +588,59 @@ Se han completado todas las mejoras solicitadas:
 
 ## Lessons
 - El uso de iconos sociales con estilos modernos y bien ubicados mejora la percepción de marca y la experiencia de usuario.
+
+# Planificación y Seguimiento del Proyecto
+
+## Background and Motivation
+
+El usuario ha solicitado la adición de dos nuevas secciones al sitio web:
+1.  **Sección "Sobre mí"**: Debe incluir la historia del negocio, la pasión por la pastelería (origen de la receta, tiempo horneando, motivación) y una foto "behind the scenes". Se debe añadir un video (`/videos/logo-explicado.mp4`) debajo del título de esta sección. El objetivo es humanizar la marca y generar conexión con los clientes.
+2.  **Apartado de Preguntas Frecuentes (FAQ)**: Debe anticipar dudas comunes de los clientes como el congelamiento, conservación, duración del pedido, opciones de personalización (relleno, topping) y detalles de entrega. El objetivo es mejorar las ventas y reducir consultas.
+
+**Corrección**: Las secciones "Sobre mí" y "Preguntas Frecuentes" deben ser integradas directamente en la página de inicio (`src/pages/Index.tsx`) y no como páginas separadas.
+
+## Key Challenges and Analysis
+
+*   **Ubicación de las nuevas secciones en `Index.tsx`**: Decidir el orden y la posición dentro de la página principal para una mejor coherencia y flujo de contenido.
+*   **Refactorización de componentes**: Los componentes `AboutUs.tsx` y `FAQ.tsx` fueron creados como páginas completas (con `Navbar` y `Footer`). Necesitarán ser refactorizados para ser componentes que se puedan renderizar directamente dentro de `Index.tsx` sin sus propios elementos de diseño de página.
+*   **Integración del video**: Asegurar que el video se carga y se reproduce correctamente. La ruta proporcionada es relativa y es correcta para un entorno web.
+*   **Diseño y UX**: Asegurar que las nuevas secciones se integren estéticamente con el diseño existente del sitio web y que la experiencia del usuario sea fluida.
+*   **Contenido**: El contenido textual y la imagen/video específicos deberán ser proporcionados por el usuario si el contenido actual no es el final.
+
+## High-level Task Breakdown
+
+Los siguientes pasos se ejecutarán en modo Executor.
+
+- [x] **Tarea 1: Decidir la ubicación de las nuevas secciones.** (Decision: Integrar en `Index.tsx`)
+- [ ] **Tarea 6 (Revisada): Refactorizar `AboutUs.tsx` y `FAQ.tsx` a componentes reutilizables.**
+    *   **Criterios de éxito:** Los archivos `src/pages/AboutUs.tsx` y `src/pages/FAQ.tsx` se han modificado para exportar solo los componentes de contenido, eliminando `Navbar` y `Footer` y cualquier lógica de página.
+- [ ] **Tarea 7 (Nueva): Eliminar rutas de las páginas `AboutUs` y `FAQ` de `src/App.tsx`.**
+    *   **Criterios de éxito:** Las líneas de ruta para `/sobre-nosotros` y `/preguntas-frecuentes` han sido eliminadas de `src/App.tsx`.
+- [ ] **Tarea 8 (Nueva): Eliminar enlaces de navegación a `AboutUs` y `FAQ` de `src/components/layout/Navbar.tsx`.**
+    *   **Criterios de éxito:** Los enlaces a `/sobre-nosotros` y `/preguntas-frecuentes` han sido eliminados de `src/components/layout/Navbar.tsx`.
+- [ ] **Tarea 9 (Nueva): Integrar los componentes refactorizados `AboutUs` y `FAQ` en `src/pages/Index.tsx`.**
+    *   **Criterios de éxito:** Los componentes `AboutUs` y `FAQ` han sido importados y renderizados en la ubicación deseada dentro de `src/pages/Index.tsx`.
+
+## Project Status Board
+
+- [x] Tarea 1: Decidir la ubicación de las nuevas secciones.
+- [x] Tarea 6 (Revisada): Refactorizar `AboutUs.tsx` y `FAQ.tsx` a componentes reutilizables.
+- [x] Tarea 7 (Nueva): Eliminar rutas de las páginas `AboutUs` y `FAQ` de `src/App.tsx`.
+- [x] Tarea 8 (Nueva): Eliminar enlaces de navegación a `AboutUs` y `FAQ` de `src/components/layout/Navbar.tsx`.
+- [x] Tarea 9 (Nueva): Integrar los componentes refactorizados `AboutUs` y `FAQ` en `src/pages/Index.tsx`.
+- [x] Tarea 10 (Nueva): Mejorar y optimizar el espacio de las secciones "Sobre mí" y "Preguntas Frecuentes", y eliminar la imagen de Pati cocinando.
+- [x] Tarea 11 (Nueva): Refinar la sección "Sobre mí" (texto más corto, negritas, cambiar nombre de marca) y asegurar funcionalidad desplegable en FAQ.
+- [x] Tarea 12 (Nueva): Implementar autoplay del video en `AboutUs.tsx` al estar en vista.
+- [x] Tarea 13 (Nueva): Reordenar las secciones en `src/pages/Index.tsx` para un flujo narrativo.
+- [x] Tarea 15 (Nueva): Reordenar la sección "Sobre mí" para que esté debajo del catálogo de productos.
+- [x] Tarea 16 (Nueva): Mejorar el texto de "Sobre mí" con detalles personales, tono divertido y emojis.
+- [x] Tarea 17 (Nueva): Mejorar el formato y acortar aún más el texto de "Sobre mí".
+- [ ] Tarea 18 (Nueva): Refinar el texto de "Sobre mí" para máxima concisión y formato.
+
+## Current Status / Progress Tracking
+
+Comenzando la Tarea 18: Refinando el texto de la sección "Sobre mí".
+
+## Executor's Feedback or Assistance Requests
+
+Ninguna por el momento.

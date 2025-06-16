@@ -12,6 +12,8 @@ import ScrollToTop from './utils/ScrollToTop';
 import { CartProvider } from './context/CartContext';
 import MobileCartBar from './components/layout/MobileCartBar';
 import OrderSummary from "./pages/OrderSummary";
+// import AboutUs from "./pages/AboutUs"; // Comentado o eliminado
+// import FAQ from "./pages/FAQ"; // Comentado o eliminado
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,8 @@ const App = () => (
             <Route path="product/:category/:id" element={<ProductDetail />} />
             <Route path="category/:categoryName" element={<CategoryPage />} />
             <Route path="/pedido" element={<OrderSummary />} />
+            {/* <Route path="/sobre-nosotros" element={<AboutUs />} /> */}
+            {/* <Route path="/preguntas-frecuentes" element={<FAQ />} /> */}
             <Route path="*" element={<NotFound />} />
           </Routes>
           <MobileCartBar />
