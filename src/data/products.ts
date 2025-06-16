@@ -234,7 +234,7 @@ export const productsData: Product[] = [
   // NUEVAS TARTAS
   { 
       id: 12, 
-      name: "Tarta de Lotus", 
+      name: "Tarta de Queso y Lotus", 
       description: "Increíble tarta con el sabor único de las galletas Lotus Biscoff, una delicia caramelizada.", 
       price: "30€", 
       image: "/images/Tarta Lotus.webp", // Restored path
@@ -242,11 +242,11 @@ export const productsData: Product[] = [
       category: "tartas", 
       configType: 'flavorOnly',
       availableFlavors: ["Lotus"],
-      size: "8-10 personas" 
+      size: "10-12 personas" 
   },
   { 
       id: 13, 
-      name: "Tarta de Happy Hippo", 
+      name: "Tarta de Queso y Happy Hippo", 
       description: "Divertida y deliciosa tarta inspirada en los sabores de Happy Hippo, con avellana y cacao.", 
       price: "32€", 
       image: "/images/Tarta Happy Hippo.webp", // Restored path
@@ -254,11 +254,11 @@ export const productsData: Product[] = [
       category: "tartas", 
       configType: 'flavorOnly',
       availableFlavors: ["Happy Hippo"],
-      size: "8-10 personas" 
+      size: "10-12 personas" 
   },
   { 
       id: 14, 
-      name: "Tarta de Nutella", 
+      name: "Tarta de Queso y Nutella", 
       description: "Irresistible tarta para los amantes de Nutella, con una suave crema de avellanas y cacao.", 
       price: "30€", 
       image: "/images/Tarta Nutela.webp", // Restored path
@@ -266,6 +266,6 @@ export const productsData: Product[] = [
       category: "tartas", 
       configType: 'flavorOnly',
       availableFlavors: ["Nutella"],
-      size: "8-10 personas" 
+      size: "10-12 personas" 
   }
 ]; 
