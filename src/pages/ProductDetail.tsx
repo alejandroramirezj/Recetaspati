@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Cookie, ArrowLeft, PlusCircle, MinusCircle, Info, CheckCircle2, Box, ShoppingCart, Trash2 } from 'lucide-react';
+import { Cookie, ArrowLeft, PlusCircle, MinusCircle, Info, CheckCircle2, Box, ShoppingCart, Trash2, Share2 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { productsData, Product as ProductType, Option } from '@/data/products';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -1124,11 +1124,30 @@ const ProductDetail = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-pati-cream">
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-8 md:py-12 relative pb-24 lg:pb-12"> {/* Reducido padding */}
-        <Link to={'/#productos'} className="inline-flex items-center gap-2 text-pati-brown hover:text-pati-burgundy mb-4 group"> {/* Reducido margen */}
-           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-           Volver al catálogo
-         </Link>
-
+        <div className="flex items-center justify-between mb-4">
+          <Link to={'/#productos'} className="inline-flex items-center gap-2 text-pati-brown hover:text-pati-burgundy group">
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Volver al catálogo
+          </Link>
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: product.name,
+                  text: product.description,
+                  url: window.location.href,
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('¡Enlace copiado!');
+              }
+            }}
+            className="inline-flex items-center gap-1 text-pati-burgundy hover:text-pati-brown bg-pati-cream border border-pati-pink/40 rounded-full px-3 py-1.5 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-pati-burgundy focus:ring-offset-2 transition-colors"
+            aria-label="Compartir producto"
+          >
+            <Share2 className="h-4 w-4 mr-1" /> Compartir
+          </button>
+        </div>
         {/* Main Grid: Adjusted for Palmeritas (ID 9) & Galletas (ID 2) one-column layout */}
         <div className={`grid ${product.configType === 'fixedPack' ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-6 lg:gap-8 items-start`}> {/* Reducido gap */}
            {/* Column 1: Configurator (always present) */}
