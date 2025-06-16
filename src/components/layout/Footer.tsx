@@ -1,5 +1,6 @@
 import { Instagram, Mail, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import SquatMiniGame from './SquatMiniGame';
 
 const Footer = () => {
   // WhatsApp details for general contact
@@ -10,7 +11,19 @@ const Footer = () => {
   return (
     <footer className="bg-pati-cream py-6">
       <div className="container mx-auto px-4 flex flex-col items-center justify-center gap-4">
-        <img src="/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-8 mb-2" />
+        <div className="flex items-center mb-2">
+          <img src="/images/Isotipo.webp" alt="Isotipo Recetas Pati" className="h-8 mr-2" />
+          <img src="/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-8" />
+        </div>
+
+        {/* Mensaje divertido del footer */}
+        <p className="text-center text-pati-brown text-sm md:text-base italic max-w-md mt-4 mb-4">
+          ¡Deja de deslizar hacia abajo! Esto no es TikTok, aquí se viene a ver y, sobre todo, a ¡pedir postres ricos! 🍪 Si no, me los acabo comiendo yo todos y no tengo horas para quemar esas calorías. 😅
+        </p>
+
+        {/* Mini-game Integration */}
+        <SquatMiniGame />
+
         <div className="flex space-x-4">
           <a 
             href="https://instagram.com/recetaspati" 
