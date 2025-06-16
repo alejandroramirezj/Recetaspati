@@ -129,7 +129,7 @@ const ProductCatalog = () => {
 
 // ProductCard modificado para aceptar un Product y enlazar directamente
 const ProductCard = ({ product }: { product: Product }) => {
-  const linkDestination = `/product/${product.category}/${product.slug}`;
+  const linkDestination = `/producto/${product.category}/${product.slug}`;
 
   return (
     <Link 
