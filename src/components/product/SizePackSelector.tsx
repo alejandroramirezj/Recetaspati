@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Cake, Cookie, Plus, Minus, Gift } from 'lucide-react';
@@ -164,220 +164,203 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
 
       <MobileVideoPlayer product={product} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
         {/* Tamaño y Sabor */}
-        <div className="space-y-4">
-          <Card className="border-pati-pink/30 shadow-md">
+        <Card className="border-pati-pink/30 shadow-md">
+          <CardHeader className="pb-3 pt-4">
+            <div className="flex items-center gap-2">
+              <Cookie className="h-5 w-5 text-pati-burgundy" />
+              <CardTitle className="text-xl text-pati-burgundy">Elige el Tamaño</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <RadioGroup
+              value={selectedSize || ''}
+              onValueChange={handleSizeSelect}
+              className="flex flex-row w-full gap-2"
+            >
+              {product.options?.map((option) => {
+                const isSelected = selectedSize === option.name;
+                const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-pati-pink/60 text-pati-burgundy hover:border-pati-burgundy/60';
+                
+                return (
+                  <div key={option.name} className="relative flex-1 min-w-0 max-w-[33%] sm:max-w-[200px]" style={{flexBasis: '0', flexGrow: 1}}>
+                    <label
+                      htmlFor={option.name}
+                      className={`w-full h-full border-2 rounded-xl px-2 py-1 sm:px-4 sm:py-1 flex flex-col items-center justify-center text-center cursor-pointer transition-colors overflow-hidden whitespace-normal ${patiSelected}`}
+                    >
+                      <RadioGroupItem
+                        value={option.name}
+                        id={option.name}
+                        className="hidden"
+                      />
+                      <span className="font-bold mb-1 text-base sm:text-lg leading-tight w-full break-words text-center">{option.name}</span>
+                      {option.description && (
+                        <span className="text-sm mb-1 text-pati-brown/90 w-full break-words text-center">{option.description}</span>
+                      )}
+                      <span className="text-xl font-bold mt-1 text-center">{option.price.includes('€') ? formatPrice(parseFloat(option.price.replace('€', '').replace(',', '.'))) + '€' : formatPrice(parseFloat(option.price.replace(',', '.')))}</span>
+                    </label>
+                  </div>
+                );
+              })}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+
+        {product.flavorOptions && product.flavorOptions.length > 0 && (
+          <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedSize ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
             <CardHeader className="pb-3 pt-4">
               <div className="flex items-center gap-2">
-                <Cookie className="h-5 w-5 text-pati-burgundy" />
-                <CardTitle className="text-xl text-pati-burgundy">Elige el Tamaño</CardTitle>
+                <Cake className="h-5 w-5 text-pati-burgundy" />
+                <CardTitle className="text-xl text-pati-burgundy">Elige el Sabor</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <RadioGroup
-                value={selectedSize || ''}
-                onValueChange={handleSizeSelect}
-                className="flex flex-row w-full gap-2"
+                value={selectedFlavor || ''}
+                onValueChange={handleFlavorSelect}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
               >
-                {product.options?.map((option) => {
-                  const isSelected = selectedSize === option.name;
-                  const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-pati-pink/60 text-pati-burgundy hover:border-pati-burgundy/60';
+                {product.flavorOptions.map((flavor) => {
+                  const isSelected = selectedFlavor === flavor.name;
+                  const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-400';
                   
                   return (
-                    <div key={option.name} className="relative flex-1 min-w-0 max-w-[33%] sm:max-w-[200px]" style={{flexBasis: '0', flexGrow: 1}}>
-                      <label
-                        htmlFor={option.name}
-                        className={`w-full h-full border-2 rounded-xl px-2 py-1 sm:px-4 sm:py-1 flex flex-col items-center justify-center text-center cursor-pointer transition-colors overflow-hidden whitespace-normal ${patiSelected}`}
-                      >
-                        <RadioGroupItem
-                          value={option.name}
-                          id={option.name}
-                          className="hidden"
-                        />
-                        <span className="font-bold mb-1 text-base sm:text-lg leading-tight w-full break-words text-center">{option.name}</span>
-                        {option.description && (
-                          <span className="text-sm mb-1 text-pati-brown/90 w-full break-words text-center">{option.description}</span>
+                    <label
+                      key={flavor.name}
+                      htmlFor={`flavor-${flavor.name}`}
+                      className={`flex items-center space-x-3 p-3 border rounded-md cursor-pointer ${patiSelected}`}
+                    >
+                      <RadioGroupItem
+                        value={flavor.name}
+                        id={`flavor-${flavor.name}`}
+                        className="hidden"
+                      />
+                      <div className="flex-grow">
+                        <span className="font-medium text-base leading-none">{flavor.name}</span>
+                        {flavor.description && (
+                          <p className="text-sm text-gray-500 mt-0.5">{flavor.description}</p>
                         )}
-                        <span className="text-xl font-bold mt-1 text-center">{option.price.includes('€') ? formatPrice(parseFloat(option.price.replace('€', '').replace(',', '.'))) + '€' : formatPrice(parseFloat(option.price.replace(',', '.')))}</span>
-                      </label>
-                    </div>
+                      </div>
+                      {flavor.priceAdjustment > 0 && (
+                        <Badge variant="secondary" className="bg-pati-burgundy text-white hover:bg-pati-burgundy/90">
+                          +{formatPrice(flavor.priceAdjustment)}€
+                        </Badge>
+                      )}
+                    </label>
                   );
                 })}
               </RadioGroup>
             </CardContent>
           </Card>
+        )}
 
-          {product.flavorOptions && product.flavorOptions.length > 0 && (
-            <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedSize ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
-              <CardHeader className="pb-3 pt-4">
-                <div className="flex items-center gap-2">
-                  <Cake className="h-5 w-5 text-pati-burgundy" />
-                  {/* <CardTitle className="text-xl text-pati-burgundy">Elige el Sabor</CardTitle> */}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <RadioGroup
-                  value={selectedFlavor || ''}
-                  onValueChange={handleFlavorSelect}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-                >
-                  {product.flavorOptions.map((flavor) => {
-                    const isSelected = selectedFlavor === flavor.name;
-                    const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-400';
-                    
-                    return (
-                      <label
-                        key={flavor.name}
-                        htmlFor={`flavor-${flavor.name}`}
-                        className={`flex items-center space-x-3 p-3 border rounded-md cursor-pointer ${patiSelected}`}
-                      >
-                        <RadioGroupItem
-                          value={flavor.name}
-                          id={`flavor-${flavor.name}`}
-                          className="hidden"
-                        />
-                        <div className="flex-grow">
-                          <span className="font-medium text-base leading-none">{flavor.name}</span>
-                          {flavor.description && (
-                            <p className="text-sm text-gray-500 mt-0.5">{flavor.description}</p>
-                          )}
-                        </div>
-                        {flavor.priceAdjustment > 0 && (
-                          <Badge variant="secondary" className="bg-pati-burgundy text-white hover:bg-pati-burgundy/90">
-                            +{formatPrice(flavor.priceAdjustment)}€
-                          </Badge>
-                        )}
-                      </label>
-                    );
-                  })}
-                </RadioGroup>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Toppings y Resumen */}
-        <div className="space-y-4">
-          {product.toppingOptions && product.toppingOptions.length > 0 && (
-            <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedSize && selectedFlavor ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
-              <CardHeader className="pb-3 pt-4">
-                <div className="flex items-center gap-2">
-                  <Gift className="h-5 w-5 text-pati-burgundy" />
-                  <CardTitle className="text-xl text-pati-burgundy">Toppings Extra</CardTitle>
-                </div>
-                <p className="text-sm text-gray-500">¡Añade un toque especial a tu tarta!</p>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-row flex-nowrap overflow-x-auto space-x-3 pb-2">
-                  {product.toppingOptions.map((topping) => {
-                    const isChecked = selectedToppings.includes(topping.name);
-                    const toppingSelectedClass = isChecked ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-pati-pink/60 text-pati-burgundy hover:border-pati-burgundy/60';
-
-                    return (
-                      <div
-                        key={topping.name}
-                        className={`flex flex-col items-center justify-center p-3 border-2 rounded-xl cursor-pointer transition-colors ${toppingSelectedClass}`}
-                        onClick={() => handleToppingCheck(topping.name, !isChecked)}
-                      >
-                        <span className="font-medium text-center w-full whitespace-normal break-words">{topping.name}</span>
-                        <span className="text-lg font-bold mt-1 text-center w-full">
-                          +{formatPrice(topping.price)}€
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {(selectedSize && selectedFlavor) && (
-            <Card className="border-pati-pink/30 shadow-md p-4">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="flex items-center gap-2">
-                  <Cake className="h-6 w-6 text-pati-burgundy" />
-                  <h3 className="text-lg font-bold font-playfair text-pati-burgundy">Tu Tarta Personalizada</h3>
-                </div>
-                <div className="space-y-1 text-sm text-pati-dark-brown mb-4">
-                  <div className="flex items-center justify-center gap-x-2">
-                    <p className="flex items-center gap-1"><Cookie className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Tamaño:</span> {selectedSize}</p>
-                    <p className="flex items-center gap-1"><Cake className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Sabor:</span> {selectedFlavor}</p>
-                  </div>
-                  {selectedToppings.length > 0 && (
-                    <p className="flex items-center gap-1"><Gift className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Toppings:</span> <span className="text-xs">{selectedToppings.join(', ')}</span></p>
-                  )}
-                  <p className="text-2xl font-bold font-playfair text-pati-burgundy mt-2">Total: {formatPrice(calculateTotalPrice)}€</p>
-                </div>
-
-                <div className="relative w-full h-64 max-w-lg mx-auto rounded-lg overflow-hidden flex items-center justify-center">
-                  {/* Base Cake Image - assuming 'tarta-galleta.png' is the base image */}
-                  <img
-                    src="/images/tarta-galleta.png"
-                    alt="Tarta Galleta Base"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-
-                  {/* Selected Flavor Overlay */}
-                  {selectedFlavor && getOverlayImageUrl(selectedFlavor) && (
-                    <img
-                      src={getOverlayImageUrl(selectedFlavor)}
-                      alt={`${selectedFlavor} overlay`}
-                      className="absolute max-w-[60%] max-h-[60%] w-auto h-auto object-contain z-10"
-                      style={{ top: '40%', left: '50%', transform: 'translate(-50%, -50%)', filter: 'drop-shadow(5px 5px 6px rgba(0, 0, 0, 0.7))' }}
-                    />
-                  )}
-
-                  {/* Selected Toppings Overlay */}
-                  {selectedToppings.flatMap((toppingName, toppingIndex) => {
-                    const toppingImageUrl = getOverlayImageUrl(toppingName);
-                    if (!toppingImageUrl) return [];
-
-                    const instances = [];
-                    for (let i = 0; i < numInstancesPerTopping; i++) {
-                      const overallIndex = (toppingIndex * numInstancesPerTopping) + i;
-                      const position = toppingPositions[overallIndex % toppingPositions.length];
-                      
-                      // Add small random offset to position to avoid perfect overlap
-                      const randomXOffset = (Math.random() - 0.5) * 2; // -1 to +1 percentage points
-                      const randomYOffset = (Math.random() - 0.5) * 2; // -1 to +1 percentage points
-
-                      const dynamicTop = position.top ? `calc(${position.top} + ${randomYOffset}%)` : undefined;
-                      const dynamicLeft = position.left ? `calc(${position.left} + ${randomXOffset}%)` : undefined;
-                      const dynamicRight = position.right ? `calc(${position.right} + ${randomXOffset}%)` : undefined;
-                      const dynamicBottom = position.bottom ? `calc(${position.bottom} + ${randomYOffset}%)` : undefined;
-
-                      instances.push(
-                        <img
-                          key={`${toppingName}-${i}`}
-                          src={toppingImageUrl}
-                          alt={`${toppingName} overlay instance ${i + 1}`}
-                          className="absolute max-w-[25%] max-h-[25%] w-auto h-auto object-contain z-20 transition-all duration-300 ease-out"
-                          style={{
-                            ...(dynamicTop !== undefined && { top: dynamicTop }),
-                            ...(dynamicLeft !== undefined && { left: dynamicLeft }),
-                            ...(dynamicRight !== undefined && { right: dynamicRight }),
-                            ...(dynamicBottom !== undefined && { bottom: dynamicBottom }),
-                            transform: `translate(-50%, -50%) scale(0.8)`,
-                            opacity: 0,
-                            filter: 'drop-shadow(6px 6px 8px rgba(0, 0, 0, 0.9)) contrast(1.2)', // Stronger shadow and contrast
-                          }}
-                          onLoad={(e) => {
-                            // This is a workaround to trigger animation after load
-                            (e.target as HTMLImageElement).style.opacity = '1';
-                            (e.target as HTMLImageElement).style.transform = `translate(-50%, -50%) scale(1)`;
-                          }}
-                        />
-                      );
-                    }
-                    return instances;
-                  })}
-                </div>
+        {/* Toppings Extra - NOW WITHIN THE SAME COLUMN */}
+        {product.toppingOptions && product.toppingOptions.length > 0 && (
+          <Card className={`border-pati-pink/30 shadow-md transition-opacity duration-300 ${selectedFlavor ? 'opacity-100' : 'opacity-60 pointer-events-none'}`}>
+            <CardHeader className="pb-3 pt-4">
+              <div className="flex items-center gap-2">
+                <Gift className="h-5 w-5 text-pati-burgundy" />
+                <CardTitle className="text-xl text-pati-burgundy">Toppings Extra</CardTitle>
               </div>
-            </Card>
-          )}
-        </div>
+              <CardDescription>¡Añade un toque especial a tu tarta!</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-row flex-nowrap overflow-x-auto space-x-3 pb-2 md:grid md:grid-cols-3 lg:grid-cols-4 md:space-x-0 gap-3">
+                {product.toppingOptions.map((topping) => {
+                  const isSelected = selectedToppings.includes(topping.name);
+                  const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-400';
+
+                  return (
+                    <div
+                      key={topping.name}
+                      className={`flex flex-col items-center justify-center p-3 border-2 rounded-xl cursor-pointer transition-colors ${patiSelected}`}
+                      onClick={() => handleToppingCheck(topping.name, !isSelected)}
+                    >
+                      <span className="font-medium text-center w-full whitespace-normal break-words">{topping.name}</span>
+                      {topping.price > 0 && (
+                        <Badge variant="secondary" className="mt-1 bg-pati-burgundy text-white hover:bg-pati-burgundy/90">
+                          +{formatPrice(topping.price)}€
+                        </Badge>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      {selectedSize && selectedFlavor && (
+        <>
+          <p className="text-xl font-bold text-pati-accent mb-6">{formatPrice(calculateTotalPrice)}€</p>
+
+          <div className="relative w-full h-64 max-w-lg mx-auto rounded-lg overflow-hidden flex items-center justify-center">
+            {/* Base Cake Image - assuming 'tarta-galleta.png' is the base image */}
+            <img
+              src="/images/tarta-galleta.png"
+              alt="Tarta Galleta Base"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+
+            {/* Selected Flavor Overlay */}
+            {selectedFlavor && getOverlayImageUrl(selectedFlavor) && (
+              <img
+                src={getOverlayImageUrl(selectedFlavor)}
+                alt={`${selectedFlavor} overlay`}
+                className="absolute max-w-[60%] max-h-[60%] w-auto h-auto object-contain z-10"
+                style={{ top: '40%', left: '50%', transform: 'translate(-50%, -50%)', filter: 'drop-shadow(5px 5px 6px rgba(0, 0, 0, 0.7))' }}
+              />
+            )}
+
+            {/* Selected Toppings Overlay */}
+            {selectedToppings.flatMap((toppingName, toppingIndex) => {
+              const toppingImageUrl = getOverlayImageUrl(toppingName);
+              if (!toppingImageUrl) return [];
+
+              const instances = [];
+              for (let i = 0; i < numInstancesPerTopping; i++) {
+                const overallIndex = (toppingIndex * numInstancesPerTopping) + i;
+                const position = toppingPositions[overallIndex % toppingPositions.length];
+                
+                // Add small random offset to position to avoid perfect overlap
+                const randomXOffset = (Math.random() - 0.5) * 2; // -1 to +1 percentage points
+                const randomYOffset = (Math.random() - 0.5) * 2; // -1 to +1 percentage points
+
+                const dynamicTop = position.top ? `calc(${position.top} + ${randomYOffset}%)` : undefined;
+                const dynamicLeft = position.left ? `calc(${position.left} + ${randomXOffset}%)` : undefined;
+                const dynamicRight = position.right ? `calc(${position.right} + ${randomXOffset}%)` : undefined;
+                const dynamicBottom = position.bottom ? `calc(${position.bottom} + ${randomYOffset}%)` : undefined;
+
+                instances.push(
+                  <img
+                    key={`${toppingName}-${i}`}
+                    src={toppingImageUrl}
+                    alt={`${toppingName} overlay instance ${i + 1}`}
+                    className="absolute max-w-[25%] max-h-[25%] w-auto h-auto object-contain z-20 transition-all duration-300 ease-out"
+                    style={{
+                      ...(dynamicTop !== undefined && { top: dynamicTop }),
+                      ...(dynamicLeft !== undefined && { left: dynamicLeft }),
+                      ...(dynamicRight !== undefined && { right: dynamicRight }),
+                      ...(dynamicBottom !== undefined && { bottom: dynamicBottom }),
+                      transform: `translate(-50%, -50%) scale(0.8)`,
+                      opacity: 0,
+                      filter: 'drop-shadow(6px 6px 8px rgba(0, 0, 0, 0.9)) contrast(1.2)', // Stronger shadow and contrast
+                    }}
+                    onLoad={(e) => {
+                      // This is a workaround to trigger animation after load
+                      (e.target as HTMLImageElement).style.opacity = '1';
+                      (e.target as HTMLImageElement).style.transform = `translate(-50%, -50%) scale(1)`;
+                    }}
+                  />
+                );
+              }
+              return instances;
+            })}
+          </div>
+        </>
+      )}
 
       <Button 
         size="lg" 
