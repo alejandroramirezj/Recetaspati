@@ -38,6 +38,19 @@ export type Product = {
 
 // Centralized product data
 export const productsData: Product[] = [
+  // Tarta-Galleta
+  { 
+      id: 15, 
+      name: "Tarta-Galleta", 
+      description: "Una deliciosa combinación de tarta y galleta, perfecta para cualquier ocasión.", 
+      price: "35€", 
+      image: "/images/tarta-galleta.png",
+      video: "/videos/tarta-galleta.mp4",
+      category: "tartas", 
+      configType: 'flavorOnly',
+      availableFlavors: ["Tarta-Galleta"],
+      size: "8-10 personas" 
+  },
   // Tartas
   { 
       id: 1, 
