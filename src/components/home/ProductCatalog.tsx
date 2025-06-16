@@ -153,7 +153,9 @@ const ProductCard = ({ product }: { product: Product }) => {
         {product.name}
       </h3>
       <div className="font-extrabold text-xl text-pati-dark-brown text-center mb-1">
-        {product.price}
+        {product.price ? product.price : (product.options && product.options.length > 0) ?
+          `${Math.min(...product.options.map(opt => parseFloat(opt.price.replace('€', '').replace(',', '.'))))}€/${Math.max(...product.options.map(opt => parseFloat(opt.price.replace('€', '').replace(',', '.'))))}€`
+          : 'Precio no disponible'}
       </div>
       <span className="absolute inset-0 rounded-xl group-active:bg-pati-burgundy/10 pointer-events-none transition-all"></span>
     </Link>

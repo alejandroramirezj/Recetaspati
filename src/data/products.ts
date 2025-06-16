@@ -80,7 +80,7 @@ export const productsData: Product[] = [
   // Galletas - MOVED TO BE THE SECOND PRODUCT
   {
     id: 2,
-    name: "Caja de Galletas Artesanales",
+    name: "Caja de Galletas",
     description: "Configura tu propia caja con tus sabores favoritos.", // Updated description
     price: "16€/29€", // Indicate pack prices
     image: "/images/Galleta Kinder Bueno.webp", // Restored path
