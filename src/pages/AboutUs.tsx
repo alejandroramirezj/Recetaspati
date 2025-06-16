@@ -25,7 +25,6 @@ const AboutUs = () => {
       <div ref={ref} className="w-full max-w-2xl mx-auto mb-8">
         <video
           ref={videoRef}
-          controls
           loop // Para que se reproduzca en bucle
           muted // Importante para el autoplay en muchos navegadores
           playsInline // Recomendado para autoplay en iOS
