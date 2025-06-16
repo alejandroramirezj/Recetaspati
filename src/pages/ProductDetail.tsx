@@ -129,6 +129,12 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
     });
 
+    const rewardIdSummary = `reward-itempack-summary-${product.id}`;
+    const { reward: rewardSummary, isAnimating: isAnimatingSummaryInternal } = useReward(rewardIdSummary, 'emoji', {
+        emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
+        elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
+    });
+
     // --- DATA DERIVATION ---
     const packOptions = useMemo(() => {
         return product.options?.map(opt => ({
@@ -207,7 +213,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 currentCount,
                 isOrderComplete,
                 finalPackPrice,
-                false,
+                isAnimatingSummaryInternal,
                 isAnimatingSticky
             );
         }
@@ -233,7 +239,8 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         isAnimatingSticky,
         onConfigUpdate,
         selectedItems,  // Añadido para actualizar cuando cambian las galletas seleccionadas
-        selectedFlavors // Añadido para actualizar cuando cambian los sabores seleccionados
+        selectedFlavors, // Añadido para actualizar cuando cambian los sabores seleccionados
+        isAnimatingSummaryInternal
     ]);
 
     // Efecto para escuchar el evento add-to-cart
@@ -244,6 +251,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                     handleAddToCart('sticky');
                 } else if (e.detail.source === 'desktop') {
                     handleAddToCart('summary'); // Usamos summary para el efecto en desktop
+                    rewardSummary(); // Disparar la animación del botón de resumen
                 } else if (e.detail.source === 'summary' && e.detail.packSelection) {
                     // Si viene de la píldora, reconstruimos el estado y añadimos el producto
                     // Usamos los datos de packSelection para crear el item
@@ -290,7 +298,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         return () => {
             document.removeEventListener('add-to-cart', handleCustomEvent as EventListener);
         };
-    }, [isOrderComplete, selectedItems, selectedFlavors, finalPackPrice, currentCustomPackUnitPrice, currentPackIsCustom, selectedPackSize, currentCount, product, dispatch, rewardSticky]);
+    }, [isOrderComplete, selectedItems, selectedFlavors, finalPackPrice, currentCustomPackUnitPrice, currentPackIsCustom, selectedPackSize, currentCount, product, dispatch, rewardSticky, rewardSummary]);
 
     // --- HANDLERS ---
     const decrementItem = (itemName: string) => { // Only for cookiePack
