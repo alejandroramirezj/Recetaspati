@@ -10,44 +10,64 @@
   <!-- Páginas Principales -->
   <url>
     <loc>https://recetaspati.com/</loc>
-    <lastmod>2024-03-20</lastmod>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Categorías -->
   <url>
-    <loc>https://recetaspati.com/categoria/tartas</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/category/tartas</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://recetaspati.com/categoria/galletas</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/category/galletas</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://recetaspati.com/categoria/palmeritas</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/category/palmeritas</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://recetaspati.com/categoria/minicookies</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/category/minicookies</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Productos - Tartas -->
+  <!-- Productos -->
   <url>
-    <loc>https://recetaspati.com/producto/bundtcake-chocolate</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/tartas/tarta-galleta</loc>
+    <lastmod>2024-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://recetaspati.com/images/tarta-galleta.png</image:loc>
+      <image:title>Tarta Galleta</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://recetaspati.com/product/galletas/caja-de-galletas</loc>
+    <lastmod>2024-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://recetaspati.com/images/Galleta Kinder Bueno.webp</image:loc>
+      <image:title>Caja de Galletas</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://recetaspati.com/product/tartas/bundtcake-de-chocolate</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -55,98 +75,69 @@
       <image:title>Bundtcake de Chocolate</image:title>
     </image:image>
   </url>
-
   <url>
-    <loc>https://recetaspati.com/producto/tarta-queso</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://recetaspati.com/producto/tarta-queso-lotus</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://recetaspati.com/producto/tarta-tiramisu</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://recetaspati.com/producto/tarta-tres-leches</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://recetaspati.com/producto/tarta-zanahoria</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://recetaspati.com/producto/pavlova-frutos-rojos</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://recetaspati.com/producto/tarta-lotus</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/tartas/tarta-de-queso</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
-      <image:loc>https://recetaspati.com/images/Tarta Lotus.webp</image:loc>
-      <image:title>Tarta de Lotus</image:title>
+      <image:loc>https://recetaspati.com/images/placeholder.svg</image:loc>
+      <image:title>Tarta de Queso</image:title>
     </image:image>
   </url>
-
   <url>
-    <loc>https://recetaspati.com/producto/tarta-happy-hippo</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/tartas/tarta-de-queso-y-lotus</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
-      <image:loc>https://recetaspati.com/images/Tarta Happy Hippo.webp</image:loc>
-      <image:title>Tarta de Happy Hippo</image:title>
+      <image:loc>https://recetaspati.com/images/placeholder.svg</image:loc>
+      <image:title>Tarta de Queso y Lotus</image:title>
     </image:image>
   </url>
-
   <url>
-    <loc>https://recetaspati.com/producto/tarta-nutella</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/tartas/tarta-de-tiramisu</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
-      <image:loc>https://recetaspati.com/images/Tarta Nutela.webp</image:loc>
-      <image:title>Tarta de Nutella</image:title>
+      <image:loc>https://recetaspati.com/images/placeholder.svg</image:loc>
+      <image:title>Tarta de Tiramisú</image:title>
     </image:image>
   </url>
-
-  <!-- Productos - Galletas -->
   <url>
-    <loc>https://recetaspati.com/producto/caja-galletas-artesanales</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/tartas/tarta-de-tres-leches</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
-      <image:loc>https://recetaspati.com/images/Galleta Kinder Bueno.webp</image:loc>
-      <image:title>Caja de Galletas Artesanales</image:title>
+      <image:loc>https://recetaspati.com/images/placeholder.svg</image:loc>
+      <image:title>Tarta de Tres Leches</image:title>
     </image:image>
   </url>
-
-  <!-- Productos - Palmeritas -->
   <url>
-    <loc>https://recetaspati.com/producto/caja-palmeritas-surtidas</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/tartas/tarta-de-zanahoria</loc>
+    <lastmod>2024-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://recetaspati.com/images/placeholder.svg</image:loc>
+      <image:title>Tarta de Zanahoria</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://recetaspati.com/product/tartas/pavlova-de-frutos-rojos</loc>
+    <lastmod>2024-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://recetaspati.com/images/placeholder.svg</image:loc>
+      <image:title>Pavlova de Frutos Rojos</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://recetaspati.com/product/palmeritas/caja-de-palmeritas-surtidas</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -154,28 +145,54 @@
       <image:title>Caja de Palmeritas Surtidas</image:title>
     </image:image>
   </url>
-
-  <!-- Productos - Mini Tartas -->
   <url>
-    <loc>https://recetaspati.com/producto/mini-tarta-individual</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/mini-tartas/caja-de-mini-cakes</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://recetaspati.com/images/Minicakes.webp</image:loc>
-      <image:title>Mini Tarta Individual</image:title>
+      <image:title>Caja de Mini Cakes</image:title>
     </image:image>
   </url>
-
-  <!-- Productos - Minicookies -->
   <url>
-    <loc>https://recetaspati.com/producto/minicookies</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://recetaspati.com/product/minicookies/caja-de-mini-cookies</loc>
+    <lastmod>2024-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
       <image:loc>https://recetaspati.com/images/minicookies.webp</image:loc>
-      <image:title>Minicookies</image:title>
+      <image:title>Caja de Mini Cookies</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://recetaspati.com/product/tartas/tarta-de-happy-hippo</loc>
+    <lastmod>2024-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://recetaspati.com/images/Tarta Happy Hippo.webp</image:loc>
+      <image:title>Tarta de Happy Hippo</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://recetaspati.com/product/tartas/tarta-lotus-biscoff</loc>
+    <lastmod>2024-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://recetaspati.com/images/Tarta Lotus.webp</image:loc>
+      <image:title>Tarta Lotus Biscoff</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://recetaspati.com/product/tartas/tarta-de-nutella</loc>
+    <lastmod>2024-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://recetaspati.com/images/Tarta Nutela.webp</image:loc>
+      <image:title>Tarta de Nutella</image:title>
     </image:image>
   </url>
 
@@ -198,7 +215,21 @@
     <loc>https://recetaspati.com/pedido</loc>
     <lastmod>2024-03-20</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://recetaspati.com/privacidad</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://recetaspati.com/faq</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 
 </urlset> 
