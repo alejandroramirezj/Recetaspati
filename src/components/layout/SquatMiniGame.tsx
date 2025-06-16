@@ -44,9 +44,9 @@ const SquatMiniGame: React.FC = () => {
         </p>
       )}
       
-      {/* Hand icon and speech bubble - positioned outside the circle */}
+      {/* Hand icon and speech bubble - positioned outside the circle but inside main div */}
       {!showPrizeMessage && squatCount === 0 && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col items-center animate-bounce-custom" style={{ '--delay': '0s' } as React.CSSProperties}> 
+          <div className="absolute left-[20px] top-[60%] -translate-y-1/2 flex flex-col items-center animate-bounce-custom" style={{ '--delay': '0s' } as React.CSSProperties}> 
               <span className="text-pati-burgundy text-4xl">👉🏻</span>
               <span className="bg-pati-burgundy text-white text-xs px-2 py-1 rounded-md mt-1 shadow-md text-center" style={{ width: '90px' }}>¡Toca para<br/>sentadillas!</span> 
           </div> 
