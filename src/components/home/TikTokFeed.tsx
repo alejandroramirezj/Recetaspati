@@ -5,9 +5,9 @@ import { User, Heart, Video, Eye } from 'lucide-react';
 
 // Array of local video paths
 const localVideoPaths = [
-  "/videos/video-titok-1.mp4",
-  "/videos/video-titok-2.mp4",
-  "/videos/video-titok-3.mp4",
+  "/videos/recetaspati1.mp4",
+  "/videos/recetaspati2.mp4",
+  "/videos/recetaspati3.mp4",
 ];
 
 const TikTokFeed = () => {

@@ -1,5 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Instagram, BookText, User } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+
+// Array of local video paths for Instagram
+const localVideoPaths = [
+  "/videos/recetaspati1.mp4",
+  "/videos/recetaspati2.mp4",
+  "/videos/recetaspati3.mp4",
+];
 
 // Ya no se necesita useEffect para el embed de Instagram
 // Ya no se necesita la declaración global de window.instgrm
@@ -36,22 +44,24 @@ const InstagramFeed = () => {
           </div>
         </div>
 
-        {/* Video Local en lugar del anterior embed/grid */}
-        <div className="flex justify-center mb-10">
-          <div className="w-full sm:w-auto max-w-xs aspect-[9/16] bg-white rounded-lg shadow-xl overflow-hidden border-2 border-pati-pink/50">
-            <video 
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata" 
-              className="w-full h-full object-cover"
-              poster="/images/placeholder.svg" // Opcional: Cambiar a un poster específico para este video
-            >
-              <source src="/videos/recetaspati.mp4#t=0.5" type="video/mp4" />
-              Tu navegador no soporta vídeos.
-            </video>
-          </div>
+        {/* Flex container for videos - Scrollable on mobile, single row on web */}
+        <div className="flex flex-row overflow-x-auto space-x-4 md:space-x-6 pb-4 mb-10 justify-start md:justify-center scrollbar-thin scrollbar-thumb-pati-pink scrollbar-track-pati-light-pink">
+          {localVideoPaths.map((videoPath, index) => (
+            <div key={index} className="flex-shrink-0 w-[280px] md:w-[320px]"> {/* Adjusted fixed width for consistency */}
+              <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] bg-black">
+                <CardContent className="p-0 h-full">
+                  <video
+                    src={videoPath}
+                    autoPlay loop muted playsInline
+                    className="w-full h-full object-cover"
+                    aria-label={`Video de Instagram ${index + 1}`}
+                  >
+                    Tu navegador no soporta la etiqueta de vídeo.
+                  </video>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
         </div>
 
         {/* Botón de seguir en Instagram */}
