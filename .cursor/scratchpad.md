@@ -14,6 +14,7 @@ El usuario ha solicitado los siguientes cambios:
 - Incluir el isotipo a la izquierda del logo en el Navbar.
 - Eliminar los botones de TikTok e Instagram del Navbar en la versión móvil.
 - Centrar el logo con el isotipo en el Navbar en la versión móvil.
+- Añadir un acceso al carrito a la derecha del Navbar con un icono SVG en la versión móvil.
 
 ## Key Challenges and Analysis (Planner Input - Initial Review)
 

@@ -37,7 +37,7 @@ const Navbar = () => {
         {/* Logo y redes sociales alineados en la misma fila */}
         <div className="flex flex-1 items-center justify-center lg:justify-between w-full">
           <Link to="/" className="flex items-center">
-            <img src="/images/Isotipo.webp" alt="Isotipo Pati Sweet Creations" className="h-10 mr-2" />
+            <img src="/images/Isotipo.webp" alt="Isotipo Pati Sweet Creations" className="h-12 mr-2" />
             <img src="/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-10" />
           </Link>
           {/* Redes sociales siempre a la derecha del logo - HIDDEN ON MOBILE */}
@@ -53,6 +53,22 @@ const Navbar = () => {
             </a>
           </div>
         </div>
+        {/* Mobile Cart Icon - Shown on mobile, hidden on large screens */}
+        <Link 
+          to="/pedido" 
+          className={`relative flex lg:hidden items-center justify-center p-2 rounded-full hover:bg-pati-cream transition-all duration-300 ease-in-out ${isAnimating ? 'animate-bounce' : ''}`}
+          aria-label={totalItems > 0 ? `Ver carrito (${totalItems} artículo${totalItems !== 1 ? 's' : ''})` : "Ver carrito (vacío)"}
+        >
+          <ShoppingCart className="h-6 w-6 text-pati-brown" />
+          {totalItems > 0 && (
+            <Badge 
+              variant="destructive" 
+              className={`absolute -top-1 -right-1 h-5 w-5 min-w-[1.25rem] p-0 flex items-center justify-center text-xs rounded-full transition-transform ${isAnimating ? 'scale-110' : ''}`}
+            >
+              {totalItems}
+            </Badge>
+          )}
+        </Link>
         {/* Desktop navigation */}
         <nav className="hidden lg:flex items-center space-x-6 ml-8">
           <a href="/#productos" className="text-pati-dark-brown hover:text-pati-burgundy font-medium transition-colors">
