@@ -266,7 +266,7 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
               <CardDescription>¡Añade un toque especial a tu tarta!</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex flex-row flex-nowrap overflow-x-auto space-x-3 pb-2 md:grid md:grid-cols-3 lg:grid-cols-4 md:space-x-0 gap-3">
+              <div className="flex flex-row flex-nowrap overflow-x-auto gap-2 pb-2 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-3">
                 {product.toppingOptions.map((topping) => {
                   const isSelected = selectedToppings.includes(topping.name);
                   const patiSelected = isSelected ? 'bg-pati-burgundy border-pati-burgundy text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-400';

@@ -801,7 +801,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                                  rewardSummary(); // Asegurar que la animación se activa aquí
                              }}
                              size="lg" 
-                             className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                             className={`relative w-full max-w-[280px] mx-auto bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
                              disabled={!isOrderComplete || isAnimatingSummary} 
                          >
                              <span id={rewardIdSummary} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
