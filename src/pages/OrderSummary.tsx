@@ -57,32 +57,36 @@ const OrderSummary: React.FC = () => {
                  </Button>
              </div>
         ) : (
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-lg mx-auto">
                  <Card className="border-pati-pink/30 shadow-md mb-8">
                      <CardHeader>
                          <CardTitle className="text-xl text-pati-burgundy">Artículos ({totalItems})</CardTitle>
                      </CardHeader>
-                    <CardContent className="divide-y divide-pati-pink/20">
+                    <CardContent className="divide-y divide-pati-pink/20 px-4 py-4">
                         {state.items.map((item) => {
                             return (
-                             <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 py-4 px-2 sm:px-0">
+                             <div key={item.id} className="flex items-start gap-3 border-b pb-3 last:border-b-0">
                                 <img 
                                      src={item.imageUrl || '/placeholder.svg'}
                                      alt={`Imagen de ${item.productName}${item.selectedOptions?.flavor ? ' sabor ' + item.selectedOptions.flavor : ''}`}
-                                     className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border flex-shrink-0 mx-auto sm:mx-0"
+                                     className="w-16 h-16 object-cover rounded-md border flex-shrink-0"
                                      loading="lazy"
                                  />
-                                 <div className="flex-grow space-y-1 text-center sm:text-left">
-                                     <p className="font-semibold text-pati-burgundy leading-tight text-lg">{item.productName}</p>
+                                 <div className="flex-grow space-y-1">
+                                     <p className="font-semibold text-pati-burgundy leading-tight">{item.productName}</p>
                                      {/* Display options */}
-                                     {item.selectedOptions?.pack && <p className="text-sm text-gray-600">Pack: {item.selectedOptions.pack}</p>}
-                                     {item.type === 'flavorQuantity' && item.selectedOptions?.flavor && <p className="text-sm text-gray-600">Sabor: {item.selectedOptions.flavor}</p>}
-                                     {item.type === 'flavorOnly' && item.selectedOptions?.flavor && <p className="text-sm text-gray-600">Opción: {item.selectedOptions.flavor}</p>}
+                                     {item.selectedOptions?.pack && (
+                                         <p className="text-xs text-gray-500">
+                                             Contenido del Pack ({String(item.selectedOptions.pack).replace('Caja ', '')}):
+                                         </p>
+                                     )}
+                                     {item.type === 'flavorQuantity' && item.selectedOptions?.flavor && <p className="text-xs text-gray-500">Sabor: {item.selectedOptions.flavor}</p>}
+                                     {item.type === 'flavorOnly' && item.selectedOptions?.flavor && <p className="text-xs text-gray-500">Opción: {item.selectedOptions.flavor}</p>}
                                      {/* Section for cookiePack to display individual cookies from cookieDetails.cookies */}
                                      {item.type === 'cookiePack' && item.cookieDetails && item.cookieDetails.cookies && (
-                                         <div className="text-sm text-gray-600 space-y-0.5">
-                                            <p className="font-medium">Contenido del Pack ({item.cookieDetails.packSize} unidades):</p>
-                                            <ul className="list-disc list-inside pl-2 text-xs">
+                                         <div className="text-xs text-gray-500 space-y-0.5">
+                                            <p className="font-medium">Contenido ({item.cookieDetails.packSize} uds):</p>
+                                            <ul className="list-disc list-inside pl-2">
                                                 {Object.entries(item.cookieDetails.cookies).map(([name, quantity]) => (
                                                     <li key={name}>{quantity}x {name}</li>
                                                 ))}
@@ -91,26 +95,27 @@ const OrderSummary: React.FC = () => {
                                      )}
                                      {/* Section for flavorPack (like Palmeritas) and flavorMultiSelect (like Minicookies) to display selectedFlavors */}
                                      {(item.type === 'flavorPack' || item.type === 'flavorMultiSelect') && item.selectedFlavors && item.selectedFlavors.length > 0 && (
-                                        <div className="text-sm text-gray-600">
+                                        <div className="text-xs text-gray-500">
                                             Sabores: {item.selectedFlavors.join(' y ')}
                                         </div>
                                      )}
-                                     <p className="text-md font-bold text-pati-accent pt-1">
+                                     {/* Price moved to be below options */}
+                                     <p className="font-semibold text-pati-burgundy pt-1">
                                          {formatPrice(item.packPrice ?? item.unitPrice)} {item.unitPrice ? '/ ud.' : ''}
                                      </p>
                                  </div>
-                                 {/* Quantity Controls & Remove (alineado a la derecha en sm+) */}
-                                 <div className="flex flex-row sm:flex-col items-center justify-center sm:items-end gap-2 flex-shrink-0 w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto">
-                                     <div className="flex items-center gap-2">
-                                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleUpdateQuantity(item.id, item.quantity, -1)} aria-label="Reducir cantidad">
+                                 {/* Quantity Controls & Remove */}
+                                 <div className="flex flex-col items-end gap-1 ml-auto">
+                                     <div className="flex items-center gap-1">
+                                         <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => handleUpdateQuantity(item.id, item.quantity, -1)} aria-label="Reducir cantidad">
                                               <MinusCircle className="h-4 w-4" />
                                           </Button>
-                                          <span className="font-bold text-lg w-8 text-center tabular-nums">{item.quantity}</span>
-                                          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleUpdateQuantity(item.id, item.quantity, 1)} aria-label="Aumentar cantidad">
+                                          <span className="font-semibold text-sm w-6 text-center tabular-nums">{item.quantity}</span>
+                                          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => handleUpdateQuantity(item.id, item.quantity, 1)} aria-label="Aumentar cantidad">
                                               <PlusCircle className="h-4 w-4" />
                                           </Button>
                                       </div>
-                                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-auto py-1 text-xs" onClick={() => handleRemoveItem(item.id)}>
+                                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 h-auto py-0.5 text-xs" onClick={() => handleRemoveItem(item.id)}>
                                            <Trash2 className="h-3 w-3 mr-1"/> Quitar
                                       </Button>
                                   </div>
@@ -118,7 +123,7 @@ const OrderSummary: React.FC = () => {
                             );
                         })}
                     </CardContent>
-                    <CardFooter className="bg-gray-50 py-4 px-6 mt-4">
+                    <CardFooter className="bg-gray-50 py-4 px-6 mt-4 hidden">
                         <div className="w-full flex justify-end items-center gap-4">
                              <span className="text-lg font-semibold text-pati-dark-brown">Total Pedido:</span>
                              <span className="text-2xl font-bold text-pati-burgundy">{formatPrice(cartTotal)}</span>

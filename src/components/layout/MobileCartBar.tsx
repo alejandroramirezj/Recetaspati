@@ -103,6 +103,11 @@ const MobileCartBar: React.FC = () => {
     setShowAddButton(true);
   }, [location.pathname, packSelection?.selectedPackSize, packSelection?.currentPackIsCustom]);
 
+  // Ocultar MobileCartBar en la página de resumen del pedido
+  if (location.pathname === '/pedido') {
+    return null;
+  }
+
   if (totalItems === 0 && !packSelection?.isActive) {
     return null; // No mostrar si no hay carrito ni selección activa
   }

@@ -15,6 +15,11 @@ El usuario ha solicitado los siguientes cambios:
 - Eliminar los botones de TikTok e Instagram del Navbar en la versión móvil.
 - Centrar el logo con el isotipo en el Navbar en la versión móvil.
 - Añadir un acceso al carrito a la derecha del Navbar con un icono SVG en la versión móvil.
+- El resumen del pedido (la vista en móvil) tiene que ser como el carrito móvil.
+- La píldora del carrito móvil debe ocultarse cuando se está en la pestaña de resumen del pedido.
+- Ocultar el contador de artículos del Navbar en móvil.
+- Ocultar la barra del total del pedido en la página de resumen.
+- Restaurar el contador rojo de ítems en el Navbar móvil.
 
 ## Key Challenges and Analysis (Planner Input - Initial Review)
 
@@ -215,27 +220,7 @@ El usuario ha solicitado la creación de un minijuego interactivo en el sitio we
 
 ## Executor's Feedback or Assistance Requests
 
-*Implementación del límite de 2 sabores para el pack de 6 galletas completada. Por favor, prueba la funcionalidad y confirma si todo opera según lo esperado. Las tareas de optimización de espacio quedan pendientes.*
-*Iniciando nueva tarea: Añadir opción de "Pack Personalizado Galletas".*
-
-*El selector de packs de galletas ahora es tipo botón, alineado horizontalmente en desktop y vertical en móvil, con selección visual clara y mostrando nombre, precio y descripción. Por favor, revisa visualmente el cambio y dime si cumple con el objetivo o si deseas algún ajuste adicional.*
-
-## Lessons Learned
-
-- La gestión de estado con `useReducer` y `Context` es efectiva para el carrito.
-- Es importante definir tipos claros (`TypeScript`) para productos y carrito para evitar errores.
-- La generación de IDs únicos para `CartItem` requiere considerar las opciones seleccionadas para evitar colisiones.
-- El `linter` puede dar falsos positivos o requerir varios intentos para aplicar correcciones complejas de tipos.
-- Usar `alert()` para feedback no es ideal; preferible `toast` o animaciones sutiles.
-- Siempre verificar rutas (`/pedido`) antes de enlazar a ellas.
-- La animación directa del icono del carrito es una alternativa viable al `toast` para feedback de "añadir al carrito".
-- Hacer la barra inferior del configurador de packs siempre visible mejora la UX en escritorio.
-- El atributo `loading="lazy"` es una forma sencilla de mejorar el rendimiento de carga inicial de imágenes.
-- Añadir `aria-label` y otros atributos ARIA mejora la accesibilidad para usuarios de lectores de pantalla.
-- La optimización del espacio es un equilibrio entre densidad y legibilidad; cambios pequeños pueden tener impacto acumulativo.
-- Es útil revisar paddings, márgenes, gaps y alturas mínimas globalmente.
-- Al modificar configuradores complejos, es importante rastrear múltiples estados (ej. cantidad total, cantidad de tipos únicos, límites para cada uno) y asegurarse de que la UI refleje correctamente las restricciones.
-- (Añadir futuras lecciones aquí)
+# Lessons
 
 ## Background and Motivation
 El usuario desea que el resumen del pedido (`OrderSummary.tsx`) y el carrito móvil (`MobileCartBar.tsx`) muestren claramente los sabores seleccionados o las galletas individuales para todos los tipos de productos. Se corrigió `OrderSummary.tsx`, pero `MobileCartBar.tsx` aún no mostraba todos los detalles correctamente.
