@@ -73,7 +73,8 @@ export const productsData: Product[] = [
       toppingOptions: [
         { name: 'Kinder Bueno', price: 1 },
         { name: 'Happy Hippo', price: 2 },
-        { name: 'Kinder Maxi', price: 1 }
+        { name: 'Kinder Maxi', price: 1 },
+        { name: 'Galleta Lotus', price: 1 }
       ]
   },
   // Galletas - MOVED TO BE THE SECOND PRODUCT

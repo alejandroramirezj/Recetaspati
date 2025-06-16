@@ -53,6 +53,7 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
     'Happy Hippo': '/images/happy-hippo.png',
     'Kinder Bueno': '/images/kinder-bueno.png',
     'Kinder Maxi': '/images/kinder-maxi.png',
+    'Galleta Lotus': '/images/galleta-lotus.png',
     // Add other toppings if they have specific overlay images
   };
 
