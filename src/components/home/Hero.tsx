@@ -109,10 +109,10 @@ const Hero = () => {
                 loop
                 muted
                 playsInline
-                poster="/images/happy-hippo-poster.webp"
+                poster="/images/tarta-galleta.png"
                 aria-label="Vídeo viral de galletas artesanas en Granada"
               >
-                <source src="/videos/happy-hippo.mp4" type="video/mp4" />
+                <source src="/videos/tarta-galleta.mp4" type="video/mp4" />
               </video>
             </motion.div>
             {/* Botón fijo debajo del video */}

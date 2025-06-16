@@ -6,6 +6,11 @@ El objetivo es crear/mejorar una web sencilla para "Pati Sweet Creations" que mu
 
 El usuario desea que el resumen del pedido (`OrderSummary.tsx`) y el carrito móvil (`MobileCartBar.tsx`) muestren claramente los sabores seleccionados o las galletas individuales para todos los tipos de productos. También solicitó la conversión de imágenes `.png` a formato `.webp` en todo el proyecto.
 
+El usuario ha solicitado los siguientes cambios:
+
+- Que el segundo producto del catálogo sea la "caja de galletas".
+- Que la sección "hero" se centre en la "tarta de galletas en Granada", con el texto "Pide tu tarta de galleta".
+
 ## Key Challenges and Analysis (Planner Input - Initial Review)
 
 ### 1. Image Optimization
