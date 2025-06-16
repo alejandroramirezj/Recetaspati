@@ -316,20 +316,20 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         }
         
         // Lógica existente para packs con tamaño fijo
-        const tổngSốLượngHiệnTại = Object.values(selectedItems).reduce((sum, count) => sum + count, 0);
-        const sốLượngHươngVịĐộcĐáoHiệnTại = Object.keys(selectedItems).length;
-        const hươngVịĐãĐượcChọn = (selectedItems[itemName] || 0) > 0;
+        const currentTotalCount = Object.values(selectedItems).reduce((sum, count) => sum + count, 0);
+        const currentUniqueFlavorCount = Object.keys(selectedItems).length;
+        const isFlavorAlreadySelected = (selectedItems[itemName] || 0) > 0;
 
         // Condición 1: No exceder el tamaño total del pack
-        if (tổngSốLượngHiệnTại >= (selectedPackSize || 0)) {
+        if (currentTotalCount >= (selectedPackSize || 0)) {
                     return;
                 }
 
         // Condición 2: Respetar el límite de sabores únicos, si está definido
         if (maxUniqueSelectedFlavorsAllowed !== null) {
-            if (sốLượngHươngVịĐộcĐáoHiệnTại >= maxUniqueSelectedFlavorsAllowed && !hươngVịĐãĐượcChọn) {
+            if (currentUniqueFlavorCount >= maxUniqueSelectedFlavorsAllowed && !isFlavorAlreadySelected) {
                 // Ya se alcanzó el límite de sabores únicos Y este es un sabor nuevo
-                console.warn(`Límite de ${maxUniqueSelectedFlavorsAllowed} sabores únicos alcanzado.`);
+                console.warn(`Máximo de ${maxUniqueSelectedFlavorsAllowed} sabores únicos alcanzado.`);
                 return;
             }
         }
@@ -426,7 +426,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 selectedOptions: { pack: 'Personalizado' } 
             };
 
-        } else if (selectedPackSize) { 
+        } else {
             cartItemId = `${product.id}-pack${selectedPackSize}`;
             if (product.configType === 'cookiePack') {
                 cartItemPayload = {
@@ -445,9 +445,6 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 console.error("Tipo de producto no soportado para añadir al carrito desde ItemPackConfigurator para packs fijos");
                 return;
             }
-        } else {
-            console.error("Estado inválido en handleAddToCart: ni personalizado ni packSize seleccionado.");
-            return;
         }
 
         dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } }); // Siempre ADD_ITEM

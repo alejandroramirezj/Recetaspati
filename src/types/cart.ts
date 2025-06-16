@@ -15,7 +15,7 @@ export interface CartItem {
   
   // Opciones específicas seleccionadas
   selectedOptions?: {
-    [key: string]: string | number; // Ej: { sabor: 'Chocolate', tamaño: 'Grande' }
+    [key: string]: string | number | string[]; // Ej: { sabor: 'Chocolate', tamaño: 'Grande', toppings: ['Oreo'] }
   };
 
   // Detalles específicos para packs de galletas

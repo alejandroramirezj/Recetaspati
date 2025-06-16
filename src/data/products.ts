@@ -20,6 +20,17 @@ export type IndividualCookie = {
   description: string;
 };
 
+export type FlavorOption = {
+  name: string;
+  priceAdjustment: number; // Precio adicional o 0 si está incluido
+  description?: string;
+};
+
+export type Topping = {
+  name: string;
+  price: number;
+};
+
 export type Product = {
   id: number;
   name: string;
@@ -34,6 +45,8 @@ export type Product = {
   individualCookies?: IndividualCookie[]; // Specific to cookiePack
   availableFlavors?: string[]; // ADDED: For flavor selection
   unitPrice?: number; // ADDED: For items sold individually (like mini-tartas)
+  flavorOptions?: FlavorOption[]; // NUEVO: Opciones de sabor para tartas
+  toppingOptions?: Topping[];     // NUEVO: Opciones de toppings para tartas
 };
 
 // Centralized product data
@@ -50,6 +63,17 @@ export const productsData: Product[] = [
       options: [
         { name: 'Mediana', price: '22€', description: 'Para 8 personas' },
         { name: 'Grande', price: '35€', description: 'Para 14 personas' }
+      ],
+      flavorOptions: [
+        { name: 'Sin relleno', priceAdjustment: 0 },
+        { name: 'Nutella', priceAdjustment: 1 },
+        { name: 'Lotus', priceAdjustment: 1 },
+        { name: 'Kinder', priceAdjustment: 1 }
+      ],
+      toppingOptions: [
+        { name: 'Kinder Bueno', price: 1 },
+        { name: 'Happy Hippo', price: 2 },
+        { name: 'Kinder Maxi', price: 1 }
       ]
   },
   // Galletas - MOVED TO BE THE SECOND PRODUCT
