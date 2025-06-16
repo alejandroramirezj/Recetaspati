@@ -64,14 +64,6 @@ const Hero = () => {
       </div>
       <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center">
         <div className="w-full max-w-2xl space-y-3 flex flex-col items-center">
-          {/* Isotipo centrado */}
-          <div className="flex justify-center items-center mb-2 w-full">
-            <img 
-              src="/images/Isotipo.webp"
-              alt="Logo Pati Sweet Creations" 
-              className="h-24 md:h-32 w-auto mx-auto"
-            />
-          </div>
           {/* Título SEO y viral */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl text-pati-burgundy max-w-2xl mx-auto font-extrabold drop-shadow-lg leading-tight">
             Tarta de galleta en Granada

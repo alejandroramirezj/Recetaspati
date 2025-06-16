@@ -35,12 +35,13 @@ const Navbar = () => {
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between lg:justify-between relative">
         {/* Logo y redes sociales alineados en la misma fila */}
-        <div className="flex flex-1 items-center justify-between w-full">
+        <div className="flex flex-1 items-center justify-center lg:justify-between w-full">
           <Link to="/" className="flex items-center">
+            <img src="/images/Isotipo.webp" alt="Isotipo Pati Sweet Creations" className="h-10 mr-2" />
             <img src="/images/recetaspati.webp" alt="Recetas Pati Logo" className="h-10" />
           </Link>
-          {/* Redes sociales siempre a la derecha del logo */}
-          <div className="flex items-center gap-3 ml-2">
+          {/* Redes sociales siempre a la derecha del logo - HIDDEN ON MOBILE */}
+          <div className="hidden lg:flex items-center gap-3 ml-2">
             <a href="https://tiktok.com/@recetaspati_" target="_blank" rel="noopener noreferrer" aria-label="TikTok Recetas Pati" className="flex items-center gap-1 rounded-full bg-pati-burgundy px-3 py-1.5 shadow-lg shadow-pati-pink/10 hover:scale-105 hover:ring-2 hover:ring-pati-pink/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pati-pink/40">
               <FaTiktok size={20} className="text-white" />
               <span className="text-xs text-white font-extrabold flex items-center gap-1">{TIKTOK_LIKES} <Heart size={14} className="inline text-pati-pink stroke-2" /></span>

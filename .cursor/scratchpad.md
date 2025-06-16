@@ -10,6 +10,10 @@ El usuario ha solicitado los siguientes cambios:
 
 - Que el segundo producto del catálogo sea la "caja de galletas".
 - Que la sección "hero" se centre en la "tarta de galletas en Granada", con el texto "Pide tu tarta de galleta".
+- Eliminar el isotipo de la sección Hero.
+- Incluir el isotipo a la izquierda del logo en el Navbar.
+- Eliminar los botones de TikTok e Instagram del Navbar en la versión móvil.
+- Centrar el logo con el isotipo en el Navbar en la versión móvil.
 
 ## Key Challenges and Analysis (Planner Input - Initial Review)
 
