@@ -40,7 +40,7 @@ const AboutUs = () => {
       </div>
       <section className="max-w-3xl mx-auto text-pati-dark-brown text-lg leading-relaxed text-center">
         <p>
-          Soy Pati 👋, el alma de <strong>Recetas Pati</strong>. Mi pasión por la cocina <strong>desde pequeñita</strong> me llevó a especializarme en <strong>galletas</strong> 🍪. Mi logo es un reflejo de mi vida: <strong>CrossFit</strong> 💪, mi perrita <strong>Arya</strong> 🐶 y la <strong>cocina</strong> 👩‍🍳.
+          Soy Pati 👋, el alma de <strong>Recetas Pati</strong>. Mi pasión por la cocina <strong>desde pequeñita</strong> me llevó a especializarme en la <strong>reposteria</strong> 🍪. Mi logo es un reflejo de mis pasiones: <strong>Deporte</strong> 💪, mi perrita <strong>Arya</strong> 🐶 y la <strong>repostería</strong> 👩‍🍳.
         </p>
       </section>
     </main>
