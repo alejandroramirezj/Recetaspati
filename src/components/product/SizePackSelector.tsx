@@ -46,8 +46,8 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
   const itemImageMap: { [key: string]: string } = {
     // Flavors (as per src/data/products.ts flavorOptions for Tarta Galleta)
     // 'Nutella': '/images/nutella.png', // Assuming a nutella.png exists for 'Nutella' - REMOVED AS REQUESTED
-    'Lotus': '/images/lotus.png',     // Assuming a lotus.png exists for 'Lotus'
-    'Kinder': '/images/kinder-bueno.png', // Using kinder-bueno for the 'Kinder' flavor
+    // 'Lotus': '/images/lotus.png',     // Assuming a lotus.png exists for 'Lotus'
+    // 'Kinder': '/images/kinder-bueno.png', // Using kinder-bueno for the 'Kinder' flavor
 
     // Toppings (as per existing toppings or new ones)
     'Happy Hippo': '/images/happy-hippo.png',
@@ -203,7 +203,7 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
               <CardHeader className="pb-3 pt-4">
                 <div className="flex items-center gap-2">
                   <Cake className="h-5 w-5 text-pati-burgundy" />
-                  <CardTitle className="text-xl text-pati-burgundy">Elige el Sabor</CardTitle>
+                  {/* <CardTitle className="text-xl text-pati-burgundy">Elige el Sabor</CardTitle> */}
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -289,13 +289,15 @@ const SizePackSelector: React.FC<SizePackSelectorProps> = ({ product }) => {
                   <Cake className="h-6 w-6 text-pati-burgundy" />
                   <h3 className="text-lg font-bold font-playfair text-pati-burgundy">Tu Tarta Personalizada</h3>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5 text-sm text-pati-dark-brown mb-4">
-                  <p className="flex items-center gap-1"><Cookie className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Tamaño:</span> {selectedSize}</p>
-                  <p className="flex items-center gap-1"><Cake className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Sabor:</span> {selectedFlavor}</p>
+                <div className="space-y-1 text-sm text-pati-dark-brown mb-4">
+                  <div className="flex items-center justify-center gap-x-2">
+                    <p className="flex items-center gap-1"><Cookie className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Tamaño:</span> {selectedSize}</p>
+                    <p className="flex items-center gap-1"><Cake className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Sabor:</span> {selectedFlavor}</p>
+                  </div>
                   {selectedToppings.length > 0 && (
-                    <p className="flex items-center gap-1"><Gift className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Toppings:</span> {selectedToppings.join(', ')}</p>
+                    <p className="flex items-center gap-1"><Gift className="h-4 w-4 text-pati-burgundy" /> <span className="font-medium">Toppings:</span> <span className="text-xs">{selectedToppings.join(', ')}</span></p>
                   )}
-                  <p className="text-xl font-bold font-playfair text-pati-burgundy mt-2">Total: {calculateTotalPrice.toFixed(2).replace('.', ',')}€</p>
+                  <p className="text-2xl font-bold font-playfair text-pati-burgundy mt-2">Total: {calculateTotalPrice.toFixed(2).replace('.', ',')}€</p>
                 </div>
 
                 <div className="relative w-full h-64 max-w-lg mx-auto rounded-lg overflow-hidden flex items-center justify-center">
