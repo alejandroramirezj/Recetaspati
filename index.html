@@ -10,6 +10,13 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://recetaspati.com" />
 
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#8B0000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Recetas Pati" />
+    <link rel="manifest" href="/manifest.json" />
+
     <!-- Favicon Links -->
     <link rel="icon" href="/images/Isotipo.png" type="image/png" />
     <link rel="apple-touch-icon" href="/images/Isotipo.png" />
@@ -74,5 +81,18 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script async src="https://www.tiktok.com/embed.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch((err) => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,23 @@
+{
+  "name": "Recetas Pati",
+  "short_name": "Recetas Pati",
+  "description": "Dulces artesanales elaborados en Granada con ingredientes naturales",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8B0000",
+  "icons": [
+    {
+      "src": "/images/Isotipo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/Isotipo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+} 
