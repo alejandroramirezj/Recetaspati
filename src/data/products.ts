@@ -1,7 +1,7 @@
 // src/data/products.ts
 
 // Define Configuration Types
-type ProductConfigType = 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple' | 'flavorMultiSelect';
+type ProductConfigType = 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple' | 'flavorMultiSelect' | 'sizePack';
 
 // Define the types needed for products
 // It's good practice to define types in a dedicated types file, but for simplicity here:
@@ -24,7 +24,7 @@ export type Product = {
   id: number;
   name: string;
   description: string;
-  price: string; // Price reference (can be base price, pack price, unit price)
+  price?: string; // Price reference (can be base price, pack price, unit price)
   image: string;
   video?: string; // ADDED optional video field
   category: 'tartas' | 'galletas' | 'palmeritas' | 'mini-tartas' | 'minicookies'; // ADDED minicookies category
@@ -41,15 +41,16 @@ export const productsData: Product[] = [
   // Tarta-Galleta
   { 
       id: 15, 
-      name: "Tarta-Galleta", 
+      name: "Tarta Galleta", 
       description: "Una deliciosa combinación de tarta y galleta, perfecta para cualquier ocasión.", 
-      price: "35€", 
       image: "/images/tarta-galleta.png",
       video: "/videos/tarta-galleta.mp4",
       category: "tartas", 
-      configType: 'flavorOnly',
-      availableFlavors: ["Tarta-Galleta"],
-      size: "8-10 personas" 
+      configType: 'sizePack',
+      options: [
+        { name: 'Mediana', price: '22€', description: 'Para 8 personas' },
+        { name: 'Grande', price: '35€', description: 'Para 14 personas' }
+      ]
   },
   // Galletas - MOVED TO BE THE SECOND PRODUCT
   {

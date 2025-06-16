@@ -18,6 +18,8 @@ import { CartItem } from '../types/cart';
 import { getWhatsAppUrl } from '@/utils/whatsappUtils';
 import FlavorMultiSelector from '@/components/product/FlavorMultiSelector';
 import { useReward } from 'react-rewards';
+import SizePackSelector from '@/components/product/SizePackSelector';
+import MobileVideoPlayer from '@/components/product/MobileVideoPlayer';
 
 // Define a more specific type for the details object
 interface ProductDetailsDisplay {
@@ -99,27 +101,6 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
             </Card>
         </div>
     );
-};
-
-// --- Helper Component for Mobile Video --- (NUEVO)
-const MobileVideoPlayer = ({ product }: { product: ProductType | null }) => {
-  if (!product?.video) return null;
-  return (
-    <div className="md:hidden mt-6 flex justify-center">
-      <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[16/9] max-w-full bg-black max-h-80 sm:max-h-[400px]">
-        <CardContent className="p-0 h-full">
-          <video 
-            src={product.video} 
-            autoPlay loop muted playsInline
-            className="w-full h-full object-cover"
-            aria-label={`Vídeo de ${product.name}`}
-          >
-            Tu navegador no soporta la etiqueta de vídeo.
-          </video>
-        </CardContent>
-      </Card>
-    </div>
-  );
 };
 
 // Inner Component handling configuration logic and UI - NOW GENERIC
@@ -1036,6 +1017,8 @@ const ProductDetail = () => {
             return <FixedPackSelector product={product} />;
           case 'flavorQuantity':
             return <FlavorMultiSelector product={product} />;
+          case 'sizePack':
+            return <SizePackSelector product={product} />;
           case 'flavorOnly':
             return (
               <div className="space-y-4">

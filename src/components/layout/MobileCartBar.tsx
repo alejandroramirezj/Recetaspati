@@ -240,6 +240,7 @@ const MobileCartBar: React.FC = () => {
                                 {item.selectedOptions?.pack && <p className="text-xs text-gray-500">Pack: {item.selectedOptions.pack}</p>}
                                 {item.type === 'flavorQuantity' && item.selectedOptions?.flavor && <p className="text-xs text-gray-500">Sabor: {item.selectedOptions.flavor}</p>}
                                 {item.type === 'flavorOnly' && item.selectedOptions?.flavor && <p className="text-xs text-gray-500">Opción: {item.selectedOptions.flavor}</p>}
+                                {item.type === 'sizePack' && item.selectedOptions?.size && <p className="text-xs text-gray-500">Tamaño: {item.selectedOptions.size}</p>}
                                 
                                 {/* Section for cookiePack to display individual cookies from cookieDetails.cookies */}
                                 {item.type === 'cookiePack' && item.cookieDetails && item.cookieDetails.cookies && (

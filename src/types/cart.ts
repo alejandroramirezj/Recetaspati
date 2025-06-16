@@ -11,7 +11,7 @@ export interface CartItem {
   imageUrl?: string; // Para mostrar en el resumen
   
   // Tipo de producto para lógica condicional
-  type: 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple' | 'flavorMultiSelect'; // ADDED flavorMultiSelect
+  type: 'cookiePack' | 'fixedPack' | 'flavorQuantity' | 'flavorOnly' | 'flavorPack' | 'simple' | 'flavorMultiSelect' | 'sizePack'; // ADDED sizePack
   
   // Opciones específicas seleccionadas
   selectedOptions?: {
