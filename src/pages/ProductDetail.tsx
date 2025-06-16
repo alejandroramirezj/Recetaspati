@@ -55,6 +55,11 @@ interface FixedPackSelectorProps {
 }
 const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
     const { dispatch } = useCart();
+    const rewardId = `reward-fixedpack-${product.id}`;
+    const { reward, isAnimating: isAnimatingReward } = useReward(rewardId, 'emoji', {
+        emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
+        elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
+    });
 
     const handleAddPack = (packOption: Option) => {
         // Assuming Option has name and price
@@ -71,6 +76,7 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
             selectedOptions: { pack: packOption.name },
         };
         dispatch({ type: 'ADD_ITEM', payload: cartItem });
+        reward(); // Trigger the animation here
     };
 
     return (
@@ -91,7 +97,13 @@ const FixedPackSelector: React.FC<FixedPackSelectorProps> = ({ product }) => {
                                     {option.description && <p className="text-xs text-pati-brown mb-2">{option.description}</p>}
                                 </div>
                                 <p className="text-lg font-bold text-pati-burgundy mb-2">{option.price}</p>
-                                <Button size="sm" className="w-full" onClick={() => handleAddPack(option)}>
+                                <Button 
+                                    size="sm" 
+                                    className="relative w-full" 
+                                    onClick={() => handleAddPack(option)}
+                                    disabled={isAnimatingReward} // Disable during animation
+                                >
+                                    <span id={rewardId} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
                                     Añadir al Pedido
                                 </Button>
                             </div>
@@ -130,7 +142,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
     });
 
     const rewardIdSummary = `reward-itempack-summary-${product.id}`;
-    const { reward: rewardSummary, isAnimating: isAnimatingSummaryInternal } = useReward(rewardIdSummary, 'emoji', {
+    const { reward: rewardSummary, isAnimating: isAnimatingSummary } = useReward(rewardIdSummary, 'emoji', {
         emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
         elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
     });
@@ -213,7 +225,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                 currentCount,
                 isOrderComplete,
                 finalPackPrice,
-                isAnimatingSummaryInternal,
+                isAnimatingSummary,
                 isAnimatingSticky
             );
         }
@@ -240,7 +252,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
         onConfigUpdate,
         selectedItems,  // Añadido para actualizar cuando cambian las galletas seleccionadas
         selectedFlavors, // Añadido para actualizar cuando cambian los sabores seleccionados
-        isAnimatingSummaryInternal
+        isAnimatingSummary
     ]);
 
     // Efecto para escuchar el evento add-to-cart
@@ -457,6 +469,7 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
 
         dispatch({ type: 'ADD_ITEM', payload: { ...cartItemPayload, id: cartItemId } }); // Siempre ADD_ITEM
         if (triggerSource === 'sticky') rewardSticky();
+        else if (triggerSource === 'summary') rewardSummary();
     };
 
     const generateWhatsAppMessage = () => { // Adjusted for flavorPack
@@ -779,20 +792,33 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                               </ul>
                       </div>
                      )}
-                     <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                       <Button
-                           id="add-pack-button-mobile"
-                           onClick={() => handleAddToCart('summary')}
-                           size="lg"
-                           className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-                           disabled={!isOrderComplete}
-                       >
-                           <ShoppingCart className="mr-2 h-5 w-5" />
-                           {isOrderComplete ? 
-                                (currentPackIsCustom ? `Añadir ${currentCount} Galleta${currentCount !== 1 ? 's' : ''}` : `Añadir Pack ${selectedPackSize || 0}`) :
-                                "Completa tu selección"}
-                       </Button>
-                  </div>
+                     {/* Botón de Añadir al Carrito para el Resumen (visible en móvil) */}
+                     <div className="flex flex-col gap-2 mt-2 md:hidden"> {/* HIDDEN ON DESKTOP */}
+                         <Button 
+                             id="add-pack-button-summary"
+                             onClick={() => {
+                                 handleAddToCart('summary');
+                                 rewardSummary(); // Asegurar que la animación se activa aquí
+                             }}
+                             size="lg" 
+                             className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                             disabled={!isOrderComplete || isAnimatingSummary} 
+                         >
+                             <span id={rewardIdSummary} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
+                             <ShoppingCart className="mr-2 h-5 w-5" /> 
+                             {isOrderComplete 
+                                 ? (currentPackIsCustom 
+                                     ? `Añadir ${currentCount} Galleta${currentCount !== 1 ? 's' : ''}`
+                                     : product.configType === 'flavorPack'
+                                         ? `Añadir Caja ${selectedPackSize || 0}`
+                                         : `Añadir Pack ${selectedPackSize || 0}`) 
+                                 : currentPackIsCustom 
+                                     ? 'Elige tus galletas'
+                                     : product.configType === 'flavorPack'
+                                         ? `Elige ${maxFlavors || 0 - selectedFlavors.length} sabor(es) más`
+                                         : `Completa tu pack de ${selectedPackSize || 0}`}
+                         </Button>
+                     </div>
                   </CardContent>
                 </Card>
                 </div>
@@ -824,8 +850,9 @@ const ItemPackConfigurator: React.FC<ItemPackConfiguratorProps> = ({ product, ca
                         onClick={() => handleAddToCart('sticky')}
                         className={`relative whitespace-nowrap focus-visible:ring-offset-1 flex-shrink-0 ${isOrderComplete ? 'bg-pati-burgundy hover:bg-pati-burgundy/90 text-white focus-visible:ring-pati-burgundy' : 'bg-gray-400 text-gray-700 cursor-not-allowed focus-visible:ring-gray-500'}`}
                         size="sm"
-                        disabled={!isOrderComplete}
+                        disabled={!isOrderComplete || isAnimatingSticky} // Disable during animation
                     >
+                        <span id={rewardIdSticky} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
                         {isOrderComplete ? <CheckCircle2 className="mr-1.5 h-4 w-4"/> : <Info className="mr-1.5 h-4 w-4" />}
                          {isOrderComplete ? (currentPackIsCustom ? "Añadir Galletas" : "Añadir Pack") :
                          (currentPackIsCustom ? (currentCount > 0 ? 'Añadir Galletas' : 'Elige Galletas') : (product.configType === 'flavorPack' ? `Elige ${maxFlavors || 0 - selectedFlavors.length} sabor(es) más.` : `${currentCount}/${selectedPackSize || 0} seleccionados. Completa tu pack.`))
@@ -859,7 +886,7 @@ const DesktopPackSummary = ({
   isAnimating: boolean;
 }) => {
   const rewardIdDesktop = `reward-itempack-desktop-${product.id}`;
-  const { reward, isAnimating: isAnimatingButton } = useReward(rewardIdDesktop, 'emoji', {
+  const { reward: rewardDesktop, isAnimating: isAnimatingDesktop } = useReward(rewardIdDesktop, 'emoji', {
         emoji: ['🍪', '🎂', '🍩', '🍰', '🧁', '🍬', '🥨', '💖'],
         elementCount: 15, spread: 90, startVelocity: 30, decay: 0.95, lifetime: 200, zIndex: 1000, position: 'absolute',
     });
@@ -911,11 +938,11 @@ const DesktopPackSummary = ({
               id="add-pack-button-desktop"
               onClick={() => {
                 handleAddToCart('desktop');
-                reward();
+                rewardDesktop(); // Call the reward function here
               }}
                     size="lg" 
               className={`relative flex-1 bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2 ${!isOrderComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={!isOrderComplete || isAnimatingButton || isAnimating}
+              disabled={!isOrderComplete || isAnimatingDesktop || isAnimating}
                 > 
               <span id={rewardIdDesktop} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
                     <ShoppingCart className="mr-2 h-5 w-5" /> 
@@ -1036,26 +1063,25 @@ const ProductDetail = () => {
                   size="lg" 
                   className="relative w-full bg-pati-burgundy hover:bg-pati-burgundy/90 text-white py-2"
                   onClick={() => {
-                    const price = parseFloat(product.price.replace('€', '').replace(',', '.'));
-                    const cartItem: CartItem = {
-                      id: `${product.id}-${product.availableFlavors?.[0] || 'default'}`,
-                      productId: product.id,
-                      productName: product.name,
-                      quantity: 1,
-                      packPrice: price,
-                      imageUrl: product.image,
-                      type: 'flavorOnly',
-                      selectedOptions: { 
-                        flavor: product.availableFlavors?.[0] || 'default' 
+                    dispatch({ 
+                      type: 'ADD_ITEM', 
+                      payload: { 
+                        id: product.id.toString(), 
+                        productId: product.id, 
+                        productName: product.name, 
+                        quantity: 1, 
+                        packPrice: parseFloat(product.price.replace('€', '').replace(',', '.')), 
+                        imageUrl: product.image, 
+                        type: 'flavorOnly',
+                        selectedOptions: { flavor: product.availableFlavors ? product.availableFlavors[0] : '' } // Por defecto el primer sabor o vacío
                       }
-                    };
-                    dispatch({ type: 'ADD_ITEM', payload: cartItem });
-                    rewardFlavorOnly(); // Disparar animación
+                    });
+                    rewardFlavorOnly(); // Trigger the animation here
                   }}
-                  disabled={isAnimatingFlavorOnly} // Deshabilitar botón durante la animación
-                > 
+                  disabled={isAnimatingFlavorOnly}
+                >
                   <span id={flavorOnlyRewardId} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"/>
-                  <ShoppingCart className="mr-2 h-5 w-5" /> Añadir al Carrito
+                  Añadir al Pedido
                 </Button>
               </div>
             );
@@ -1108,15 +1134,10 @@ const ProductDetail = () => {
            {/* Column 1: Configurator (always present) */}
            <div>
               {renderConfigurator()} 
-           </div>
-
-           {/* Column 2: Media (Image or Video) - Conditional Rendering Adjusted */}
-           {/* Show this column if NOT fixedPack AND NOT Palmeritas (id 9) AND NOT Galletas (id 2) */}
-           {(product.configType !== 'fixedPack') && (
-             <div className="hidden md:block md:sticky md:top-24">
-                {/* Resumen del Pack en Desktop - Para cookiePack (id 2 - galletas) y flavorPack (id 9 - palmeritas) */}
-                {((product.configType === 'cookiePack' && product.id === 2) || 
-                  (product.configType === 'flavorPack' && product.id === 9)) && (
+              {/* Resumen del Pack en Desktop - Para cookiePack (id 2 - galletas) y flavorPack (id 9 - palmeritas) */}
+              {((product.configType === 'cookiePack' && product.id === 2) || 
+                (product.configType === 'flavorPack' && product.id === 9)) && (
+                <div className="hidden md:block mt-6"> {/* Added wrapper div with desktop-only class and margin-top */}
                   <DesktopPackSummary 
                     product={product}
                     selectedPackSize={selectedPackSize}
@@ -1127,14 +1148,18 @@ const ProductDetail = () => {
                     handleAddToCart={handleAddToCart}
                     isAnimating={isAnimatingSummary || isAnimatingSticky}
                   />
-                )}
+                </div>
+              )}
+           </div>
 
-                {/* Video o imagen */}
+           {/* Column 2: Media (Image or Video) - Conditional Rendering Adjusted */}
+           {(product.configType !== 'fixedPack') && (
+             <div className="hidden md:block md:sticky md:top-24">
                 {product.video ? (
                     <Card className="overflow-hidden border-pati-pink/30 shadow-md aspect-[9/16] max-w-sm mx-auto bg-black">
                        <CardContent className="p-0 h-full">
-                           <video 
-                               src={product.video} 
+                           <video
+                               src={product.video}
                                autoPlay loop muted playsInline
                                className="w-full h-full object-cover"
                                aria-label={`Vídeo de ${product.name}`}
@@ -1143,14 +1168,14 @@ const ProductDetail = () => {
                            </video>
                        </CardContent>
                     </Card>
-                ) : product.image ? ( 
+                ) : product.image ? (
                     <Card className="overflow-hidden border-pati-pink/30 shadow-md">
                        <CardContent className="p-0">
                            <div className="aspect-square">
-                               <img 
-                                  src={product.image} 
+                               <img
+                                  src={product.image}
                                   alt={`Imagen de ${product.name}`}
-                                  className="w-full h-full object-contain" 
+                                  className="w-full h-full object-contain"
                                   loading="lazy"
                                />
                            </div>
