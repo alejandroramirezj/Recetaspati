@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página no encontrada - Recetas Pati</title>
     <script>
-        // Redirige a index.html y preserva la ruta original
-        var redirectTo = '/' + location.search + location.hash;
-        if (location.pathname !== '/' && !location.pathname.startsWith('/index.html')) {
-            window.location.replace('/index.html?redirect=' + encodeURIComponent(location.pathname + location.search + location.hash));
-        }
+        // Redirección SPA para GitHub Pages
+        (function() {
+          var l = window.location;
+          // Si no estamos ya en index.html y no es la raíz
+          if (!l.pathname.endsWith('/index.html') && l.pathname !== '/') {
+            var redirectUrl = '/index.html?redirect=' + encodeURIComponent(l.pathname + l.search + l.hash);
+            window.location.replace(redirectUrl);
+          }
+        })();
     </script>
 </head>
 <body>
     <h1>Página no encontrada</h1>
-    <p>Redirigiendo a la página principal...</p>
+    <p>Redirigiendo a la página correcta...</p>
     <p>Si no eres redirigido automáticamente, <a href="/">haz clic aquí</a>.</p>
 </body>
 </html> 
