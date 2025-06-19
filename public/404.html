@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página no encontrada - Recetas Pati</title>
     <script>
-        // Obtener la ruta actual
-        const path = window.location.pathname;
-        const queryString = window.location.search;
-        const hash = window.location.hash;
-
-        // Redirigir a la raíz
-        window.location.replace('/' + queryString + hash);
+        // Redirige a index.html y preserva la ruta original
+        var redirectTo = '/' + location.search + location.hash;
+        if (location.pathname !== '/' && !location.pathname.startsWith('/index.html')) {
+            window.location.replace('/index.html?redirect=' + encodeURIComponent(location.pathname + location.search + location.hash));
+        }
     </script>
 </head>
 <body>
