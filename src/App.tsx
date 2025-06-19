@@ -26,6 +26,19 @@ const SpaRedirectHandler = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Manejo del redirect desde 404.html (GitHub Pages SPA)
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    if (redirect && decodeURIComponent(redirect) !== location.pathname + location.search + location.hash) {
+      // Limpiar el parámetro de la URL
+      params.delete('redirect');
+      const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+      window.history.replaceState({}, '', cleanUrl);
+      // Navegar a la ruta original
+      navigate(decodeURIComponent(redirect), { replace: true });
+      return;
+    }
+    // Soporte para sessionStorage (por si acaso)
     const redirectPath = sessionStorage.getItem('redirect');
     if (redirectPath && redirectPath !== location.pathname + location.search + location.hash) {
       sessionStorage.removeItem('redirect');
