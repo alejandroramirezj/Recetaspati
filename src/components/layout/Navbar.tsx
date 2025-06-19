@@ -15,7 +15,7 @@ const Navbar = () => {
   const [isAnimating, setIsAnimating] = useState(false); // Estado para controlar animación
 
   // Variables fácilmente editables para seguidores y likes
-  const TIKTOK_LIKES = "84K"; // Cambia este valor según los likes reales
+  const TIKTOK_LIKES = "106.4K"; // Actualizado: 106.4K likes y más de 3 millones de visualizaciones
   const INSTAGRAM_FOLLOWERS = "1.8K"; // Cambia este valor según los seguidores reales
 
   // Efecto para manejar la animación

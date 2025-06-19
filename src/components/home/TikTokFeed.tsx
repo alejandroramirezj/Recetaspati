@@ -15,9 +15,9 @@ const TikTokFeed = () => {
   const profileName = "recetaspati_";
   const TIKTOK_FOLLOWERS = "X.XK";
   const followerCount = "2.984";
-  const heartCount = "88.705";
+  const heartCount = "106.4K";
   const videoCount = "93";
-  const viewCount = "2,8 millones";
+  const viewCount = "3 millones+";
 
   return (
     <section id="tiktok" className="py-12 bg-white overflow-hidden">
