@@ -49,13 +49,17 @@ const SpaRedirectHandler = () => {
   return null; // Este componente no renderiza nada
 };
 
+// Determinar si usamos dominio personalizado o GitHub Pages
+const isCustomDomain = window.location.hostname !== 'alejandroramirezj.github.io';
+const Router = isCustomDomain ? BrowserRouter : HashRouter;
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <CartProvider>
-        <HashRouter>
+        <Router>
           <ScrollToTop />
           <SpaRedirectHandler />
           <Routes>
@@ -68,7 +72,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <MobileCartBar />
-        </HashRouter>
+        </Router>
       </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
