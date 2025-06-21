@@ -145,6 +145,13 @@ const MobileCartBar: React.FC = () => {
     setJustAddedPack(false);
   }, [location.pathname]);
 
+  // Resetear packSelection al salir de la página de producto
+  useEffect(() => {
+    if (!location.pathname.includes('/product/')) {
+      setPackSelection(null);
+    }
+  }, [location.pathname]);
+
   // Ocultar MobileCartBar en la página de resumen del pedido
   if (location.pathname === '/pedido') {
     return null;
@@ -157,58 +164,86 @@ const MobileCartBar: React.FC = () => {
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild>
-        {/* Barra inferior compacta: solo botón con progreso y acción */}
+        {/* Barra inferior creativa: miniaturas dentro del carrito SVG */}
         <div 
-          className={`fixed left-0 right-0 mx-auto bottom-4 z-50 bg-white border border-pati-burgundy shadow-lg rounded-full w-[92vw] max-w-lg px-2 py-2 flex items-center justify-center min-h-[56px] h-auto cursor-pointer lg:hidden transition-all`}
+          className={`fixed left-0 right-0 mx-auto bottom-4 z-50 bg-white border border-pati-burgundy shadow-lg rounded-full w-[92vw] max-w-lg px-2 py-2 flex items-center justify-between min-h-[56px] h-auto cursor-pointer lg:hidden transition-all`}
         >
-          {/* Mostrar solo 'Ver mi pedido' si estamos en la home o si se acaba de añadir un pack */}
-          {(isHomePage || justAddedPack) && totalItems > 0 ? (
-            <Button 
-              className="w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer flex items-center justify-center gap-2"
-              onClick={() => setIsSheetOpen(true)}
-              aria-label="Ver mi pedido"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span className="font-semibold">Ver mi pedido</span>
-            </Button>
-          ) : packSelection?.isActive ? (
-            <Button
-              className={`w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none flex items-center justify-center gap-2 transition-all ${packSelection.isOrderComplete ? 'bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer' : 'bg-pati-brown/30 text-pati-brown cursor-not-allowed'}`}
-              onClick={packSelection.isOrderComplete ? handleAddToCart : undefined}
-              disabled={!packSelection.isOrderComplete}
-              aria-label={packSelection.isOrderComplete ? 'Añadir al carrito' : 'Completa tu pack'}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {/* Progreso y acción en una sola línea */}
-              <span className="font-semibold">
-                {packSelection.currentPackIsCustom
-                  ? `${packSelection.currentCount} uds.`
-                  : `${packSelection.currentCount}/${packSelection.selectedPackSize || 0} uds.`}
-              </span>
-              <span className="mx-2">·</span>
-              <span className="truncate block w-full text-center">
-                {packSelection.isOrderComplete
-                  ? (packSelection.currentPackIsCustom
-                      ? `Añadir ${packSelection.currentCount} Galleta${packSelection.currentCount !== 1 ? 's' : ''}`
-                      : `Añadir Pack ${packSelection.selectedPackSize || ''}`)
-                  : (packSelection.currentPackIsCustom
-                      ? 'Elige tus galletas'
-                      : `Completa tu pack de ${packSelection.selectedPackSize || ''}`)}
-              </span>
-            </Button>
-          ) : (
-            // Estado normal: mostrar acceso al carrito si hay items
-            totalItems > 0 && (
+          {/* Carrito SVG grande y miniaturas dentro (20%) */}
+          <div className="flex items-center justify-start flex-shrink-0 w-[20%] min-w-[70px] max-w-[100px] pl-1 relative">
+            <div className="relative w-14 h-14">
+              <svg width="56" height="56" viewBox="0 0 32 32" fill="none" stroke="#7B3F3F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-14 h-14">
+                <circle cx="12" cy="28" r="2.5"/>
+                <circle cx="26" cy="28" r="2.5"/>
+                <path d="M3.5 5h3l3 17h14l3-10H8.5"/>
+              </svg>
+              {/* Miniaturas absolutas dentro del carrito */}
+              {state.items[0] && (
+                <img
+                  src={state.items[0].imageUrl || '/Recetaspati/placeholder.svg'}
+                  alt={state.items[0].productName}
+                  className="absolute left-[13px] top-[13px] w-5 h-5 object-cover rounded-full border-2 border-white shadow-sm z-10 bg-white"
+                  style={{zIndex: 10}}
+                />
+              )}
+              {state.items[1] && (
+                <img
+                  src={state.items[1].imageUrl || '/Recetaspati/placeholder.svg'}
+                  alt={state.items[1].productName}
+                  className="absolute left-[25px] top-[22px] w-4 h-4 object-cover rounded-full border-2 border-white shadow-sm z-9 bg-white"
+                  style={{zIndex: 9}}
+                />
+              )}
+              {state.items[2] && state.items.length <= 3 && (
+                <img
+                  src={state.items[2].imageUrl || '/Recetaspati/placeholder.svg'}
+                  alt={state.items[2].productName}
+                  className="absolute left-[5px] top-[25px] w-4 h-4 object-cover rounded-full border-2 border-white shadow-sm z-8 bg-white"
+                  style={{zIndex: 8}}
+                />
+              )}
+              {state.items.length > 3 && (
+                <span className="absolute left-[20px] top-[2px] w-5 h-5 flex items-center justify-center rounded-full bg-pati-burgundy text-white text-xs font-bold border-2 border-white shadow-sm z-20">+{state.items.length - 2}</span>
+              )}
+            </div>
+          </div>
+          {/* Botón dinámico o 'Ver mi pedido' (80%) */}
+          <div className="flex-1 flex justify-end w-[80%]">
+            {packSelection?.isActive ? (
+              <Button
+                className={`w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none flex items-center justify-center gap-2 transition-all ${packSelection.isOrderComplete ? 'bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer' : 'bg-pati-brown/30 text-pati-brown cursor-not-allowed'}`}
+                onClick={packSelection.isOrderComplete ? handleAddToCart : undefined}
+                disabled={!packSelection.isOrderComplete}
+                aria-label={packSelection.isOrderComplete ? 'Añadir al carrito' : 'Completa tu pack'}
+                style={{maxWidth: '100%'}}
+              >
+                {/* Progreso y acción en una sola línea */}
+                <span className="font-semibold">
+                  {packSelection.currentPackIsCustom
+                    ? `${packSelection.currentCount} uds.`
+                    : `${packSelection.currentCount}/${packSelection.selectedPackSize || 0} uds.`}
+                </span>
+                <span className="mx-2">·</span>
+                <span className="truncate block w-full text-center">
+                  {packSelection.isOrderComplete
+                    ? (packSelection.currentPackIsCustom
+                        ? `Añadir ${packSelection.currentCount} Galleta${packSelection.currentCount !== 1 ? 's' : ''}`
+                        : `Añadir Pack ${packSelection.selectedPackSize || ''}`)
+                    : (packSelection.currentPackIsCustom
+                        ? 'Elige tus galletas'
+                        : `Completa tu pack de ${packSelection.selectedPackSize || ''}`)}
+                </span>
+              </Button>
+            ) : (
               <Button 
                 className="w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer flex items-center justify-center gap-2"
                 onClick={() => setIsSheetOpen(true)}
                 aria-label="Ver mi pedido"
+                style={{maxWidth: '100%'}}
               >
-                <ShoppingCart className="h-5 w-5" />
                 <span className="font-semibold">Ver mi pedido</span>
               </Button>
-            )
-          )}
+            )}
+          </div>
         </div>
       </SheetTrigger>
       
