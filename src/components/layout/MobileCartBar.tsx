@@ -164,9 +164,13 @@ const MobileCartBar: React.FC = () => {
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild>
-        {/* Barra inferior creativa: miniaturas dentro del carrito SVG */}
+        {/* Barra inferior creativa y animada sin gradiente */}
         <div 
-          className={`fixed left-0 right-0 mx-auto bottom-4 z-50 bg-white border border-pati-burgundy shadow-lg rounded-full w-[92vw] max-w-lg px-2 py-2 flex items-center justify-between min-h-[56px] h-auto cursor-pointer lg:hidden transition-all`}
+          className={`fixed left-0 right-0 mx-auto bottom-4 z-50 bg-white border border-pati-burgundy shadow-lg rounded-full w-[92vw] max-w-lg px-2 py-2 flex items-center justify-between min-h-[56px] h-auto cursor-pointer lg:hidden transition-all fixed-cart-bar`}
+          style={{
+            boxShadow: '0 8px 32px 0 rgba(123, 63, 63, 0.18), 0 1.5px 0 0 #fff inset',
+            transition: 'box-shadow 0.3s',
+          }}
         >
           {/* Carrito SVG grande y miniaturas dentro (20%) */}
           <div className="flex items-center justify-start flex-shrink-0 w-[20%] min-w-[70px] max-w-[100px] pl-1 relative">
@@ -176,30 +180,48 @@ const MobileCartBar: React.FC = () => {
                 <circle cx="26" cy="28" r="2.5"/>
                 <path d="M3.5 5h3l3 17h14l3-10H8.5"/>
               </svg>
-              {/* Miniaturas absolutas dentro del carrito */}
+              {/* Badge animado con número de productos y destello */}
+              {state.items.length > 0 && (
+                <span
+                  key={state.items.length}
+                  className="cart-badge absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center rounded-full bg-[#E9B7B7] text-pati-burgundy text-xs font-bold border-2 border-white shadow z-20 animate-bump"
+                  style={{animation: 'bump 0.3s', boxShadow: '0 0 8px 2px #fff7, 0 0 0 2px #E9B7B7'}}
+                >
+                  {state.items.length}
+                  {/* Destello tipo estrella */}
+                  <svg className="absolute -top-1 -right-1" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 0v2M6 10v2M0 6h2M10 6h2M2.22 2.22l1.42 1.42M8.36 8.36l1.42 1.42M2.22 9.78l1.42-1.42M8.36 3.64l1.42-1.42" stroke="#FFD700" strokeWidth="1" strokeLinecap="round"/></svg>
+                </span>
+              )}
+              {/* Miniaturas absolutas dentro del carrito, borde dorado y brillo */}
               {state.items[0] && (
-                <img
-                  src={state.items[0].imageUrl || '/Recetaspati/placeholder.svg'}
-                  alt={state.items[0].productName}
-                  className="absolute left-[13px] top-[13px] w-5 h-5 object-cover rounded-full border-2 border-white shadow-sm z-10 bg-white"
-                  style={{zIndex: 10}}
-                />
+                <span className="absolute left-[13px] top-[13px] w-5 h-5 flex items-center justify-center rounded-full bg-white/70 border-2 border-yellow-400 shadow-gold z-10">
+                  <img
+                    src={state.items[0].imageUrl || '/Recetaspati/placeholder.svg'}
+                    alt={state.items[0].productName}
+                    className="w-4 h-4 object-cover rounded-full"
+                    style={{zIndex: 10}}
+                  />
+                </span>
               )}
               {state.items[1] && (
-                <img
-                  src={state.items[1].imageUrl || '/Recetaspati/placeholder.svg'}
-                  alt={state.items[1].productName}
-                  className="absolute left-[25px] top-[22px] w-4 h-4 object-cover rounded-full border-2 border-white shadow-sm z-9 bg-white"
-                  style={{zIndex: 9}}
-                />
+                <span className="absolute left-[25px] top-[22px] w-4 h-4 flex items-center justify-center rounded-full bg-white/70 border-2 border-yellow-400 shadow-gold z-9">
+                  <img
+                    src={state.items[1].imageUrl || '/Recetaspati/placeholder.svg'}
+                    alt={state.items[1].productName}
+                    className="w-3 h-3 object-cover rounded-full"
+                    style={{zIndex: 9}}
+                  />
+                </span>
               )}
               {state.items[2] && state.items.length <= 3 && (
-                <img
-                  src={state.items[2].imageUrl || '/Recetaspati/placeholder.svg'}
-                  alt={state.items[2].productName}
-                  className="absolute left-[5px] top-[25px] w-4 h-4 object-cover rounded-full border-2 border-white shadow-sm z-8 bg-white"
-                  style={{zIndex: 8}}
-                />
+                <span className="absolute left-[5px] top-[25px] w-4 h-4 flex items-center justify-center rounded-full bg-white/70 border-2 border-yellow-400 shadow-gold z-8">
+                  <img
+                    src={state.items[2].imageUrl || '/Recetaspati/placeholder.svg'}
+                    alt={state.items[2].productName}
+                    className="w-3 h-3 object-cover rounded-full"
+                    style={{zIndex: 8}}
+                  />
+                </span>
               )}
               {state.items.length > 3 && (
                 <span className="absolute left-[20px] top-[2px] w-5 h-5 flex items-center justify-center rounded-full bg-pati-burgundy text-white text-xs font-bold border-2 border-white shadow-sm z-20">+{state.items.length - 2}</span>
@@ -210,11 +232,11 @@ const MobileCartBar: React.FC = () => {
           <div className="flex-1 flex justify-end w-[80%]">
             {packSelection?.isActive ? (
               <Button
-                className={`w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none flex items-center justify-center gap-2 transition-all ${packSelection.isOrderComplete ? 'bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer' : 'bg-pati-brown/30 text-pati-brown cursor-not-allowed'}`}
+                className={`w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none flex items-center justify-center gap-2 transition-all cart-bar-btn-solid ${packSelection.isOrderComplete ? 'bg-pati-burgundy text-white hover:scale-[1.04] hover:shadow-xl active:scale-95 cursor-pointer' : 'bg-pati-brown/30 text-pati-brown cursor-not-allowed'}`}
                 onClick={packSelection.isOrderComplete ? handleAddToCart : undefined}
                 disabled={!packSelection.isOrderComplete}
                 aria-label={packSelection.isOrderComplete ? 'Añadir al carrito' : 'Completa tu pack'}
-                style={{maxWidth: '100%'}}
+                style={{maxWidth: '100%', boxShadow: '0 4px 18px 0 rgba(123, 63, 63, 0.18)', transition: 'box-shadow 0.3s, transform 0.2s'}}
               >
                 {/* Progreso y acción en una sola línea */}
                 <span className="font-semibold">
@@ -235,10 +257,10 @@ const MobileCartBar: React.FC = () => {
               </Button>
             ) : (
               <Button 
-                className="w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none bg-pati-burgundy text-white hover:scale-[1.04] hover:shadow-xl active:scale-95 cursor-pointer flex items-center justify-center gap-2 cart-bar-btn-solid"
                 onClick={() => setIsSheetOpen(true)}
                 aria-label="Ver mi pedido"
-                style={{maxWidth: '100%'}}
+                style={{maxWidth: '100%', boxShadow: '0 4px 18px 0 rgba(123, 63, 63, 0.18)', transition: 'box-shadow 0.3s, transform 0.2s'}}
               >
                 <span className="font-semibold">Ver mi pedido</span>
               </Button>
