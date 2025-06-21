@@ -224,7 +224,7 @@ const MobileCartBar: React.FC = () => {
                 </span>
               )}
               {state.items.length > 3 && (
-                <span className="absolute left-[20px] top-[2px] w-5 h-5 flex items-center justify-center rounded-full bg-pati-burgundy text-white text-xs font-bold border-2 border-white shadow-sm z-20">+{state.items.length - 2}</span>
+                null
               )}
             </div>
           </div>
