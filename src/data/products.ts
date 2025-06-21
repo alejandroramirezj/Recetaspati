@@ -71,7 +71,7 @@ export const productsData: Product[] = [
       category: "tartas", 
       configType: 'sizePack',
       options: [
-        { name: 'Mediana', price: '22€', description: 'Para 8 personas' },
+        { name: 'Mediana', price: '24€', description: 'Para 8 personas' },
         { name: 'Grande', price: '35€', description: 'Para 14 personas' }
       ],
       flavorOptions: [
