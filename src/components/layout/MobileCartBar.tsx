@@ -103,14 +103,11 @@ const MobileCartBar: React.FC = () => {
     setShowAddButton(true);
   }, [location.pathname, packSelection?.selectedPackSize, packSelection?.currentPackIsCustom]);
 
-  // Ocultar MobileCartBar en la página de resumen del pedido
-  if (location.pathname === '/pedido') {
-    return null;
-  }
+  // Detectar si estamos en la home
+  const isHomePage = location.pathname === '/';
 
-  if (totalItems === 0 && !packSelection?.isActive) {
-    return null; // No mostrar si no hay carrito ni selección activa
-  }
+  // Estado para saber si se acaba de añadir un pack
+  const [justAddedPack, setJustAddedPack] = useState(false);
 
   // Función para mostrar confeti
   const showConfetti = () => {
@@ -124,8 +121,6 @@ const MobileCartBar: React.FC = () => {
   // Handler para añadir al carrito
   const handleAddToCart = () => {
     if (packSelection) {
-      console.log('Intentando añadir al carrito:', packSelection);
-      // Disparamos el evento con toda la información necesaria
       document.dispatchEvent(new CustomEvent('add-to-cart', { 
         detail: { 
           source: 'summary',
@@ -135,75 +130,85 @@ const MobileCartBar: React.FC = () => {
           }
         } 
       }));
-      console.log('Evento add-to-cart disparado');
       showConfetti();
       setShowAddButton(false);
-      // Cerramos el sheet si está abierto
       setIsSheetOpen(false);
+      setPackSelection(null);
+      setJustAddedPack(true); // Marcar que se acaba de añadir un pack
     } else {
       console.warn('No hay packSelection disponible para añadir al carrito');
     }
   };
 
+  // Resetear justAddedPack cuando se cambia de producto o de página
+  useEffect(() => {
+    setJustAddedPack(false);
+  }, [location.pathname]);
+
+  // Ocultar MobileCartBar en la página de resumen del pedido
+  if (location.pathname === '/pedido') {
+    return null;
+  }
+
+  if (totalItems === 0 && !packSelection?.isActive) {
+    return null; // No mostrar si no hay carrito ni selección activa
+  }
+
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild>
-        {/* Barra inferior visible */}
+        {/* Barra inferior compacta: solo botón con progreso y acción */}
         <div 
-          className={`fixed left-0 right-0 mx-auto bottom-4 z-50 bg-white border border-pati-burgundy shadow-lg rounded-full w-[92vw] max-w-lg pl-3 pr-12 py-2 flex items-center justify-start min-h-[60px] h-16 cursor-pointer lg:hidden`}
+          className={`fixed left-0 right-0 mx-auto bottom-4 z-50 bg-white border border-pati-burgundy shadow-lg rounded-full w-[92vw] max-w-lg px-2 py-2 flex items-center justify-center min-h-[56px] h-auto cursor-pointer lg:hidden transition-all`}
         >
-          {/* Icono de carrito pequeño y badge alineado a la esquina izquierda */}
-          <div className="flex items-center justify-start h-10 mr-2 ml-0" style={{minWidth: '40px'}}>
-            <div className="relative flex items-center justify-center h-10 w-10">
-              <span className="absolute -top-1 -right-1 bg-pati-burgundy text-white text-xs font-bold rounded-full px-1.5 py-0.5 shadow z-10 min-w-[20px] text-center border border-pati-burgundy">
-                {totalItems}
-                 </span>
-              <span className="text-2xl" role="img" aria-label="Carrito lleno de dulces">🛒</span>
-             </div>
-          </div>
-          {/* Botón de añadir, progreso o ver/enviar pedido */}
-          <div className="flex gap-2 items-center w-full justify-center">
-            {/* Confeti desde el centro de la píldora */}
-            <span className="flex gap-2 items-center w-full justify-center">
-              {showAdd && packSelection?.isOrderComplete && (
-                <Button
-                  className="w-full font-bold shadow-none rounded-full px-3 py-2 text-sm truncate h-9 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer"
-                  onClick={handleAddToCart}
-                  aria-label="Añadir al carrito"
-                >
-                  <span className="truncate block w-full text-center">
-                    {packSelection.currentPackIsCustom
-                      ? `Añadir ${packSelection.currentCount} uds.`
-                      : `Añadir Pack${packSelection.selectedPackSize ? ' ' + packSelection.selectedPackSize : ''}`}
-                  </span>
-                </Button>
-              )}
-              {showProgress && (
-                <Button
-                  className="w-full font-bold shadow-none rounded-full px-3 py-2 text-sm truncate h-9 border-none bg-gray-200 text-gray-500 cursor-not-allowed"
-                  disabled
-                  aria-label="Progreso de selección"
-                >
-                  <span className="truncate block w-full text-center">
-                    {packSelection.currentPackIsCustom
-                      ? `Elige galletas (${packSelection.currentCount} seleccionadas)`
-                      : packSelection.selectedPackSize
-                        ? `${packSelection.currentCount}/${packSelection.selectedPackSize} seleccionadas`
-                        : 'Completa tu pack'}
-                  </span>
-                </Button>
-              )}
-              {showPedido && (
-                <Button 
-                  className="w-full font-bold shadow-none rounded-full px-3 py-2 text-sm truncate h-9 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer"
-                  onClick={() => setIsSheetOpen(true)}
-                  aria-label="Ver o enviar pedido"
-                >
-                  <span className="truncate block w-full text-center">Ver/Enviar Pedido</span>
-                </Button>
-              )}
-            </span>
-          </div>
+          {/* Mostrar solo 'Ver mi pedido' si estamos en la home o si se acaba de añadir un pack */}
+          {(isHomePage || justAddedPack) && totalItems > 0 ? (
+            <Button 
+              className="w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer flex items-center justify-center gap-2"
+              onClick={() => setIsSheetOpen(true)}
+              aria-label="Ver mi pedido"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              <span className="font-semibold">Ver mi pedido</span>
+            </Button>
+          ) : packSelection?.isActive ? (
+            <Button
+              className={`w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none flex items-center justify-center gap-2 transition-all ${packSelection.isOrderComplete ? 'bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer' : 'bg-pati-brown/30 text-pati-brown cursor-not-allowed'}`}
+              onClick={packSelection.isOrderComplete ? handleAddToCart : undefined}
+              disabled={!packSelection.isOrderComplete}
+              aria-label={packSelection.isOrderComplete ? 'Añadir al carrito' : 'Completa tu pack'}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {/* Progreso y acción en una sola línea */}
+              <span className="font-semibold">
+                {packSelection.currentPackIsCustom
+                  ? `${packSelection.currentCount} uds.`
+                  : `${packSelection.currentCount}/${packSelection.selectedPackSize || 0} uds.`}
+              </span>
+              <span className="mx-2">·</span>
+              <span className="truncate block w-full text-center">
+                {packSelection.isOrderComplete
+                  ? (packSelection.currentPackIsCustom
+                      ? `Añadir ${packSelection.currentCount} Galleta${packSelection.currentCount !== 1 ? 's' : ''}`
+                      : `Añadir Pack ${packSelection.selectedPackSize || ''}`)
+                  : (packSelection.currentPackIsCustom
+                      ? 'Elige tus galletas'
+                      : `Completa tu pack de ${packSelection.selectedPackSize || ''}`)}
+              </span>
+            </Button>
+          ) : (
+            // Estado normal: mostrar acceso al carrito si hay items
+            totalItems > 0 && (
+              <Button 
+                className="w-full font-bold shadow-none rounded-full px-3 py-3 text-base truncate h-12 border-none bg-pati-burgundy text-white hover:bg-pati-burgundy/90 cursor-pointer flex items-center justify-center gap-2"
+                onClick={() => setIsSheetOpen(true)}
+                aria-label="Ver mi pedido"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                <span className="font-semibold">Ver mi pedido</span>
+              </Button>
+            )
+          )}
         </div>
       </SheetTrigger>
       
