@@ -207,14 +207,10 @@ export const productsData: Product[] = [
       { name: "Caja 50 unidades", price: "22€" }
     ],
     availableFlavors: [
-        "Filipinos chocolate blanco", 
-        "Kinder Bueno", 
-        "Nutella", 
-        "Chocolate negro", 
+        "Chocolate blanco y filipinos", 
+        "Chocolate con leche y kitkat", 
         "Lotus", 
-        "Pistacho",
-        "Chocolate blanco",
-        "Chocolate con leche"
+        "Chocoola con leche"
     ]
   },
   // Mini Cakes - REVISED
