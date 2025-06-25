@@ -242,26 +242,22 @@ export const productsData: Product[] = [
         "Lotus"
     ]
   },
-    // Mini Cookies - REVISED
+    // Mini Cookies - CORREGIDO
   {
     id: 11,
-    name: "Caja de Mini Cookies",
-    description: "Cajas de 6 o 12 unidades de mini cookies, elige tus sabores favoritos.",
-    price: "10€/18€",
+    name: "Mini cookies",
+    description: "Bolsa de mini cookies. Elige chocolate con leche, chocolate blanco o ambos.",
+    price: "5€",
     image: "/images/minicookies.webp",
     video: "/videos/minicookies.mp4",
     category: "minicookies",
-    configType: 'flavorPack',
+    configType: 'flavorMultiSelect',
     options: [
-      { name: "Caja 6 unidades", price: "10€" },
-      { name: "Caja 12 unidades", price: "18€" }
+      { name: "Bolsa 100g", price: "5€" }
     ],
     availableFlavors: [
-        "Chocolate", 
-        "Red Velvet", 
-        "Pistacho",
-        "Lemon",
-        "Lotus"
+      "Chocolate con leche",
+      "Chocolate blanco"
     ]
   },
   // NEW PRODUCTS
